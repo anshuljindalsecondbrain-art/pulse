@@ -25,7 +25,7 @@ The inventory is consolidated from prior PULSE decisions and the supplied Studen
 ## 2. Scope boundary
 
 ### In scope
-- Configurable classification structures and schemas.
+- Management and configuration of institution-defined classification structures and schemas.
 - Question-to-classification mappings.
 - Question inventory and tagging workflows.
 - Reusable archetypes.
@@ -49,9 +49,9 @@ DTE may expose stable identifiers, classification mappings, provenance and versi
 
 ## 3. Architectural constraints governing all modules
 
-1. DTE is a generic, configurable, multi-institute classification system; it is not hardcoded to Physics, JEE, NEET or a fixed academic hierarchy.
+1. DTE is a generic, multi-institute classification-management system. It is not hardcoded to Physics, JEE, NEET or a fixed academic hierarchy, and it does not design or generate academic classification structures.
 2. Classification schemas and question mappings are separate concerns.
-3. Support hierarchical and non-hierarchical classification, configurable fields, multiple classification groups, relationship types, aliases, ordering, dependencies and validation.
+3. Represent and manage institution-defined hierarchical or non-hierarchical classification structures, configurable fields, classification groups, relationship types, aliases, ordering, dependencies and validation. Configuration records an institution-approved structure; it does not design or prescribe that structure.
 4. Do not assume a fixed six-level Subject → Chapter → Topic → Concept → Sub-concept → Archetype hierarchy. That hierarchy is one historical academic example only.
 5. Support global reference taxonomies and tenant-specific extensions as a policy requiring explicit governance; tenant isolation is mandatory.
 6. Archetype identity is reusable and is not structurally trapped beneath one sub-concept.
@@ -73,7 +73,7 @@ DTE may expose stable identifiers, classification mappings, provenance and versi
 | DTE-M01 | DTE Dashboard | Provide an operational overview of tagging work and quality | Inventory totals, work queues, review queues, coverage summaries, quality alerts, workload views | M02, M09–M16 | Proposed |
 | DTE-M02 | Question Inventory | Find and manage the question records available for classification | Search, filters, server-side pagination, tenant/source scope, question preview, status filters, duplicate indicators | Question identity/version service; content source references | Proposed |
 | DTE-M03 | Tagging Studio | Provide the primary question classification workspace | Question preview, dynamic classification form, relationship selectors, metadata, provenance, validation, completeness, save/submit/next, version comparison | M02, M04–M09, M11–M13 | Proposed |
-| DTE-M04 | Classification Configuration Studio | Define tenant- or scope-specific classification schemas | Configurable groups, fields, hierarchy, non-hierarchical nodes, required/optional fields, aliases, ordering, dependencies, constraints and labels | M15; tenant governance | Proposed |
+| DTE-M04 | Classification Configuration Studio | Configure and maintain institution-approved classification schemas | Configurable groups, fields, institution-defined hierarchy or non-hierarchical structures, required/optional fields, aliases, ordering, dependencies, constraints and labels | M15; tenant governance | Proposed |
 | DTE-M05 | Relationship Mapping Engine | Model links between classification entities and questions | Many-to-many mappings, typed edges, primary/secondary relationships, cross-branch and cross-domain links, relationship validation | M04, M06, M11 | Proposed |
 | DTE-M06 | Archetype Management | Maintain reusable pedagogical question-pattern identities | Stable code/ID, title, description, strategy, traps, benchmark solving time, related archetypes, linked questions, lifecycle and revision history | M05, M11, M12 | Proposed |
 | DTE-M07 | Question Type Manager | Configure question formats independently of difficulty | Tenant-configurable type catalogue, labels, codes, descriptions, constraints and active state | M04; question metadata contract | Proposed |
