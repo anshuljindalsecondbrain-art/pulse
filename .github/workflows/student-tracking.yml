@@ -1,0 +1,29 @@
+name: Student Tracking prototype
+
+on:
+  pull_request:
+    paths:
+      - "apps/student-tracking/**"
+      - ".github/workflows/student-tracking.yml"
+  push:
+    branches: [main]
+    paths:
+      - "apps/student-tracking/**"
+      - ".github/workflows/student-tracking.yml"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/student-tracking
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: apps/student-tracking/package.json
+      - run: npm install
+      - run: npm run typecheck
+      - run: npm run build
