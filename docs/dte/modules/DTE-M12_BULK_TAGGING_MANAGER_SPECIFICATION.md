@@ -16,6 +16,10 @@ Bulk Tagging Manager enables authorized users to apply, import, validate and rev
 
 Bulk operations must use the same business rules as single-record tagging. They must not provide a shortcut around validation, review, publication or authorization.
 
+## Institutional authority guardrail
+
+Bulk imports may reference only classification identifiers already present in the applicable institution-approved configuration. Unknown identifiers must be rejected, quarantined, or routed to an authorized configuration workflow; the bulk process must never create academic categories or hierarchy nodes automatically.
+
 ## 2. Scope
 
 In scope:
