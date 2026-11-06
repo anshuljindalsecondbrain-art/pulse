@@ -1,7 +1,7 @@
 # DTE Master Documentation Register
 
 - Document ID: PULSE-DTE-REG-002
-- Version: 0.4.4
+- Version: 0.4.5
 - Status: Draft — full phase-aware documentation baseline
 - Product: PULSE — Deep Tagging Engine (DTE)
 - Scope: DTE only. Other PULSE systems appear only as external owners/consumers in DTE contracts.
@@ -136,7 +136,7 @@ The following 18 legacy module specifications exist as draft documents. Their ap
 | M10 | Review & Approval Specification | `docs/dte/modules/DTE-M10_REVIEW_APPROVAL_SPECIFICATION.md` | Rewritten v0.2.0 — Draft; Phase 1 |
 | M11 | Version & History Manager Specification | `docs/dte/modules/DTE-M11_VERSION_HISTORY_MANAGER_SPECIFICATION.md` | Rewritten v0.2.0 — Draft; Phase 1 |
 | M12 | Bulk Tagging Manager Specification | `docs/dte/modules/DTE-M12_BULK_TAGGING_MANAGER_SPECIFICATION.md` | Existing — Draft |
-| M13 | Validation & Quality Engine Specification | `docs/dte/modules/DTE-M13_VALIDATION_QUALITY_ENGINE_SPECIFICATION.md` | Existing — Draft |
+| M13 | Validation & Quality Engine Specification | `docs/dte/modules/DTE-M13_VALIDATION_QUALITY_ENGINE_SPECIFICATION.md` | Rewritten v0.2.0 — Draft; Phase 1 |
 | M14 | Coverage & Productivity Analytics Specification | `docs/dte/modules/DTE-M14_COVERAGE_PRODUCTIVITY_ANALYTICS_SPECIFICATION.md` | Existing — Draft |
 | M15 | Configuration Version Manager Specification | `docs/dte/modules/DTE-M15_CONFIGURATION_VERSION_MANAGER_SPECIFICATION.md` | Existing — Draft |
 | M16 | Historical Enrichment Interface Specification | `docs/dte/modules/DTE-M16_HISTORICAL_ENRICHMENT_INTERFACE_SPECIFICATION.md` | Existing — Draft |
@@ -320,7 +320,7 @@ Decision papers additionally record options considered, selected direction, cons
 | Version | Date | Status | Change |
 |---|---|---|---|
 | 0.2.0 | 2026-11-06 | Draft | Audited and consolidated documentation architecture; established 50 core documents, mapped 18 existing module specifications and existing audit/decision records, added ownership, dependencies, gates and open-decision tracking |
-| 0.3.0 | 2026-11-06 | Draft | Rebased current scope to offline tagging framework definition/management; deferred question upload, digital inventory/tagging, question identity/version and Q-GENOME decisions to a separate later phase; added phase applicability and revised approval gates |\n| 0.4.0 | 2026-11-06 | Draft | Added full phase-aware audit, product roadmap, legacy module disposition and Phase 1 operating model, framework configuration, template/handoff and requirements baselines |\n| 0.4.1 | 2026-11-06 | Draft | Added future question upload and digital-tagging discovery brief to the controlled documentation register |\n| 0.4.2 | 2026-11-06 | Draft | Updated M04 register status after complete Phase 1 rewrite and GitHub verification |\n| 0.4.3 | 2026-11-06 | Draft | Updated M10 register status after complete Phase 1 review/approval rewrite; aligned header version with latest changelog |\n| 0.4.4 | 2026-11-06 | Draft | Updated M11 register status after complete Phase 1 version/history rewrite |
+| 0.3.0 | 2026-11-06 | Draft | Rebased current scope to offline tagging framework definition/management; deferred question upload, digital inventory/tagging, question identity/version and Q-GENOME decisions to a separate later phase; added phase applicability and revised approval gates |\n| 0.4.0 | 2026-11-06 | Draft | Added full phase-aware audit, product roadmap, legacy module disposition and Phase 1 operating model, framework configuration, template/handoff and requirements baselines |\n| 0.4.1 | 2026-11-06 | Draft | Added future question upload and digital-tagging discovery brief to the controlled documentation register |\n| 0.4.2 | 2026-11-06 | Draft | Updated M04 register status after complete Phase 1 rewrite and GitHub verification |\n| 0.4.3 | 2026-11-06 | Draft | Updated M10 register status after complete Phase 1 review/approval rewrite; aligned header version with latest changelog |\n| 0.4.4 | 2026-11-06 | Draft | Updated M11 register status after complete Phase 1 version/history rewrite |\n| 0.4.5 | 2026-11-06 | Draft | Updated M13 register status after complete Phase 1 validation/quality rewrite |
 
 ## 13. Approval
 
