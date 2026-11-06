@@ -2,7 +2,7 @@
 
 PULSE is a multi-institute academic technology platform. Its long-term direction is to connect academic content, question-bank operations, student work tracking, assessment, and AI-supported learning workflows through a governed, versioned platform.
 
-> **Repository status (2026-11-06):** documentation foundation in progress. The initial repository audit found only this README on the `main` branch. This repository is the source of truth for project code, specifications, architecture decisions, migrations, tests, and delivery history.
+> **Repository status (2026-11-06):** documentation foundation in progress. The initial repository audit found only documentation on the `main` branch; no deployable application source or Supabase migration tree was present in the inspected branch. This repository is the source of truth for project code, specifications, architecture decisions, migrations, tests, and delivery history.
 
 ## Principles
 
@@ -22,12 +22,14 @@ PULSE is a multi-institute academic technology platform. Its long-term direction
 - [Decision log](docs/decisions/DECISION_LOG.md)
 - [DTE specification](docs/modules/DTE_SPECIFICATION.md)
 - [Student Tracking specification](docs/modules/STUDENT_TRACKING_SPECIFICATION.md)
+- [System A database architecture](docs/student-tracking/SYSTEM_A_DATABASE_ARCHITECTURE.md)
+- [System A implementation plan](docs/student-tracking/SYSTEM_A_IMPLEMENTATION_PLAN.md)
 - [Database governance](docs/DATABASE_GOVERNANCE.md)
 - [AI coding-agent instructions](AGENTS.md)
 
 ## Development status
 
-The first delivery stage is an audit of the live codebase, Supabase project, schema, migrations, RLS policies, integrations, and deployed workflows. Do not apply production schema changes until the audit and proposed change plan have been reviewed.
+System A (Abhyas Matrix) is the first operational delivery priority. Its database and phased implementation baselines are documented under `docs/student-tracking/`. The implementation audit is blocked until the authoritative application source and connected Supabase project are identified. Do not apply production schema changes until the as-built audit and proposed change plan have been reviewed.
 
 ## Working with this repository
 
