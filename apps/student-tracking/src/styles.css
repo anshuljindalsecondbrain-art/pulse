@@ -156,3 +156,12 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
+
+
+/* Assignment academic eligibility feedback */
+.eligibility-preview{display:grid;gap:7px;padding:11px 12px;background:#112b2a;border:1px solid #28645a;border-radius:8px;color:#c8f0e6}
+.eligibility-summary{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:10px}
+.eligibility-summary svg{color:#69d8b5;flex:0 0 auto}
+.eligibility-summary span{margin-left:auto;color:#9dbbb5;font-size:9px}
+.eligibility-preview ul{margin:0;padding-left:20px;color:#f0c4a8;font-size:9px;display:grid;gap:3px}
+.eligibility-preview small{font-size:8px;line-height:1.45;color:#91b7ad}
