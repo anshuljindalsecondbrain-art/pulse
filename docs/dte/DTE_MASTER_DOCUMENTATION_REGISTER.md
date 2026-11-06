@@ -1,8 +1,8 @@
 # DTE Master Documentation Register
 
 - Document ID: PULSE-DTE-REG-002
-- Version: 0.2.0
-- Status: Draft — proposed audited documentation baseline
+- Version: 0.3.0
+- Status: Draft — revised phase-scoped documentation baseline
 - Product: PULSE — Deep Tagging Engine (DTE)
 - Scope: DTE only. Other PULSE systems appear only as external owners/consumers in DTE contracts.
 - Repository: anshuljindalsecondbrain-art/pulse
@@ -19,7 +19,32 @@ This is a documentation plan, not an implementation authorization. A listed docu
 
 DTE is software for managing academic classification and tagging structures already defined and approved by each institution. It does not design, prescribe, generate or impose curriculum structures, chapter-wise syllabus bifurcation or a universal academic hierarchy.
 
-DTE owns its classification configuration and mappings, tagging/review/validation workflows, archetype and metadata governance within the agreed boundaries, PYQ provenance records, DTE audit/history, and DTE APIs. It does not own question authoring/content production, content collection or exercise/test placement, student evidence, test delivery/scoring, student analytics, or difficulty calculation. These remain external ownership boundaries and are documented only where DTE needs an integration contract.
+**Current phase: offline tagging framework definition and management.** The current deliverable is the institution-configurable tagging framework and the offline human process for applying it to questions. This includes the approved classification structures, tag/category definitions, tagging instructions, templates or tagging sheets, assignment conventions, quality checks, review/correction rules and governance records. The current phase does not add, upload, ingest, store or manage question content. It does not build a digital question inventory or a digital question-tagging workspace.
+
+**Later phase: question upload and digital tagging.** Question upload/ingestion will be handled by a separate module in a later phase. That module will use the approved tagging framework defined in the current phase when questions are uploaded and tagged. Detailed question identity, question-version, placement, canonical content ownership, Q-GENOME and digital mapping architecture decisions belong to that later-phase design unless a narrowly necessary offline-framework dependency is demonstrated.
+
+DTE's current phase manages the institution-approved classification framework and its offline tagging process. It does not author questions, define academic curriculum structures, prescribe chapter-wise bifurcation, or determine what an institution's academic taxonomy should contain. Digital question inventory, upload, ingestion, storage, question identity/version management, automated tagging, student evidence, test delivery/scoring, student analytics and difficulty calculation are not current-phase deliverables.
+
+## 2.1 Phase boundary and applicability
+
+| Workstream | Current offline-framework phase | Later upload-and-tagging phase |
+|---|---|---|
+| Institution-approved classification structure configuration | In scope | Reuse and maintain |
+| Tag/category definitions and descriptions | In scope | Reuse |
+| Offline tagging guidelines and decision rules | In scope | Reuse |
+| Offline tagging templates/sheets and instructions | In scope | May inform digital UI/import format |
+| Human tagging, checking, correction and approval procedure | In scope | Adapt to digital workflow |
+| Tagging quality criteria and consistency audit | In scope | Reuse/extend |
+| Question upload, ingestion and OCR | Out of scope | Separate module |
+| Digital question inventory and content storage | Out of scope | Separate module/domain |
+| Digital question-to-tag mapping persistence | Out of scope | Later design |
+| Question identity, version and placement architecture | Deferred | Resolve before digital implementation |
+| Q-GENOME canonical question ownership | Deferred | Resolve if/when required by later integration |
+| AI-assisted tagging | Out of scope | Separate future decision |
+
+The terms “question”, “tag assignment” and “mapping” may appear in current documentation as offline work concepts. Their appearance does not authorize a digital question database or persistence model.
+
+All existing M01–M18 specifications are repository artifacts in Draft status, not approved scope. Their module names and content must be triaged against this phase boundary. A module must not be treated as current-phase scope solely because it appears in the legacy module register. Digital inventory, upload, digital tagging UI and external-engine integration specifications are deferred for later-phase reassessment.
 
 ## 3. Register design principles
 
@@ -186,8 +211,10 @@ These are supporting governance records and are not counted as additional core s
 | Semantic Scope Audit | `docs/dte/audits/DTE_SEMANTIC_SCOPE_AUDIT_001.md` | Existing — Draft | Checks alignment with institution-owned classification scope |
 | Scope Compliance Audit | `docs/dte/audits/DTE_SCOPE_COMPLIANCE_AUDIT_001.md` | Existing — Draft | Presence-level clarification check; not semantic certification |
 | Semantic Scope Remediation | `docs/dte/audits/DTE_SEMANTIC_SCOPE_REMEDIATION_001.md` | Existing — Draft verification | Records wording remediation in affected module specifications |
-| DEC-001 Mapping Attachment Policy | `docs/dte/decisions/DTE_QUESTION_CLASSIFICATION_ATTACHMENT_POLICY.md` | Existing — Draft | Option D selected as direction; detailed rules pending approval |
-| DEC-002 Logical Question Identity Policy | `docs/dte/decisions/DTE_LOGICAL_QUESTION_IDENTITY_POLICY.md` | Existing — Draft | Human-governed identity policy proposed; pending approval |
+| DEC-001 Mapping Attachment Policy | `docs/dte/decisions/DTE_QUESTION_CLASSIFICATION_ATTACHMENT_POLICY.md` | Existing — Draft — Deferred | Digital question mapping attachment policy; not a current offline-phase dependency |
+| DEC-002 Logical Question Identity Policy | `docs/dte/decisions/DTE_LOGICAL_QUESTION_IDENTITY_POLICY.md` | Existing — Draft — Deferred | Digital identity/version policy; not a current offline-phase dependency |
+| DEC-003 Q-GENOME Question Ownership | `docs/dte/decisions/DTE_QGENOME_QUESTION_OWNERSHIP_DECISION.md` | Existing — Draft — Deferred | Reassess during later question-upload/digital-tagging phase |
+| DEC-004 Current Phase Boundary | `docs/dte/decisions/DTE_CURRENT_PHASE_BOUNDARY_DECISION.md` | New — Draft | Defines offline tagging framework now; separate question upload and digital tagging later |
 
 ## 8. Consolidation and improvement decisions
 
@@ -212,40 +239,42 @@ The following changes reduce duplication and ambiguity:
 - Approve this master register and document lifecycle.
 - Assign owners and reviewers.
 
-### Gate 1 — Resolve critical domain decisions
-- Approve DEC-001 mapping attachment policy.
-- Approve DEC-002 logical question identity policy.
-- Decide canonical question-content ownership and Q-GENOME boundary.
-- Decide tenant/global reference governance.
-- Approve entity ownership and responsibility matrix.
+### Gate 1 — Offline tagging framework baseline
+- Confirm the exact institution-owned structures and fields the software must manage, without designing academic bifurcation.
+- Define tagging terminology, category/field semantics and permitted relationships.
+- Define offline tagging instructions, templates/sheets and human assignment conventions.
+- Define completeness, validation, review, correction and approval rules for offline tagging records.
+- Define roles and authority for framework configuration, tagging, checking and approval.
+- Record examples and edge cases supplied or approved by the institution.
 
-### Gate 2 — Canonical architecture
-- Complete canonical domain model/entity catalogue.
-- Complete ERD and schema specification.
-- Complete workflow state machines.
-- Complete role/permission and authorization model.
-- Complete API/event contracts.
+### Gate 2 — Offline operating model and verification
+- Complete end-to-end offline tagging workflows, including preparation, assignment, checking, correction, approval and version/change control.
+- Complete responsibility matrix and role/permission model for the current phase.
+- Complete testable requirements and traceability for the offline framework-management software.
+- Audit the existing M01–M18 specifications and retain, revise, defer or retire each against the current phase.
+- Obtain explicit product-owner approval of the current-phase documentation baseline.
 
-### Gate 3 — Module reconciliation
-- Reconcile M01–M18 against approved cross-module policies.
-- Close overlaps and update module acceptance criteria.
-- Complete end-to-end workflows and requirements traceability.
+### Gate 3 — Later-phase discovery (not current implementation authorization)
+- Define question upload/ingestion and digital tagging requirements as a separate module.
+- Resolve question identity/version/placement, canonical content ownership and Q-GENOME boundary only when required by that later-phase design.
+- Define digital data model, APIs/events, migrations, security and scale requirements for the later phase.
 
-### Gate 4 — Verification and implementation readiness
-- Complete test plans and executable acceptance criteria.
-- Complete security and tenant-isolation design review.
-- Complete NFR/performance targets and deployment design.
-- Obtain explicit product and technical baseline approval.
+### Gate 4 — Implementation readiness
+- Complete verification, security, performance and operational requirements for the phase being implemented.
+- Obtain explicit product and technical baseline approval for that phase.
 
-**Implementation remains prohibited until the required Gate 4 approvals are recorded.** Documentation work may continue before then.
+**No implementation is authorized by this register. Current-phase implementation remains prohibited until its documentation is reviewed and explicitly approved. Later-phase decisions must not be pulled into the current baseline merely to complete the older architecture plan.**
 
 ## 10. Open decisions and unresolved audit findings
 
 | ID | Issue | Severity | Required decision/evidence |
 |---|---|---|---|
-| DTE-OPEN-001 | Canonical question/content ownership and Q-GENOME boundary | Critical | Named system of record and stable ID contract |
-| DTE-OPEN-002 | DEC-001 detailed attachment/inheritance/precedence policy | Critical | Explicit approval of scope rules and conflict behaviour |
-| DTE-OPEN-003 | DEC-002 identity/version adjudication policy | Critical | Approval of identity authority and merge/split workflow |
+| DTE-OPEN-001 | Offline tagging framework requirements and institution-approved structure representation | High | Approved framework specification, field definitions and offline tagging instructions |
+| DTE-OPEN-002 | Offline tagging record/template format and required evidence | High | Approved template/sheet structure and completion rules |
+| DTE-OPEN-003 | Current-phase role authority, review and correction workflow | High | Approved responsibility and workflow matrix |
+| DTE-DEFER-001 | Digital question identity/version/placement policy (DEC-002) | Deferred | Reopen during later upload-and-tagging phase |
+| DTE-DEFER-002 | Digital mapping attachment/inheritance policy (DEC-001) | Deferred | Reopen during later upload-and-tagging phase |
+| DTE-DEFER-003 | Q-GENOME canonical question ownership (DEC-003) | Deferred | Reopen only if required by later digital architecture |
 | DTE-OPEN-004 | Module entity/workflow ownership overlaps | High | Approved responsibility matrix |
 | DTE-OPEN-005 | Normative workflow state machines absent | High | Transition tables and negative cases |
 | DTE-OPEN-006 | Roles, permissions and separation of duties incomplete | High | Approved permission matrix and RLS design |
@@ -279,6 +308,7 @@ Decision papers additionally record options considered, selected direction, cons
 | Version | Date | Status | Change |
 |---|---|---|---|
 | 0.2.0 | 2026-11-06 | Draft | Audited and consolidated documentation architecture; established 50 core documents, mapped 18 existing module specifications and existing audit/decision records, added ownership, dependencies, gates and open-decision tracking |
+| 0.3.0 | 2026-11-06 | Draft | Rebased current scope to offline tagging framework definition/management; deferred question upload, digital inventory/tagging, question identity/version and Q-GENOME decisions to a separate later phase; added phase applicability and revised approval gates |
 
 ## 13. Approval
 
