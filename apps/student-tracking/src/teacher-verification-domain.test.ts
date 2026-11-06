@@ -44,7 +44,10 @@ describe("teacher verification command contract", () => {
 
   it("rejects a different institute or obligation's evidence", () => {
     expect(() => prepare(command({ instituteId: "inst-2" }))).toThrow(/does not belong/i);
-    expect(() => prepare(command({ obligationId: "obligation-2" }))).toThrow(/does not belong/i);
+    expect(() => prepareTeacherVerification({
+      command: command({ obligationId: "obligation-2" }),
+      authorizedObligationIds: ["obligation-2"], evidence: [report()], decisionHistory: [],
+    })).toThrow(/does not belong/i);
   });
 
   it("rejects teacher observations and non-submitted reports", () => {
