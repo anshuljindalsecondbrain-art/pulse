@@ -33,7 +33,7 @@ Approval: Pending explicit project-owner confirmation.
 ## Implementation evidence
 Branch: feat/system-a-abhyas-foundation
 PR: https://github.com/anshuljindalsecondbrain-art/pulse/pull/2
-Commits and CI: pending final linkage.
+Governance baseline commit: da8189bb8694bf19520651f1a0e33821130ea872 (CI workflow update); current PR head is tracked in PR #2.\nCI metadata check: initial run failed because the workflow event payload contained the previous PR body; PR body has since been updated. A fresh run is required.
 Changed paths: governance documentation, GitHub templates and CI governance check.
 
 ## Validation
