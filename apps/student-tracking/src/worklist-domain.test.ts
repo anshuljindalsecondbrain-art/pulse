@@ -135,6 +135,24 @@ describe("teacher verification queue projection", () => {
     expect(queue[0].state).toBe("CONFIRMED");
   });
 
+
+  it("removes a prior submission from the queue when a newer report supersedes it", () => {
+    const queue = buildTeacherVerificationQueue({
+      obligations: plan.obligations,
+      versions: [plan.assignmentVersion],
+      evidence: [
+        evidence({ id: "event-old", recordedAt: "2026-11-06T10:02:00.000Z" }),
+        evidence({
+          id: "event-new",
+          workProgress: "ATTEMPTED",
+          recordedAt: "2026-11-06T10:05:00.000Z",
+        }),
+      ],
+      decisions: [],
+    });
+    expect(queue).toHaveLength(0);
+  });
+
   it("does not queue teacher observations or reports from another institute", () => {
     const queue = buildTeacherVerificationQueue({
       obligations: plan.obligations,
