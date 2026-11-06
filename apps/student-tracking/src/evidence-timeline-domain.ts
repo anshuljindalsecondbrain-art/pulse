@@ -155,11 +155,29 @@ export function buildEvidenceTimeline(input: {
 
   const supersededEvidence = new Map<string, string>();
   for (const event of input.evidence) {
-    if (event.supersedesEventId) supersededEvidence.set(event.supersedesEventId, event.id);
+    if (!event.supersedesEventId || !scoped(scope, event)) continue;
+    const previous = evidenceById.get(event.supersedesEventId);
+    if (previous && previous.instituteId === event.instituteId &&
+        previous.studentId === event.studentId && previous.obligationId === event.obligationId &&
+        previous.exerciseSlotId === event.exerciseSlotId) {
+      supersededEvidence.set(previous.id, event.id);
+    }
   }
+  const decisionsById = new Map(input.decisions.map(item => [item.id, item]));
   const supersededDecisions = new Map<string, string>();
   for (const decision of input.decisions) {
-    if (decision.supersedesDecisionId) supersededDecisions.set(decision.supersedesDecisionId, decision.id);
+    if (!decision.supersedesDecisionId) continue;
+    const currentEvidence = evidenceById.get(decision.evidenceEventId);
+    const previous = decisionsById.get(decision.supersedesDecisionId);
+    const previousEvidence = previous ? evidenceById.get(previous.evidenceEventId) : undefined;
+    if (currentEvidence && previous && previousEvidence &&
+        scoped(scope, currentEvidence) && scoped(scope, previousEvidence) &&
+        previous.instituteId === decision.instituteId &&
+        previous.obligationId === decision.obligationId &&
+        previous.evidenceEventId === decision.evidenceEventId &&
+        previous.purpose === decision.purpose) {
+      supersededDecisions.set(previous.id, decision.id);
+    }
   }
 
   const entries: EvidenceTimelineEntry[] = [];
