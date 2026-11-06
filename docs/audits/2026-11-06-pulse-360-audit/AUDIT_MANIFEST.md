@@ -79,4 +79,4 @@ See `15_TEN_INDEPENDENT_AUDIT_PASSES.md` and `16_CROSS_AUDIT_VERIFICATION.md`.
 
 ## Git commit verification
 
-This manifest is created before the final report commit is known. Update the commit SHA and validation result after all report files and the master documentation index have been verified on the branch.
+Verified report snapshot: Git tree/commit `6938c8c63e96681457770798f2f085e5962bd18b`. The tree contains exactly 23 files in this audit directory (22 numbered report files plus this manifest). The master documentation index links the report directory and all report files. This verification confirms GitHub content presence, not local Markdown lint, runtime tests, or CI success on the report commit. The manifest finalization itself is committed immediately after this verified snapshot.
