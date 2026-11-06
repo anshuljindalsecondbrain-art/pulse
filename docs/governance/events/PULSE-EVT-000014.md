@@ -25,7 +25,9 @@ Add pure correction command contracts for cycle start, student resubmission, tea
 - [x] Require review to reference the exact latest correction submission.
 - [x] Preserve repeated return/review history within one correction cycle.
 - [x] Close only after the latest correction submission is accepted.
-- [x] Require a reason and timestamp for each transition.\n- [x] Provide an explicit student restart transition after a correction is returned again.\n- [x] Require correction submissions to be SUBMITTED before review.
+- [x] Require a reason and timestamp for each transition.
+- [x] Provide an explicit student restart transition after a correction is returned again.
+- [x] Require correction submissions to be SUBMITTED before review.
 - [ ] Derive actor identity and authorization scope from authenticated server context.
 - [ ] Persist correction events and decisions transactionally with database constraints and RLS.
 - [ ] Add database integration tests and operational correction UI.
