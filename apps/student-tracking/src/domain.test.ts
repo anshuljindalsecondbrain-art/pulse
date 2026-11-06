@@ -137,7 +137,7 @@ describe("CSV export safety", () => {
   it.each(["=1+1", "+SUM(A1:A2)", "-2+3", "@cmd", "  =HYPERLINK(\"https://example.com\")"])(
     "neutralizes spreadsheet formula prefix: %s",
     (value) => {
-      expect(toSafeCsvCell(value)).toBe(`"'${value}"`);
+      expect(toSafeCsvCell(value)).toBe('"' + "'" + value.replaceAll('"', '""') + '"');
     },
   );
 
