@@ -51,3 +51,12 @@ The following are the verified live states at the time of this refresh. These ar
 | PULSE-ISSUE-0016 | Platform / Database | Unified physical schema is now documented as PULSE-DATA-CORE-009 but remains Draft; concurrent enrollment, guardian verification, role/action mapping, resource assignment, publication snapshot and evidence lifecycle decisions remain unresolved | Blocking | OPEN | Obtain product, academic, privacy, technical and security approvals; do not generate/apply production migration before closure |
 | PULSE-ISSUE-0017 | System A / Data Model | Source System A subject/chapter master tables conflict with configurable DTE classification ownership and must not be retained as System A canonical tables | High | DESIGN_DECISION_RECORDED | Keep optional external classification references only; confirm DTE/QBMS integration contract |
 | PULSE-ISSUE-0018 | System A / Evidence | Source combined verification_decisions for completion and answer evaluation; target schema separates completion decisions and answer evaluations | High | DESIGN_DECISION_RECORDED | Academic owner to approve separate semantics, reviewer permissions, supersession and scoring policy |
+
+
+## 2026-11-06 — D-001 product decision recorded
+
+| Issue ID | Module | Description | Severity | Status | Dependency / next action |
+|---|---|---|---|---|---|
+| PULSE-ISSUE-0021 | Shared Platform / Academic Core | D-001 product decision permits multiple concurrent active enrollments within and across institutes; Academic Owner confirmation remains outstanding | High | OPEN | Academic Owner to confirm enrollment semantics, overlap rules and uniqueness business keys before schema freeze; preserve tenant isolation and explicit active-context resolution |
+
+Evidence: PULSE-EVT-000020 and PULSE-DATA-CORE-010. Product decision recorded; this does not authorize SQL or migration changes.
