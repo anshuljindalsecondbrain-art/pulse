@@ -16,6 +16,10 @@ Validation & Quality Engine evaluates whether DTE configuration and question map
 
 Validation determines whether defined rules pass. Quality analytics may summarize trends, but must not replace explicit rule outcomes with an opaque single score.
 
+## Institutional authority guardrail
+
+Validation rules must be derived from the applicable institution-approved configuration and its explicitly enabled policies. The engine must not enforce a universal academic hierarchy, fixed chapter/topic/concept levels, or relationships that the institution has not configured.
+
 ## 2. Scope
 
 In scope:
