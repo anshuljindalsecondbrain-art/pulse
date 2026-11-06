@@ -18,6 +18,6 @@ Coverage: Initial baseline; historical backfill incomplete.
 | PULSE-EVT-000011 | 2026-11-06 | System A academic workflow implementation | System A | Add student worklist and teacher verification queue projections | IMPLEMENTED_PENDING_CI | [Event](events/PULSE-EVT-000011.md) |
 | PULSE-EVT-000012 | 2026-11-06 | System A evidence command implementation | System A | Add validated, idempotent student evidence submission contract | IMPLEMENTED_PENDING_CI | [Event](events/PULSE-EVT-000012.md) |
 | PULSE-EVT-000013 | 2026-11-06 | System A academic review command implementation | System A | Add controlled teacher verification command contract | IMPLEMENTED_PENDING_CI | [Event](events/PULSE-EVT-000013.md) |
-| PULSE-EVT-000014 | 2026-11-06 | System A correction workflow command implementation | System A | Add correction cycle, submission, review and closure contracts | IMPLEMENTED_PENDING_CI | [Event](events/PULSE-EVT-000014.md) |
+| PULSE-EVT-000014 | 2026-11-06 | System A correction workflow command implementation | System A | Add correction cycle, submission, review and closure contracts | VALIDATED_DOMAIN_ONLY | [Event](events/PULSE-EVT-000014.md) |
 
 Rules: Allocate the next unused global ID; never recycle IDs. Create an individual event record before or alongside substantive implementation. Keep rejected, deferred, blocked and superseded events. Update this index whenever status or evidence changes. Historical coverage is incomplete; add verified events in backfill batches and do not infer missing approvals or tests.
