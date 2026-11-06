@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import type { FormEvent, KeyboardEvent, ReactNode } from "react";
-import { isAttemptedStatus, nextStatus, type Status } from "./domain";
+import { isAttemptedStatus, nextStatus, toSafeCsvCell, type Status } from "./domain";
 import { Activity, ArrowRight, Bell, BookOpen, CalendarDays, Check, CheckCheck, ChevronDown, CircleHelp, ClipboardList, Command, Download, GraduationCap, LayoutDashboard, Plus, Search, Settings2, ShieldCheck, Sparkles, Users, X } from "lucide-react";
 
 type Student = { id: string; name: string; roll: string; batch: string };
@@ -96,7 +96,7 @@ function App() {
   function exportCsv() {
     const rows = [["Student","Roll",...Array.from({length:exercise.count},(_,i)=>`Q${i+1}`)]];
     roster.forEach(s => rows.push([s.name,s.roll,...Array.from({length:exercise.count},(_,i)=>statusMeta[marks[`${s.id}-${exercise.id}-${i+1}`] ?? "U"].label)]));
-    const csv = rows.map(r => r.map(v => `"${String(v).replaceAll('"','""')}"`).join(",")).join("\n");
+    const csv = rows.map(r => r.map(toSafeCsvCell).join(",")).join("\n");
     const url = URL.createObjectURL(new Blob([csv],{type:"text/csv"})); const a=document.createElement("a"); a.href=url; a.download=`${exercise.name.replaceAll(" ","-")}-matrix.csv`; a.click(); URL.revokeObjectURL(url);
   }
   function addStudent(e: FormEvent<HTMLFormElement>) {
@@ -120,7 +120,7 @@ function App() {
       return;
     }
 
-    const shortcuts: Record<string, Status> = { "1": "C", "2": "I", "3": "D", "4": "S", "5": "P", "0": "U", Backspace: "U" };
+    const shortcuts: Record<string, Status> = { "1": "C", "2": "I", "3": "D", "4": "S", "5": "P", "0": "U", Backspace: "U", Delete: "U" };
     const nextStatus = shortcuts[e.key];
     const activeCell = document.activeElement as HTMLButtonElement;
     const studentId = activeCell?.dataset?.student;
@@ -150,7 +150,7 @@ function App() {
       <div className="user-profile"><div className="user-avatar">AJ</div><div><b>Anshul Jindal</b><span>Physics Faculty</span></div><ChevronDown size={15}/></div>
     </aside>
     <main className="main">
-      <header className="topbar"><div className="breadcrumbs">PULSE <span>/</span> WORKSPACE <span>/</span> <b>ABHYAS MATRIX</b></div><div className="top-actions"><span className="date-chip"><CalendarDays size={14}/> Friday, 06 Nov 2026</span><button className="icon-btn" aria-label="Notifications"><Bell size={17}/><i/></button><div className="top-avatar">AJ</div></div></header>
+      <header className="topbar"><div className="breadcrumbs">PULSE <span>/</span> WORKSPACE <span>/</span> <b>ABHYAS MATRIX</b></div><div className="top-actions"><span className="date-chip"><CalendarDays size={14}/> {new Date().toLocaleDateString(undefined, { weekday: "long", day: "2-digit", month: "short", year: "numeric" })}</span><button className="icon-btn" aria-label="Notifications"><Bell size={17}/><i/></button><div className="top-avatar">AJ</div></div></header>
       <div className="content">
         <div className="page-heading"><div><div className="eyebrow"><span className="eyebrow-line"/> SYSTEM A · STUDENT WORK TRACKING</div><h1>Abhyas Matrix</h1><p>One view of every student's practice. Capture work in class, identify roadblocks, and keep every learning signal traceable.</p></div><div className="heading-actions"><button className="btn secondary" onClick={exportCsv}><Download size={15}/> Export matrix</button><button className="btn primary" onClick={()=>setShowCreator(true)}><Plus size={16}/> Quick DPP</button></div></div>
         <div className="notice"><div className="notice-icon"><ShieldCheck size={17}/></div><div><b>Operational tracking is independent of deep tagging.</b><span>Exercises can be created and tracked with chapter scope and numbered slots. Topic, concept and archetype enrichment can be connected later without changing original student evidence.</span></div><span className="notice-tag">SYSTEM A</span></div>
