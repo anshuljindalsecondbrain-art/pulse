@@ -244,8 +244,6 @@ export function prepareCorrectionSubmission(input: {
   if (c.attemptCycleId !== cycle.originalAttemptCycleId) {
     throw new Error("Correction must preserve the original attemptCycleId.");
   }
-  if (cycle.state !== "IN_PROGRESS") throw new Error("Correction must be in progress before resubmission.");
-
   const priorByKey = input.existingSubmissions.filter((item) =>
     item.evidence.instituteId === c.instituteId &&
     item.evidence.studentId === c.studentId &&
@@ -258,6 +256,7 @@ export function prepareCorrectionSubmission(input: {
     }
     return Object.freeze({ outcome: "IDEMPOTENT_REPLAY", value: Object.freeze({ cycle, submission: prior }) });
   }
+  if (cycle.state !== "IN_PROGRESS") throw new Error("Correction must be in progress before resubmission.");
   if (input.existingEvidence.some((item) => item.id === input.newEvidenceId)) {
     throw new Error("Correction evidence ID must be unique.");
   }
@@ -336,7 +335,7 @@ export function prepareCorrectionReview(input: {
   if (!input.authorizedObligationIds.includes(c.obligationId)) {
     throw new Error("Reviewer is not authorized for this correction obligation.");
   }
-  if (cycle.state !== "RESUBMITTED" || submission.correctionCycleId !== cycle.id ||
+  if (submission.correctionCycleId !== cycle.id ||
       submission.originatingReturnedDecisionId !== cycle.originatingReturnedDecisionId ||
       submission.evidence.id !== cycle.latestCorrectionEvidenceEventId ||
       c.evidenceEventId !== submission.evidence.id) {
@@ -362,6 +361,7 @@ export function prepareCorrectionReview(input: {
     if (!same) throw new Error("Correction decision ID conflict: identifier already belongs to different content.");
     return Object.freeze({ outcome: "IDEMPOTENT_REPLAY", value: Object.freeze({ cycle, review: priorById }) });
   }
+  if (cycle.state !== "RESUBMITTED") throw new Error("Correction must be resubmitted before review.");
   const history = input.existingReviews.filter((item) =>
     item.correctionCycleId === cycle.id &&
     item.decision.evidenceEventId === evidence.id &&
