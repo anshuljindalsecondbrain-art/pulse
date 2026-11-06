@@ -3,6 +3,7 @@ import { OFFLINE_MODULES } from "./offline-catalog";
 import { planAssignmentPublication } from "./assignment-domain";
 import { prepareStudentEvidenceSubmission } from "./evidence-submission-domain";
 import type { SystemAWorkEvidence } from "./workflow-domain";
+import type { StudentEvidenceSubmission } from "./evidence-submission-domain";
 
 const module = OFFLINE_MODULES[0];
 const plan = planAssignmentPublication({
@@ -14,7 +15,7 @@ const plan = planAssignmentPublication({
   publishedBy: "teacher-1",
 });
 const obligation = plan.obligations[0];
-const submission = (overrides: Record<string, unknown> = {}) => ({
+const submission = (overrides: Partial<StudentEvidenceSubmission> = {}): StudentEvidenceSubmission => ({
   instituteId: "inst-1", studentId: "stu-1", obligationId: obligation.id,
   exerciseSlotId: obligation.exerciseSlotId, actorId: "stu-1",
   workProgress: "SUBMITTED" as const, attemptCycleId: "cycle-1",
