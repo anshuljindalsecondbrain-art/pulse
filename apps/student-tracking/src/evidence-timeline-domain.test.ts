@@ -167,6 +167,27 @@ describe("read-only evidence timeline projection", () => {
     expect(Object.isFrozen(result.entries[0])).toBe(true);
   });
 
+  it("rejects composite timeline ID collisions across decision sources", () => {
+    const correctionEvidence = evidence({ id: "ev-correction" });
+    const sharedIdDecision: SystemAVerificationDecision = {
+      id: "shared-decision-id", instituteId: "inst-1", obligationId: "obl-1",
+      evidenceEventId: "ev-1", verifierId: "teacher-1", purpose: "COMPLETION",
+      outcome: "CONFIRMED", reason: "Reviewed", decidedAt: "2026-11-06T10:00:00.000Z",
+    };
+    const correctionReview: CorrectionReviewRecord = {
+      correctionCycleId: "cycle-1",
+      decision: { ...sharedIdDecision, evidenceEventId: "ev-correction", purpose: "CORRECTION", outcome: "ACCEPTED" },
+    };
+    const submission: CorrectionSubmission = {
+      correctionCycleId: "cycle-1", originatingReturnedDecisionId: "return-1",
+      evidence: correctionEvidence, submittedAt: correctionEvidence.recordedAt,
+    };
+    expect(() => buildEvidenceTimeline({
+      ...empty, evidence: [evidence(), correctionEvidence], decisions: [sharedIdDecision],
+      correctionCycles: [cycle], correctionSubmissions: [submission], correctionReviews: [correctionReview],
+    })).toThrow(/composite timeline ID collision/i);
+  });
+
   it("does not mutate source records", () => {
     const source = evidence();
     const before = JSON.stringify(source);
