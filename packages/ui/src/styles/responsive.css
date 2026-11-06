@@ -1,0 +1,55 @@
+/* PULSE shared responsive foundation
+ * Import this file before app-specific styles in every frontend entry point.
+ * Apps may override visual tokens, but should preserve the layout/accessibility contract.
+ */
+:root {
+  --pulse-content-max: 1600px;
+  --pulse-page-gutter: clamp(12px, 2.5vw, 40px);
+  --pulse-layout-gap: clamp(10px, 1.5vw, 20px);
+  --pulse-control-height: 40px;
+  --pulse-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --pulse-safe-top: env(safe-area-inset-top, 0px);
+  --pulse-focus-ring: 2px solid var(--pulse-focus-color, #8b83ff);
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { min-width: 320px; min-height: 100%; scroll-behavior: smooth; scrollbar-gutter: stable; }
+body { min-width: 320px; max-width: 100%; margin: 0; overflow-x: hidden; }
+#root, [data-pulse-root] { width: 100%; min-height: 100vh; min-height: 100dvh; }
+img, video, canvas, svg { max-width: 100%; }
+input, button, select, textarea { max-width: 100%; font: inherit; }
+button, a, input, select, textarea { touch-action: manipulation; }
+:where(button, a, input, select, textarea, [tabindex]):focus-visible { outline: var(--pulse-focus-ring); outline-offset: 2px; }
+:where(table) { max-width: 100%; }
+:where(.pulse-page) { width: 100%; min-width: 0; padding: var(--pulse-page-gutter); }
+:where(.pulse-container) { width: min(100%, var(--pulse-content-max)); min-width: 0; margin-inline: auto; }
+:where(.pulse-grid) { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: var(--pulse-layout-gap); min-width: 0; }
+:where(.pulse-card, .pulse-panel) { min-width: 0; max-width: 100%; }
+:where(.pulse-row) { display: flex; align-items: center; flex-wrap: wrap; gap: var(--pulse-layout-gap); min-width: 0; }
+:where(.pulse-stack) { display: flex; flex-direction: column; gap: var(--pulse-layout-gap); min-width: 0; }
+:where(.pulse-form-grid) { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--pulse-layout-gap); min-width: 0; }
+:where(.pulse-table-scroll, [data-pulse-scroll="horizontal"]) { max-width: 100%; overflow: auto; overscroll-behavior-inline: contain; -webkit-overflow-scrolling: touch; }
+:where(.pulse-table-scroll table, [data-pulse-scroll="horizontal"] table) { width: max-content; min-width: 100%; }
+:where(.pulse-dialog, [role="dialog"]) { max-width: min(100%, 720px); max-height: calc(100dvh - 32px - var(--pulse-safe-top) - var(--pulse-safe-bottom)); overflow: auto; overscroll-behavior: contain; }
+:where(.pulse-media) { display: block; width: 100%; height: auto; object-fit: contain; }
+@media (max-width: 1024px) {
+  :root { --pulse-page-gutter: clamp(12px, 2vw, 24px); --pulse-layout-gap: 12px; }
+  :where(.pulse-form-grid) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 768px) {
+  :root { --pulse-page-gutter: 12px; --pulse-layout-gap: 10px; --pulse-control-height: 44px; }
+  :where(.pulse-page) { padding-bottom: calc(var(--pulse-page-gutter) + var(--pulse-safe-bottom)); }
+  :where(.pulse-grid) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  :where(.pulse-form-grid) { grid-template-columns: minmax(0, 1fr); }
+  :where(.pulse-row[data-pulse-stack-mobile="true"]) { align-items: stretch; flex-direction: column; }
+  :where(.pulse-dialog, [role="dialog"]) { width: 100%; max-width: 100%; max-height: calc(100dvh - 16px - var(--pulse-safe-top) - var(--pulse-safe-bottom)); }
+}
+@media (max-width: 420px) {
+  :root { --pulse-page-gutter: 10px; --pulse-layout-gap: 8px; }
+  :where(.pulse-grid[data-pulse-single-mobile="true"]) { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-height: 520px) and (orientation: landscape) and (max-width: 900px) {
+  :where(.pulse-dialog, [role="dialog"]) { max-height: calc(100dvh - 12px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}

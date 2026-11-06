@@ -2,7 +2,7 @@
 
 PULSE is a multi-institute academic technology platform. Its long-term direction is to connect academic content, question-bank operations, student work tracking, assessment, and AI-supported learning workflows through a governed, versioned platform.
 
-> **Repository status (2026-11-06):** documentation foundation in progress. The initial repository audit found only this README on the `main` branch. This repository is the source of truth for project code, specifications, architecture decisions, migrations, tests, and delivery history.
+> **Repository status (2026-11-06):** the repository now contains a fresh System A frontend prototype under `apps/student-tracking/`. It is an isolated Vite/React application with local demo persistence; production auth, database integration, RLS and deployment are not yet implemented. This repository is the source of truth for project code, specifications, architecture decisions, migrations, tests, and delivery history.
 
 ## Principles
 
@@ -16,18 +16,25 @@ PULSE is a multi-institute academic technology platform. Its long-term direction
 
 ## Documentation map
 
+- [Student Tracking app prototype](apps/student-tracking/README.md)
+- [PULSE governance protocol](docs/governance/EVENT_GOVERNANCE_PROTOCOL.md)
+- [Master event register](docs/governance/MASTER_EVENT_REGISTER.md)
+- [Requirement traceability](docs/governance/REQUIREMENT_TRACEABILITY.md)
+- [Architecture decision log](docs/governance/ARCHITECTURE_DECISION_LOG.md)
 - [Project master plan](docs/PROJECT_MASTER_PLAN.md)
 - [Architecture](docs/ARCHITECTURE.md)
 - [Development roadmap](docs/DEVELOPMENT_ROADMAP.md)
 - [Decision log](docs/decisions/DECISION_LOG.md)
 - [DTE specification](docs/modules/DTE_SPECIFICATION.md)
 - [Student Tracking specification](docs/modules/STUDENT_TRACKING_SPECIFICATION.md)
+- [System A database architecture](docs/student-tracking/SYSTEM_A_DATABASE_ARCHITECTURE.md)
+- [System A implementation plan](docs/student-tracking/SYSTEM_A_IMPLEMENTATION_PLAN.md)
 - [Database governance](docs/DATABASE_GOVERNANCE.md)
 - [AI coding-agent instructions](AGENTS.md)
 
 ## Development status
 
-The first delivery stage is an audit of the live codebase, Supabase project, schema, migrations, RLS policies, integrations, and deployed workflows. Do not apply production schema changes until the audit and proposed change plan have been reviewed.
+System A (Abhyas Matrix) is the first operational delivery priority. A frontend prototype and implementation baselines are in this repository. The production data layer remains blocked on connecting and auditing the intended Supabase project. Do not apply production schema changes until the as-built audit and proposed change plan have been reviewed.
 
 ## Working with this repository
 

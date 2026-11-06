@@ -1,0 +1,62 @@
+name: PULSE change event
+description: Register a requirement, bug, decision, audit finding or other project event
+title: "[EVENT] "
+labels: ["event"]
+body:
+  - type: input
+    id: event_id
+    attributes:
+      label: Event ID
+      description: Use the next ID from docs/governance/MASTER_EVENT_REGISTER.md
+      placeholder: PULSE-EVT-000004
+    validations:
+      required: true
+  - type: dropdown
+    id: category
+    attributes:
+      label: Event category
+      options:
+        - Requirement
+        - Architecture decision
+        - Implementation
+        - Bug
+        - Audit finding
+        - Research
+        - Test failure
+        - Incident
+        - Release
+        - Rejected proposal
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: module
+    attributes:
+      label: Affected module(s)
+    validations:
+      required: true
+  - type: textarea
+    id: source
+    attributes:
+      label: Original request / source
+      description: Preserve source wording or provide a durable reference.
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem, impact and risk
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Proposed outcome and acceptance criteria
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies, tests and follow-up
+    validations:
+      required: false

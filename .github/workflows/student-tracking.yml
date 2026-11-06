@@ -1,0 +1,68 @@
+name: Student Tracking prototype
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited]
+    paths:
+      - "apps/student-tracking/**"
+      - "docs/governance/**"
+      - ".github/**"
+      - ".github/workflows/student-tracking.yml"
+  push:
+    branches: [main]
+    paths:
+      - "apps/student-tracking/**"
+      - "docs/governance/**"
+      - ".github/**"
+      - ".github/workflows/student-tracking.yml"
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  governance:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate pull request traceability metadata
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          body=$(gh api repos/$REPOSITORY/pulls/$PR_NUMBER --jq .body)
+          export PULL_REQUEST_BODY="$body"
+          node <<'NODE'
+          const body = process.env.PULL_REQUEST_BODY || "";
+          const checks = [
+            [/PULSE-EVT-\d{6}/, "At least one PULSE Event ID"],
+            [/Requirement ID/i, "Requirement ID section"],
+            [/Impact and risk/i, "Impact and risk section"],
+            [/Validation/i, "Validation section"],
+            [/Documentation/i, "Documentation section"],
+          ];
+          const missing = checks.filter(([pattern]) => !pattern.test(body)).map(([, label]) => label);
+          if (missing.length) {
+            console.error("PR governance metadata missing: " + missing.join(", "));
+            process.exit(1);
+          }
+          console.log("PR governance metadata check passed.");
+          NODE
+
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/student-tracking
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: apps/student-tracking/package.json
+      - run: npm install
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build

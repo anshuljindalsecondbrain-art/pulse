@@ -1,0 +1,184 @@
+import { useEffect, useMemo, useState } from "react";
+import type { FormEvent, KeyboardEvent, ReactNode } from "react";
+import { isAttemptedStatus, nextStatus, toSafeCsvCell, type Status } from "./domain";
+import { DEMO_BATCHES, DEMO_EXERCISES, DEMO_MARKS, DEMO_STUDENTS } from "./demo-data";
+import { OFFLINE_MODULES } from "./offline-catalog";
+import { Activity, ArrowRight, Bell, BookOpen, CalendarDays, Check, CheckCheck, ChevronDown, CircleHelp, ClipboardList, Command, Download, GraduationCap, LayoutDashboard, Plus, Search, Settings2, ShieldCheck, Sparkles, Users, X } from "lucide-react";
+
+type Student = { id: string; name: string; roll: string; batch: string };
+type Exercise = { id: string; name: string; chapter: string; subject: string; count: number; batch: string; due: string; created: string; sourceModuleId?: string; questionRefs?: string[] };
+type Marks = Record<string, Status>;
+const statusMeta: Record<Status, { label: string; tone: string; next: Status }> = {
+  U: { label: "Unattempted", tone: "neutral", next: "C" },
+  C: { label: "Correct", tone: "green", next: "I" },
+  I: { label: "Incorrect", tone: "red", next: "D" },
+  D: { label: "Doubt", tone: "amber", next: "S" },
+  S: { label: "Skipped", tone: "neutral", next: "P" },
+  P: { label: "Partially correct", tone: "violet", next: "U" }
+};
+const initialStudents: Student[] = DEMO_STUDENTS;
+const initialExercises: Exercise[] = DEMO_EXERCISES;
+const seedMarks: Marks = DEMO_MARKS;
+
+function readStore<T>(key: string, fallback: T): T {
+  try { const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) as T : fallback; } catch { return fallback; }
+}
+function App() {
+  const [students, setStudents] = useState<Student[]>(() => readStore("pulse.demo.v2.students", initialStudents));
+  const [exercises, setExercises] = useState<Exercise[]>(() => readStore("pulse.demo.v2.exercises", initialExercises));
+  const [marks, setMarks] = useState<Marks>(() => readStore("pulse.demo.v2.marks", seedMarks));
+  const [activeExercise, setActiveExercise] = useState("demo-e1");
+  const [query, setQuery] = useState("");
+  const [showCreator, setShowCreator] = useState(false);
+  const [showStudents, setShowStudents] = useState(false);
+  const [tab, setTab] = useState<"matrix" | "overview">("matrix");
+  const [selectedModuleId, setSelectedModuleId] = useState("offline-phy-rot-xii");
+  const [selectedQuestionIds, setSelectedQuestionIds] = useState<string[]>(() => OFFLINE_MODULES[0].questions.slice(0, 12).map(question => question.id));
+  const [batch, setBatch] = useState("JEE XII · Alpha");
+  const [selectedBatch, setSelectedBatch] = useState("JEE XII · Alpha");
+  const [due, setDue] = useState("2026-11-08");
+  const [toast, setToast] = useState("");
+  const [filter, setFilter] = useState("All students");
+  const [experiment, setExperiment] = useState<"A" | "B">("B");
+
+  useEffect(() => { localStorage.setItem("pulse.demo.v2.students", JSON.stringify(students)); }, [students]);
+  useEffect(() => { localStorage.setItem("pulse.demo.v2.exercises", JSON.stringify(exercises)); }, [exercises]);
+  useEffect(() => { localStorage.setItem("pulse.demo.v2.marks", JSON.stringify(marks)); }, [marks]);
+  useEffect(() => { if (!toast) return; const t = window.setTimeout(() => setToast(""), 2500); return () => window.clearTimeout(t); }, [toast]);
+
+  const exercise = exercises.find(e => e.id === activeExercise) ?? exercises[0];
+  const selectedModule = OFFLINE_MODULES.find(module => module.id === selectedModuleId) ?? OFFLINE_MODULES[0];
+  const roster = students.filter(s => s.batch === selectedBatch);
+  const visibleStudents = roster.filter(s => s.name.toLowerCase().includes(query.toLowerCase()) || s.roll.toLowerCase().includes(query.toLowerCase())).filter(s => filter === "All students" || (filter === "Needs attention" && Array.from({length: exercise?.count ?? 0}, (_,i) => marks[`${s.id}-${exercise?.id}-${i+1}`] ?? "U").some(v => v === "D" || v === "I")));
+  const questionStats = useMemo(() => Array.from({length: exercise?.count ?? 0}, (_,i) => {
+    const states = roster.map(s => marks[`${s.id}-${exercise?.id}-${i+1}`] ?? "U");
+    return { q: i+1, wrong: states.filter(s => s === "I").length, doubt: states.filter(s => s === "D").length, done: states.filter(isAttemptedStatus).length, total: states.length };
+  }), [exercise, roster, marks]);
+  const totalCells = roster.length * (exercise?.count ?? 0);
+  const doneCells = questionStats.reduce((n,q) => n + q.done, 0);
+  const completion = totalCells ? Math.round(doneCells / totalCells * 100) : 0;
+  const doubts = questionStats.reduce((n,q) => n + q.doubt, 0);
+  const incorrect = questionStats.reduce((n,q) => n + q.wrong, 0);
+  const flaggedQuestions = questionStats.filter(q => q.total && (q.wrong + q.doubt) / q.total >= .4);
+
+  function updateMark(studentId: string, q: number, next?: Status) {
+    const key = `${studentId}-${exercise.id}-${q}`;
+    setMarks(prev => ({...prev, [key]: next ?? nextStatus(prev[key] ?? "U")}));
+  }
+  function assignFromOfflineModule(e: FormEvent) {
+    e.preventDefault();
+    if (!selectedModule || selectedQuestionIds.length === 0) return;
+    const item: Exercise = {
+      id: `assignment-${Date.now()}`,
+      name: selectedModule.title,
+      chapter: selectedModule.chapter,
+      subject: selectedModule.subject,
+      count: selectedQuestionIds.length,
+      batch,
+      due,
+      created: "Just now",
+      sourceModuleId: selectedModule.id,
+      questionRefs: [...selectedQuestionIds],
+    };
+    setExercises(prev => [item, ...prev]);
+    setActiveExercise(item.id);
+    setSelectedBatch(item.batch);
+    setShowCreator(false);
+    setTab("matrix");
+    setToast(`Assigned ${selectedQuestionIds.length} existing questions from ${selectedModule.chapter}.`);
+  }
+  function toggleQuestion(questionId: string) {
+    setSelectedQuestionIds(current => current.includes(questionId)
+      ? current.filter(id => id !== questionId)
+      : [...current, questionId]);
+  }
+  function exportCsv() {
+    const rows = [["Student","Roll",...Array.from({length:exercise.count},(_,i)=>`Q${i+1}`)]];
+    roster.forEach(s => rows.push([s.name,s.roll,...Array.from({length:exercise.count},(_,i)=>statusMeta[marks[`${s.id}-${exercise.id}-${i+1}`] ?? "U"].label)]));
+    const csv = rows.map(r => r.map(toSafeCsvCell).join(",")).join("\n");
+    const url = URL.createObjectURL(new Blob([csv],{type:"text/csv"})); const a=document.createElement("a"); a.href=url; a.download=`${exercise.name.replaceAll(" ","-")}-matrix.csv`; a.click(); URL.revokeObjectURL(url);
+  }
+  function addStudent(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault(); const form = e.currentTarget as HTMLFormElement; const data = new FormData(form);
+    const name=String(data.get("name")||"").trim(); if(!name) return;
+    setStudents(prev=>[...prev,{id:`s${Date.now()}`,name,roll:String(data.get("roll")||`P-${String(prev.length+1).padStart(3,"0")}`),batch}]); form.reset(); setShowStudents(false); setToast("Student added to the selected batch.");
+  }
+  function handleKeys(e: KeyboardEvent<HTMLDivElement>) {
+    const target = e.target as HTMLElement;
+    if (target.matches("input, select, textarea, [contenteditable='true']")) return;
+    const cells = Array.from(e.currentTarget.querySelectorAll<HTMLButtonElement>(".status-cell"));
+    const activeIndex = cells.indexOf(document.activeElement as HTMLButtonElement);
+
+    if (e.key === "ArrowRight" || e.key === "ArrowLeft" || e.key === "ArrowDown" || e.key === "ArrowUp") {
+      if (!cells.length) return;
+      e.preventDefault();
+      const current = activeIndex < 0 ? 0 : activeIndex;
+      const rowWidth = exercise?.count ?? 1;
+      const delta = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : e.key === "ArrowDown" ? rowWidth : -rowWidth;
+      cells[Math.max(0, Math.min(cells.length - 1, current + delta))]?.focus();
+      return;
+    }
+
+    const shortcuts: Record<string, Status> = { "1": "C", "2": "I", "3": "D", "4": "S", "5": "P", "0": "U", Backspace: "U", Delete: "U" };
+    const nextStatus = shortcuts[e.key];
+    const activeCell = document.activeElement as HTMLButtonElement;
+    const studentId = activeCell?.dataset?.student;
+    const questionNumber = Number(activeCell?.dataset?.question);
+    if (nextStatus && studentId && questionNumber) {
+      e.preventDefault();
+      updateMark(studentId, questionNumber, nextStatus);
+    }
+  }
+
+  return <div className="app-shell">
+    <aside className="sidebar">
+      <div className="brand"><div className="brand-mark"><Activity size={19}/></div><div><b>PULSE</b><span>ACADEMIC OS</span></div></div>
+      <div className="workspace"><div className="workspace-avatar">V</div><div><b>Demo Learning Institute</b><span>Sample Campus · India</span></div><ChevronDown size={14}/></div>
+      <div className="nav-label">WORKSPACE</div>
+      <nav>
+        <button className="nav-item"><LayoutDashboard size={17}/> Overview</button>
+        <button className="nav-item active"><ClipboardList size={17}/> Abhyas Matrix <span className="nav-count">A</span></button>
+        <button className="nav-item" onClick={()=>setShowStudents(true)}><Users size={17}/> Students</button>
+        <button className="nav-item"><BookOpen size={17}/> Exercises & DPPs</button>
+        <button className="nav-item"><CircleHelp size={17}/> Doubt Radar <span className="nav-badge">{doubts}</span></button>
+        <button className="nav-item"><GraduationCap size={17}/> Academic Review</button>
+      </nav>
+      <div className="nav-label second">MANAGEMENT</div>
+      <nav><button className="nav-item"><CalendarDays size={17}/> Attendance</button><button className="nav-item"><Activity size={17}/> Insights</button><button className="nav-item"><Settings2 size={17}/> Settings</button></nav>
+      <div className="sidebar-bottom"><div className="status-dot"></div><div><b>System operational</b><span>Local preview · Demo data</span></div></div>
+      <div className="user-profile"><div className="user-avatar">DF</div><div><b>Demo Faculty</b><span>Teacher role · Sample account</span></div><ChevronDown size={15}/></div>
+    </aside>
+    <main className="main">
+      <header className="topbar"><div className="breadcrumbs">PULSE <span>/</span> WORKSPACE <span>/</span> <b>ABHYAS MATRIX</b></div><div className="top-actions"><span className="date-chip"><CalendarDays size={14}/> {new Date().toLocaleDateString(undefined, { weekday: "long", day: "2-digit", month: "short", year: "numeric" })}</span><button className="icon-btn" aria-label="Notifications"><Bell size={17}/><i/></button><div className="top-avatar">DF</div></div></header>
+      <div className="content">
+        <div className="page-heading"><div><div className="eyebrow"><span className="eyebrow-line"/> SYSTEM A · STUDENT WORK TRACKING</div><h1>Abhyas Matrix</h1><p>One view of every student's practice. Capture work in class, identify roadblocks, and keep every learning signal traceable.</p></div><div className="heading-actions"><button className="btn secondary" onClick={exportCsv}><Download size={15}/> Export matrix</button><button className="btn primary" onClick={()=>{setSelectedModuleId(OFFLINE_MODULES[0].id);setSelectedQuestionIds(OFFLINE_MODULES[0].questions.slice(0,12).map(q=>q.id));setShowCreator(true);}}><Plus size={16}/> Assign module</button></div></div>
+        <div className="notice"><div className="notice-icon"><ShieldCheck size={17}/></div><div><b>Operational tracking is independent of deep tagging.</b><span>Teachers select existing questions from offline academic modules. System A tracks the assignment; it does not create or duplicate question-bank content.</span></div><span className="notice-tag">FICTIONAL DEMO DATA</span></div>
+        <div className="metric-grid">
+          <Metric icon={<ClipboardList size={17}/>} label="Active exercises" value={String(exercises.length).padStart(2,"0")} detail="Across selected batch" />
+          <Metric icon={<CheckCheck size={17}/>} label="Attempted" value={completion+"%"} detail={`${doneCells.toLocaleString()} of ${totalCells.toLocaleString()} cells`} accent="green"/>
+          <Metric icon={<CircleHelp size={17}/>} label="Open doubts" value={String(doubts).padStart(2,"0")} detail="Awaiting teacher attention" accent="amber"/>
+          <Metric icon={<Users size={17}/>} label="Needs attention" value={String(flaggedQuestions.length).padStart(2,"0")} detail="Questions with ≥40% wrong / doubt" accent="red"/>
+        </div>
+        <div className="section-toolbar"><div className="tabs"><button className={tab==="matrix"?"selected":""} onClick={()=>setTab("matrix")}>Question matrix</button><button className={tab==="overview"?"selected":""} onClick={()=>setTab("overview")}>Exercise overview</button></div><div className="toolbar-right"><span className="live-indicator"><i/> LIVE WORKSPACE</span><span className="divider-v"/><button className="text-btn" onClick={()=>setShowStudents(true)}><Users size={15}/> Manage roster</button></div></div>
+        {tab==="matrix" ? <section className="panel">
+          <div className="panel-head"><div><div className="panel-kicker">LIVE TRACKING GRID</div><h2>Student performance matrix</h2><p>Tap a cell to cycle through six operational states.</p></div><div className="panel-controls"><label className="select-wrap"><span>Exercise</span><select value={activeExercise} onChange={e=>{const next=exercises.find(item=>item.id===e.target.value);if(next){setActiveExercise(next.id);setSelectedBatch(next.batch);}}}>{exercises.map(x=><option key={x.id} value={x.id}>{x.name}</option>)}</select><ChevronDown size={14}/></label><label className="select-wrap batch-select"><span>Batch</span><select value={selectedBatch} onChange={e=>{setSelectedBatch(e.target.value);const first=exercises.find(item=>item.batch===e.target.value);if(first)setActiveExercise(first.id);}}>{DEMO_BATCHES.map(item => <option key={item}>{item}</option>)}</select><ChevronDown size={14}/></label></div></div>
+          <div className="exercise-strip"><div className="exercise-symbol"><BookOpen size={18}/></div><div className="exercise-info"><b>{exercise?.name}</b><span>{exercise?.subject} <i>·</i> {exercise?.chapter} <i>·</i> {exercise?.count} questions</span></div><div className="exercise-meta"><span><Users size={14}/> {roster.length} students</span><span><CalendarDays size={14}/> Due {exercise?.due}</span></div><div className="completion-mini"><b>{completion}%</b><span>ATTEMPTED</span><div><i style={{width:completion+"%"}}/></div></div></div>
+          <div className="matrix-toolbar"><div className="legend">{(["C","I","D","S","P","U"] as Status[]).map(s=><span key={s}><i className={"legend-dot "+statusMeta[s].tone}/>{statusMeta[s].label}</span>)}</div><div className="matrix-tools"><label className="search-box"><Search size={14}/><input placeholder="Find student..." value={query} onChange={e=>setQuery(e.target.value)}/></label><select className="filter-select" value={filter} onChange={e=>setFilter(e.target.value)}><option>All students</option><option>Needs attention</option></select><button className="icon-btn small" title="Export CSV" onClick={exportCsv}><Download size={15}/></button></div></div>
+          <div className="table-wrap" tabIndex={0} onKeyDown={handleKeys}><table className="matrix-table"><thead><tr><th className="student-col"><span>STUDENT / ROLL NO.</span></th>{Array.from({length:exercise?.count??0},(_,i)=><th key={i}><span>Q{i+1}</span></th>)}<th className="summary-col"><span>ATTEMPTED</span></th></tr></thead><tbody>
+            {visibleStudents.map((s,index)=>{const states=Array.from({length:exercise.count},(_,i)=>marks[`${s.id}-${exercise.id}-${i+1}`]??"U");const done=states.filter(isAttemptedStatus).length;return <tr key={s.id}><td className="student-cell"><div className="student-ident"><div className={"student-avatar av-"+(index%5)}>{s.name.split(" ").map(n=>n[0]).slice(0,2).join("")}</div><div><b>{s.name}</b><span>{s.roll}</span></div></div></td>{states.map((state,i)=><td key={i}><button className={"status-cell "+statusMeta[state].tone} title={statusMeta[state].label+" · click to change"} aria-label={s.name+" question "+(i+1)+": "+statusMeta[state].label} data-student={s.id} data-question={i+1} onClick={()=>updateMark(s.id,i+1)}>{state==="U"?"—":state==="P"?"½":state==="S"?"–":state}</button></td>)}<td className="done-cell"><b>{done}</b><span>/{exercise.count}</span></td></tr>})}
+            <tr className="aggregate-row"><td><b>COHORT SIGNAL</b><span> Wrong + doubt concentration</span></td>{questionStats.map(q=><td key={q.q}><div className={"signal "+((q.wrong+q.doubt)/Math.max(1,q.total)>=.4?"hot":"")}><b>{q.wrong+q.doubt}</b><span>/{q.total}</span></div></td>)}<td><span className="aggregate-total">{incorrect+doubts}</span></td></tr>
+          </tbody></table></div>
+          <div className="panel-foot"><span>Showing <b>{visibleStudents.length}</b> of <b>{roster.length}</b> students · Changes persist in this browser preview</span><span className="keyboard-hint"><Command size={12}/> Shortcuts: <kbd>1</kbd>–<kbd>5</kbd> status · <kbd>←</kbd><kbd>→</kbd> navigate</span></div>
+        </section> : <section className="panel overview-panel"><div className="panel-head"><div><div className="panel-kicker">EXERCISE LIBRARY</div><h2>Assigned practice</h2><p>Quickly reopen a DPP or inspect its cohort signals.</p></div><button className="btn primary" onClick={()=>{setSelectedModuleId(OFFLINE_MODULES[0].id);setSelectedQuestionIds(OFFLINE_MODULES[0].questions.slice(0,12).map(q=>q.id));setShowCreator(true);}}><Plus size={15}/> Assign module</button></div><div className="exercise-list">{exercises.map(x=><button className="exercise-row" key={x.id} onClick={()=>{setActiveExercise(x.id);setTab("matrix");}}><div className="exercise-symbol"><BookOpen size={18}/></div><div><b>{x.name}</b><span>{x.chapter} · {x.count} questions · {x.batch}</span></div><span className="exercise-due">Due {x.due}</span><ArrowRight size={16}/></button>)}</div></section>}
+        <div className="bottom-grid"><section className="panel radar-panel"><div className="subpanel-head"><div><div className="panel-kicker">COHORT DIAGNOSTICS</div><h3>Doubt Radar</h3></div><span className="panel-icon amber"><CircleHelp size={17}/></span></div><p className="subcopy">Questions where the cohort needs intervention.</p>{questionStats.filter(q=>q.doubt>0||q.wrong>0).sort((a,b)=>(b.doubt+b.wrong)-(a.doubt+a.wrong)).slice(0,3).map(q=><div className="radar-row" key={q.q}><div className="q-bubble">Q{q.q}</div><div className="radar-detail"><b>{q.doubt} doubts · {q.wrong} incorrect</b><span>{q.total?Math.round((q.doubt+q.wrong)/q.total*100):0}% of cohort flagged</span></div><div className="radar-track"><i style={{width:`${Math.min(100,(q.doubt+q.wrong)/Math.max(1,q.total)*100)}%`}}/></div></div>)}{!questionStats.some(q=>q.doubt||q.wrong)&&<div className="empty-state">No cohort roadblocks detected.</div>}<button className="inline-link" onClick={()=>setFilter("Needs attention")}>Filter students needing attention <ArrowRight size={14}/></button></section>
+        <section className="panel experiment-panel"><div className="subpanel-head"><div><div className="panel-kicker">PRODUCT EXPERIMENT</div><h3>Faculty logging workflow</h3></div><span className="experiment-pill"><Sparkles size={12}/> A/B TEST</span></div><p className="subcopy">Compare the traditional matrix against the tactile fast-log interaction.</p><div className="experiment-switch"><button className={experiment==="A"?"on":""} onClick={()=>setExperiment("A")}>Variant A · Classic</button><button className={experiment==="B"?"on":""} onClick={()=>setExperiment("B")}>Variant B · Fast-log</button></div><div className="variant-card"><div className="variant-icon">{experiment==="A"?<ClipboardList size={17}/>:<Command size={17}/>}</div><div><b>{experiment==="A"?"Classic batch table":"Keyboard + tap workflow"}</b><span>{experiment==="A"?"Select a state from each cell, then review the batch.":"Tap to cycle status; focus a cell and use 1–5 for direct status entry; 0 resets."}</span></div></div><div className="metric-target"><span>PRIMARY METRIC</span><b>{experiment==="A"?"Baseline completion time":"Median roll-call time"}</b><strong>{experiment==="A"?"Measure baseline":"Target < 45 sec"}</strong></div><div className="experiment-note">Experiment assignment is a visual prototype only. Deterministic cohort allocation and telemetry require backend integration.</div></section></div>
+        <footer className="footer"><span>© 2026 PULSE Academic OS</span><span>ABHYAS MATRIX <i>·</i> SYSTEM A</span><span>Built for focused academic operations</span></footer>
+      </div>
+    </main>
+    {showCreator&&<div className="modal-backdrop" onMouseDown={e=>{if(e.target===e.currentTarget)setShowCreator(false);}}><form className="modal" onSubmit={assignFromOfflineModule}><div className="modal-head"><div><div className="panel-kicker">OFFLINE MODULE CATALOGUE</div><h2>Assign existing questions</h2><p>Select a module and its existing question references. No new questions are created.</p></div><button type="button" className="icon-btn" onClick={()=>setShowCreator(false)}><X size={18}/></button></div><label>Academic module<select value={selectedModuleId} onChange={e=>{const module=OFFLINE_MODULES.find(item=>item.id===e.target.value);if(module){setSelectedModuleId(module.id);setSelectedQuestionIds(module.questions.slice(0,Math.min(12,module.questions.length)).map(q=>q.id));}}}>{OFFLINE_MODULES.map(module=><option key={module.id} value={module.id}>{module.title} · {module.subject} · Class {module.classLevel}</option>)}</select></label><div className="form-grid"><label>Subject<input value={selectedModule.subject} readOnly/></label><label>Chapter<input value={selectedModule.chapter} readOnly/></label></div><div className="form-grid"><label>Exam / Class<input value={selectedModule.examTrack+" · Class "+selectedModule.classLevel} readOnly/></label><label>Assign to batch<select value={batch} onChange={e=>setBatch(e.target.value)}>{DEMO_BATCHES.map(item=><option key={item}>{item}</option>)}</select></label></div><div className="question-picker-head"><b>Select questions</b><span>{selectedQuestionIds.length} of {selectedModule.questions.length} selected</span><button type="button" className="text-btn" onClick={()=>setSelectedQuestionIds(selectedModule.questions.map(q=>q.id))}>Select all</button><button type="button" className="text-btn" onClick={()=>setSelectedQuestionIds([])}>Clear</button></div><div className="question-picker">{selectedModule.questions.map(question=><label className="question-option" key={question.id}><input type="checkbox" checked={selectedQuestionIds.includes(question.id)} onChange={()=>toggleQuestion(question.id)}/><span>{question.label}</span><small>{question.difficulty}</small></label>)}</div><label>Due date<input type="date" value={due} onChange={e=>setDue(e.target.value)}/></label><div className="slot-preview"><div><b>Assignment preview</b><span>Selected source question IDs are retained with the assignment.</span></div><div className="slot-samples"><span>{selectedQuestionIds.length} questions</span><span>{selectedModule.subject}</span></div></div><div className="modal-actions"><button type="button" className="btn secondary" onClick={()=>setShowCreator(false)}>Cancel</button><button type="submit" className="btn primary" disabled={selectedQuestionIds.length===0}><Plus size={15}/> Assign selected questions</button></div></form></div>}
+    {showStudents&&<div className="modal-backdrop" onMouseDown={e=>{if(e.target===e.currentTarget)setShowStudents(false);}}><form className="modal compact-modal" onSubmit={addStudent}><div className="modal-head"><div><div className="panel-kicker">ROSTER MANAGEMENT</div><h2>Add a student</h2><p>Add a learner to the currently selected batch.</p></div><button type="button" className="icon-btn" onClick={()=>setShowStudents(false)}><X size={18}/></button></div><label>Student name<input name="name" autoFocus required placeholder="Full name"/></label><label>Roll number<input name="roll" placeholder="e.g. P-064"/></label><label>Batch<select value={batch} onChange={e=>setBatch(e.target.value)}><option>JEE XII · Alpha</option><option>JEE XII · Beta</option><option>JEE XI · Alpha</option></select></label><div className="modal-actions"><button type="button" className="btn secondary" onClick={()=>setShowStudents(false)}>Cancel</button><button type="submit" className="btn primary"><Plus size={15}/> Add student</button></div></form></div>}
+    {toast&&<div className="toast"><Check size={16}/>{toast}</div>}
+  </div>;
+}
+function Metric({icon,label,value,detail,accent=""}:{icon:ReactNode;label:string;value:string;detail:string;accent?:string}) { return <div className="metric-card"><div className={"metric-icon "+accent}>{icon}</div><div className="metric-label">{label}</div><div className="metric-value">{value}</div><div className="metric-detail">{detail}</div></div>; }
+export default App;
