@@ -9,6 +9,10 @@
 - Audit method: Read-back of all 18 committed GitHub files; structural, scope, cross-module boundary, lifecycle, data-contract, security, scale, testability and open-decision review.
 - Important limitation: This is a documentation architecture audit. It is not a code, database, security penetration, performance or operational audit.
 
+## Governing scope clarification — classification management software
+
+DTE manages institution-defined academic classification and tagging structures. It does not design, prescribe, generate or impose chapter-wise syllabus bifurcation, curriculum structure or a universal academic hierarchy. Institutions define their own categories and terminology; DTE provides software to configure, record, map, search, validate, review, version, govern and report on those existing structures. Academic terms such as subject, chapter, topic and concept are examples of institution-managed data, not mandatory DTE levels or a curriculum-design function.
+
 ## 1. Executive finding
 
 **Result: The 18 documents form a coherent first-pass functional outline, but they are not yet an implementation-ready specification baseline.**
