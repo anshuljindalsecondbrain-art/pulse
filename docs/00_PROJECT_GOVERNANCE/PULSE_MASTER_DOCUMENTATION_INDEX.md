@@ -67,7 +67,7 @@ All records below remain Draft proposals and are not executable authorization.
 5. Learner self-report, teacher observation, completion verification and answer evaluation are separate facts.
 6. Evidence and decisions are append-only; corrections append linked history.
 7. Tenant-owned relationships use tenant-qualified composite foreign keys.
-8. Authorization is action-based and scoped to tenant/centre/batch/student/resource at trusted service/database boundaries.
+8. Authorization is action-based and scoped to tenant/centre/batch/student/resource at trusted service/database boundaries; D-004 uses typed assignments for core resources plus a controlled extension mechanism.
 9. Assignment publication and evidence workflows require atomic, idempotent transactions.
 10. DTE manages configurable classification structures; it does not prescribe a universal chapterwise curriculum hierarchy.
 11. Modular application first; no premature microservices.
