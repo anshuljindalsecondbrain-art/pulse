@@ -3,7 +3,7 @@
 - Category: System A correction workflow implementation
 - Module(s): System A / Correction Management
 - Created / updated: 2026-11-06
-- Status: IMPLEMENTED_PENDING_CI
+- Status: VALIDATED_DOMAIN_ONLY
 - Origin and source reference: System A correction lifecycle; append-only learner evidence and teacher verification contracts.
 - Requirement ID(s): PULSE-REQ-SYA-012
 - Related event / issue / ADR: PULSE-EVT-000008; PULSE-EVT-000009; PULSE-EVT-000010; PULSE-EVT-000012; PULSE-EVT-000013
