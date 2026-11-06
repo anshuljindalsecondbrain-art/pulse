@@ -128,3 +128,36 @@ This section records a live connector audit and supersedes older deployment/data
 
 ### Non-negotiable release boundary
 The primary UI remains localStorage/demo-backed. The Supabase client/repository adapter is not integrated into the main UI. Do not enter real student data, apply the existing V10 or System A migration unchanged, create production tables/policies, merge PR #2, or promote a production deployment until the canonical physical schema, product/academic/security approvals, RLS/grants, transactional command layer, cross-tenant tests, migration replay and exact-commit browser QA are complete.
+
+
+## 10. PULSE 360° audit — 2026-11-06
+
+The full 360° audit report is stored at `docs/audits/2026-11-06-pulse-360-audit/`.
+
+| Report | File |
+|---|---|
+| Executive summary | `00_EXECUTIVE_SUMMARY.md` |
+| Project inventory | `01_PROJECT_INVENTORY.md` |
+| Requirement traceability | `02_REQUIREMENT_TRACEABILITY.md` |
+| Module status matrix | `03_MODULE_STATUS_MATRIX.md` |
+| Architecture audit | `04_ARCHITECTURE_AUDIT.md` |
+| Database and data audit | `05_DATABASE_AND_DATA_AUDIT.md` |
+| Security and privacy audit | `06_SECURITY_AND_PRIVACY_AUDIT.md` |
+| Backend and API audit | `07_BACKEND_AND_API_AUDIT.md` |
+| Frontend and UX audit | `08_FRONTEND_AND_UX_AUDIT.md` |
+| QBMS and DTE audit | `09_QBMS_AND_DTE_AUDIT.md` |
+| System A audit | `10_SYSTEM_A_STUDENT_TRACKING_AUDIT.md` |
+| AI Mentor and intelligence audit | `11_AI_MENTOR_AND_INTELLIGENCE_AUDIT.md` |
+| Testing and QA audit | `12_TESTING_AND_QA_AUDIT.md` |
+| Infrastructure and deployment audit | `13_INFRASTRUCTURE_AND_DEPLOYMENT_AUDIT.md` |
+| Governance audit | `14_GOVERNANCE_AND_DOCUMENTATION_AUDIT.md` |
+| Ten independent audit passes | `15_TEN_INDEPENDENT_AUDIT_PASSES.md` |
+| Cross-audit verification | `16_CROSS_AUDIT_VERIFICATION.md` |
+| Risk register | `17_RISK_REGISTER.md` |
+| Technical debt register | `18_TECHNICAL_DEBT_REGISTER.md` |
+| Implementation roadmap | `19_IMPLEMENTATION_ROADMAP.md` |
+| Codex execution backlog | `20_CODEX_EXECUTION_BACKLOG.md` |
+| Final acceptance gates | `21_FINAL_ACCEPTANCE_AND_RELEASE_GATES.md` |
+| Audit manifest | `AUDIT_MANIFEST.md` |
+
+**Audit verdict:** NO-GO for production. The report distinguishes verified repository/live-system evidence from design-only artifacts and unperformed checks. It does not authorize migration, merge or release.
