@@ -141,7 +141,7 @@ export function prepareCorrectionStart(input: {
   }
   if (decision.instituteId !== c.instituteId || decision.obligationId !== c.obligationId ||
       decision.evidenceEventId !== evidence.id || decision.purpose !== "COMPLETION" ||
-      decision.outcome !== "RETURNED") {
+      decision.outcome !== "RETURNED" || decision.verifierId === c.studentId) {
     throw new Error("Correction must reference the exact returned completion decision for the original evidence.");
   }
 
@@ -159,8 +159,8 @@ export function prepareCorrectionStart(input: {
     id: c.cycleId, instituteId: c.instituteId, studentId: c.studentId,
     obligationId: c.obligationId, exerciseSlotId: evidence.exerciseSlotId,
     originalEvidenceEventId: evidence.id, originalAttemptCycleId: evidence.attemptCycleId,
-    originatingReturnedDecisionId: decision.id, state: "IN_PROGRESS",
-    startedAt: c.occurredAt, updatedAt: c.occurredAt,
+    originatingReturnedDecisionId: decision.id, startEventId: c.eventId, startReason: reason,
+    state: "IN_PROGRESS", startedAt: c.occurredAt, updatedAt: c.occurredAt,
   });
   const event = makeEvent({
     id: c.eventId, correctionCycleId: cycle.id, instituteId: c.instituteId,
@@ -203,8 +203,9 @@ export type CorrectionSubmissionCommand = Readonly<{
   instituteId: string;
   studentId: string;
   obligationId: string;
+  exerciseSlotId: string;
   actorId: string;
-  workProgress: "ATTEMPTED" | "SUBMITTED";
+  workProgress: "SUBMITTED";
   attemptCycleId: string;
   idempotencyKey: string;
   occurredAt: string;
@@ -225,7 +226,7 @@ export function prepareCorrectionSubmission(input: {
   const { cycle, command: c } = input;
   for (const [label, value] of Object.entries({
     instituteId: c.instituteId, studentId: c.studentId, obligationId: c.obligationId,
-    actorId: c.actorId, attemptCycleId: c.attemptCycleId, idempotencyKey: c.idempotencyKey,
+    exerciseSlotId: c.exerciseSlotId, actorId: c.actorId, attemptCycleId: c.attemptCycleId, idempotencyKey: c.idempotencyKey,
     newEvidenceId: input.newEvidenceId, eventId: input.eventId, supersedesEventId: c.supersedesEventId,
   })) requireText(value, label);
   const reason = requireReason(c.reason);
@@ -269,7 +270,7 @@ export function prepareCorrectionSubmission(input: {
       superseded.studentId !== cycle.studentId || superseded.obligationId !== cycle.obligationId ||
       superseded.exerciseSlotId !== cycle.exerciseSlotId ||
       superseded.attemptCycleId !== cycle.originalAttemptCycleId ||
-      superseded.source !== "STUDENT_SELF_REPORT") {
+      superseded.source !== "STUDENT_SELF_REPORT" || superseded.actorRole !== "STUDENT") {
     throw new Error("Superseded evidence must belong to the same learner, obligation, slot and original attempt.");
   }
 
@@ -344,7 +345,7 @@ export function prepareCorrectionReview(input: {
   const evidence = submission.evidence;
   if (c.instituteId !== cycle.instituteId || c.obligationId !== cycle.obligationId ||
       evidence.instituteId !== cycle.instituteId || evidence.obligationId !== cycle.obligationId ||
-      evidence.studentId !== cycle.studentId || evidence.attemptCycleId !== cycle.originalAttemptCycleId) {
+      evidence.studentId !== cycle.studentId || evidence.attemptCycleId !== cycle.originalAttemptCycleId ||\n      evidence.source !== "STUDENT_SELF_REPORT" || evidence.actorRole !== "STUDENT" || evidence.workProgress !== "SUBMITTED") {
     throw new Error("Correction review crosses institute, learner, obligation or attempt scope.");
   }
   if (c.reviewerId === cycle.studentId) throw new Error("A learner cannot review their own correction.");
