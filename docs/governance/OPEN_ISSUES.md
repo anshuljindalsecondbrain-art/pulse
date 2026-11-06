@@ -69,3 +69,5 @@ Evidence: PULSE-EVT-000020 and PULSE-DATA-CORE-010. Product decision recorded; t
 | PULSE-ISSUE-0022 | Shared Platform / Authorization | D-003 product decision selects hybrid RBAC + resource/assignment scope + explicit action permissions; Security Owner approval remains outstanding | Blocking | OPEN | Security Owner to approve role catalogue, permission semantics, scope hierarchy, trusted enforcement points and deny-by-default tests before schema freeze or live authorization enablement |
 
 Evidence: PULSE-EVT-000021 and PULSE-DATA-CORE-010. Product decision recorded; no SQL, RLS or grant changes authorized.
+
+| PULSE-ISSUE-0024 | System A / Assignments | D-005 hybrid publication roster decision recorded; Academic Owner approval and lifecycle policy sign-off remain outstanding | Blocking | OPEN | Approve immutable publication snapshots with explicit, audited teacher-controlled additions/removals before schema freeze |
