@@ -1,6 +1,6 @@
 # PULSE Master Event Register
 
-Register version: 1.0 | Last updated: 2026-11-06
+Register version: 1.1 | Last updated: 2026-11-06
 Coverage: Initial baseline; historical backfill incomplete.
 
 | Event ID | Date | Category | Module | Title | Status | Evidence |
