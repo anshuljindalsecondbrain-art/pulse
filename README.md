@@ -58,6 +58,13 @@ PULSE is a multi-institute academic technology platform. Its long-term direction
 
 Do not apply either existing V10 or System A initial migration unchanged. The canonical shared identity/tenant model and System A operational model must first be reconciled into one approved physical schema. RLS, grants, command transactions, cross-tenant tests, migration replay and explicit owner approval are required before enabling real student data or production deployment.
 
+## Live systems synchronization — 2026-11-06
+
+- **Supabase:** PULSE is active/healthy in `ap-south-1`, PostgreSQL 17.11. The live public schema has no application tables, no applied migrations and no Edge Functions. The current no-lint advisor result applies only to the empty schema.
+- **GitHub:** PR #2 remains open, draft and unmerged. The branch contains the Student Tracking domain layer and the PULSE-DATA-CORE-001–008 architecture package. Database and authorization specifications remain drafts; PULSE-DATA-CORE-009 is the next planned physical ERD/data dictionary stage.
+- **Website:** The main Student Tracking UI remains localStorage/demo-backed. The Supabase client and repository adapter are not integrated into the main UI. The READY Vercel Preview observed during the audit belongs to commit `81fd420af18eb9b016b187a71b68073ebf325979`; newer changes exist and must be deployed/verified at the exact current SHA. Preview is protected and not production.
+- **Release safety:** No existing V10/System A migration is approved to apply unchanged. No real student data belongs in the demo. Do not merge PR #2 or enable production access until the unified schema, approvals, RLS/grants, trusted command layer, migration replay, cross-tenant tests and browser QA are complete.
+
 ## Development
 
 ```bash
