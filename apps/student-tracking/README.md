@@ -1,6 +1,6 @@
 # PULSE Student Tracking — Abhyas Matrix
 
-A fresh, isolated frontend application for System A. It implements the first interaction prototype for quick exercise scaffolding, a student-by-question matrix, cohort signals, a basic roster workflow and CSV export.
+A fresh, isolated frontend application for System A. It implements a student-by-question matrix, cohort signals, a basic roster workflow, CSV export and assignment from a fictional offline academic module catalogue.
 
 ## Run locally
 
@@ -42,8 +42,9 @@ npm run build
 
 ## Product behaviors represented
 
-- Create an exercise using chapter, label, question count, batch and due date.
-- Generate local numbered slots without QBMS or DTE dependency.
+- Select an existing offline academic module, choose its question references, select a batch and due date, and create an assignment.
+- Retain source module and selected question identifiers on the local assignment record.
+- System A does not create, rewrite or duplicate question-bank content; QBMS integration can replace the fictional catalogue later.
 - Cycle cells through Unattempted → Correct → Incorrect → Doubt → Skipped → Partially Correct.
 - Domain contracts distinguish immutable student report events from separate teacher verification decisions; a report alone does not imply verification.
 - A pure projection function rebuilds the current slot view from report and verification histories, retaining the underlying event arrays and scoping decisions to the exact report event reviewed.
@@ -51,7 +52,8 @@ npm run build
 - Filter students, inspect per-question cohort signals and export the matrix as CSV.
 - Add students to the selected demo batch.
 - Switch between three demo batches; exercise selection automatically selects its matching batch.
-- Demonstrate Physics, Chemistry and Mathematics exercises with fictional chapter and question data.
+- Demonstrate Physics, Chemistry, Mathematics and Biology modules with fictional chapter and question-reference data.
+- The catalogue question labels and IDs are synthetic placeholders, not actual offline module content.
 - Display the two independent product tracks: operational System A and later progressive DTE enrichment.
 
 ## Next engineering gates
