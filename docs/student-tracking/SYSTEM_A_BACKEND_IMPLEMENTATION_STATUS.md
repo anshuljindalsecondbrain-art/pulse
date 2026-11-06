@@ -77,3 +77,17 @@ The following domain-only increment has been added after the initial repository 
 - Corresponding unit tests are in `workflow-domain.test.ts` and `workflow-transitions.test.ts`.
 
 **Boundary:** These are pure domain contracts and deterministic helpers. They do not persist events, enforce tenant membership, prove role grants, implement database transactions, or replace RLS. Academic policy approval, server-side authorization, integration tests and operational UI remain outstanding.
+
+
+## Assignment publication planning increment (2026-11-06)
+
+Added `src/assignment-domain.ts` and `src/assignment-domain.test.ts`:
+
+- Validates selected question references against one existing offline module.
+- Creates an ordered immutable assignment-version snapshot with source module/question metadata.
+- Expands the target roster into one obligation per learner per question slot.
+- Separates eligible and exempted obligations and exposes denominators in a deterministic summary.
+- Uses deterministic version-scoped slot and obligation identifiers for retry-stable planning.
+- Rejects duplicate question selections, duplicate learners, empty targets, foreign question references and due dates before publication.
+
+**Boundary:** This is a pure planning function. It does not resolve the authoritative roster, authorize the publisher, persist assignment versions, atomically create obligations, send notifications or enforce database idempotency. Those remain server/database responsibilities and are blocked on the authorization/RLS design.
