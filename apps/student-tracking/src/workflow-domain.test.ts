@@ -45,6 +45,10 @@ describe("System A canonical evidence contract", () => {
     expect(Object.isFrozen(event)).toBe(true);
   });
 
+  it("requires system-import events to use the system actor", () => {
+    expect(() => report({ source: "SYSTEM_IMPORT", actorRole: "STUDENT" })).toThrow(/system actor/i);
+  });
+
   it("requires purpose-compatible outcomes for verification", () => {
     expect(() => decision({ purpose: "ANSWER_EVALUATION", outcome: "CONFIRMED" })).toThrow(/evaluation outcome/i);
     expect(() => decision({ purpose: "COMPLETION", outcome: "CORRECT" })).toThrow(/completion outcome/i);
@@ -72,6 +76,20 @@ describe("System A canonical evidence contract", () => {
     });
     expect(metrics.accuracyPercent).toBeNull();
     expect(metrics.evaluatedObligations).toBe(0);
+  });
+
+  it("does not include an evaluation attached to an older superseded report", () => {
+    const old = report({ id: "ev-old", workProgress: "ATTEMPTED", recordedAt: "2026-11-06T08:00:00.000Z" });
+    const current = report({ id: "ev-current", recordedAt: "2026-11-06T09:00:00.000Z" });
+    const oldEvaluation = decision({
+      id: "vd-old", evidenceEventId: "ev-old", purpose: "ANSWER_EVALUATION",
+      outcome: "CORRECT", decidedAt: "2026-11-06T08:30:00.000Z",
+    });
+    const metrics = deriveSystemAMetrics({
+      obligations: [obligation], evidence: [old, current], decisions: [oldEvaluation],
+    });
+    expect(metrics.evaluatedObligations).toBe(0);
+    expect(metrics.accuracyPercent).toBeNull();
   });
 
   it("counts accuracy only from explicit answer-evaluation decisions", () => {
