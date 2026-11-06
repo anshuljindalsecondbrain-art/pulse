@@ -3,7 +3,7 @@
 - Category: System A evidence projection
 - Module(s): System A / Evidence Timeline
 - Created / updated: 2026-11-06
-- Status: IMPLEMENTED_PENDING_CI
+- Status: VALIDATED_DOMAIN_ONLY
 - Origin and source reference: System A append-only evidence, verification, correction and doubt event contracts.
 - Requirement ID(s): PULSE-REQ-SYA-015
 - Related event / issue / ADR: PULSE-EVT-000008; PULSE-EVT-000011; PULSE-EVT-000012; PULSE-EVT-000013; PULSE-EVT-000014; PULSE-EVT-000015; PULSE-EVT-000016
@@ -41,4 +41,9 @@ This is a domain-only read projection. Its scope argument and input collections 
 - Paths: apps/student-tracking/src/evidence-timeline-domain.ts; apps/student-tracking/src/evidence-timeline-domain.test.ts
 
 ## Validation
-Exact-head typecheck, complete unit suite, production build, governance checks and both required GitHub Actions workflows must pass before this event is marked validated.
+- Exact validated PR head: `051e4641d0b8a97e99283bc25c39ee7295b8be5b`.
+- System A CI: run `42223790800` — success (typecheck, complete unit suite, production build and migration static guardrails).
+- Student Tracking prototype: run `42223790593` — success (governance metadata, typecheck, complete unit suite and production build).
+- Evidence Timeline tests cover separate evidence/decision types, exact scope joins, correction/doubt histories, event/recording time, deterministic ordering, immutability and composite-ID collision rejection.
+- This validates the domain projection only. It does not validate database persistence, authorization, API integration, UI or browser/accessibility behavior.
+- No database migration or production data write was performed.
