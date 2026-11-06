@@ -2,20 +2,21 @@
 
 PULSE is a multi-institute academic technology platform. Its long-term direction is to connect academic content, question-bank operations, student work tracking, assessment, and AI-supported learning workflows through a governed, versioned platform.
 
-> **Repository status (2026-11-06):** the repository now contains a fresh System A frontend prototype under `apps/student-tracking/`. It is an isolated Vite/React application with local demo persistence; production auth, database integration, RLS and deployment are not yet implemented. This repository is the source of truth for project code, specifications, architecture decisions, migrations, tests, and delivery history.
+> **Repository status (2026-11-06):** System A (Student Tracking / Abhyas Matrix) has a substantial frontend prototype and pure TypeScript domain workflows. The primary UI still uses browser-local demo persistence. Supabase client/repository foundations exist but are not integrated into the primary UI. The live PULSE Supabase project has no application tables or applied migration history. No production-connected Student Tracking workflow is available yet.
 
 ## Principles
 
 - Build on inspected, verified assets; do not assume an implementation exists because it appears in an old specification.
 - Keep operational student tracking independent from progressive deep question classification.
 - Treat question identity, question version, and placement/slot as distinct entities.
-- Make classification configurable; do not hardcode a universal six-level academic taxonomy.
+- Make classification configurable; do not hardcode a universal hierarchy.
 - Keep the Difficulty Rule Engine (DRE) independent from the Deep Tagging Engine (DTE).
 - Enforce tenant isolation, least privilege, auditability, and data-preserving change practices.
 - Prefer small, reviewable changes with tests and documented migrations.
 
 ## Documentation map
 
+- [Master documentation index](docs/00_PROJECT_GOVERNANCE/PULSE_MASTER_DOCUMENTATION_INDEX.md)
 - [Student Tracking app prototype](apps/student-tracking/README.md)
 - [PULSE governance protocol](docs/governance/EVENT_GOVERNANCE_PROTOCOL.md)
 - [Master event register](docs/governance/MASTER_EVENT_REGISTER.md)
@@ -24,23 +25,47 @@ PULSE is a multi-institute academic technology platform. Its long-term direction
 - [Project master plan](docs/PROJECT_MASTER_PLAN.md)
 - [Architecture](docs/ARCHITECTURE.md)
 - [Development roadmap](docs/DEVELOPMENT_ROADMAP.md)
-- [Decision log](docs/decisions/DECISION_LOG.md)
 - [DTE specification](docs/modules/DTE_SPECIFICATION.md)
 - [Student Tracking specification](docs/modules/STUDENT_TRACKING_SPECIFICATION.md)
-- [System A database architecture](docs/student-tracking/SYSTEM_A_DATABASE_ARCHITECTURE.md)
-- [System A implementation plan](docs/student-tracking/SYSTEM_A_IMPLEMENTATION_PLAN.md)
-- [Database governance](docs/DATABASE_GOVERNANCE.md)
+- [System A backend status](docs/student-tracking/SYSTEM_A_BACKEND_IMPLEMENTATION_STATUS.md)
+- [System A service/API contract](docs/00_PROJECT_GOVERNANCE/PULSE_SYSTEM_A_APPLICATION_SERVICE_AND_API_CONTRACT.md)
+- [System A database authorization design](docs/00_PROJECT_GOVERNANCE/PULSE_SYSTEM_A_DATABASE_AUTHORIZATION_AND_TRANSACTION_DESIGN.md)
+- [System A physical table authorization map](docs/00_PROJECT_GOVERNANCE/PULSE_SYSTEM_A_PHYSICAL_TABLE_AUTHORIZATION_AND_INTEGRITY_MAPPING.md)
+- [Supabase migration runbook](docs/database/SUPABASE_MIGRATION_RUNBOOK.md)
 - [AI coding-agent instructions](AGENTS.md)
 
-## Development status
+## Product domains
 
-System A (Abhyas Matrix) is the first operational delivery priority. A frontend prototype and implementation baselines are in this repository. The production data layer remains blocked on connecting and auditing the intended Supabase project. Do not apply production schema changes until the as-built audit and proposed change plan have been reviewed.
+- **Student Work Tracking / Abhyas Matrix:** assignment, exercise, student response, verification, correction, doubt and daily tracking workflows.
+- **QBMS:** question identity/version, sources/media, review, quality and classification associations.
+- **DTE:** institution-configurable classification structures, mapping and review; not authoritative chapterwise curriculum authoring.
+- **DRE:** difficulty rules and evaluations.
+- **Test Management:** test blueprint, assembly, delivery, results and analysis.
+- **Content Management:** institution-owned collections, editions, units, exercises and placements.
+- **AI Mentor:** diagnostic interpretation and explainable learner interventions.
+- **Shared platform:** identity, tenants, memberships, role grants, audit, notifications and integrations.
 
-## Working with this repository
+## Verified deployment and database status
 
-1. Read `AGENTS.md` and the relevant module specification before changing code.
-2. Confirm the current branch and inspect the existing implementation.
-3. Prefer a feature branch and focused pull request for substantive work.
-4. Add or update tests and documentation with each behavior change.
-5. Use reviewed Supabase migrations for database DDL.
-6. Never commit secrets, service-role keys, credentials, student PII, or production exports.
+- Supabase project: PULSE, `ap-south-1`, PostgreSQL 17.11.
+- Live `public` schema: no application tables as of the latest audit.
+- Migration history: empty.
+- Proposed System A migration: not applied; its baseline intentionally forces RLS and grants no direct application access.
+- Vercel: System A Preview has reached READY for the feature branch. Preview deployments are protected by Vercel Authentication. This is not a production release.
+- Demo data is fictional, browser-local and must not contain real student personal data.
+
+## Release controls
+
+Do not apply either existing V10 or System A initial migration unchanged. The canonical shared identity/tenant model and System A operational model must first be reconciled into one approved physical schema. RLS, grants, command transactions, cross-tenant tests, migration replay and explicit owner approval are required before enabling real student data or production deployment.
+
+## Development
+
+```bash
+cd apps/student-tracking
+npm install
+npm run typecheck
+npm test
+npm run build
+```
+
+See the master documentation index for the staged design record and implementation gates.
