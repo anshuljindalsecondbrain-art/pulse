@@ -1,7 +1,7 @@
 # PULSE — Master Documentation Index
 
 - Document ID: PULSE-GOV-REPO-003
-- Version: 0.1.0
+- Version: 0.2.0
 - Status: Draft — navigation baseline; pending owner review
 - Repository: `anshuljindalsecondbrain-art/pulse`
 - Branch baseline: `main`
@@ -33,6 +33,8 @@ This index is a navigation and governance aid. It does not approve requirements,
 | PULSE-GOV-REPO-001 | [Repository Architecture and Documentation Governance Blueprint](PULSE_REPOSITORY_ARCHITECTURE_AND_DOCUMENTATION_GOVERNANCE_BLUEPRINT.md) | Repository organization, documentation lifecycle, IDs, traceability and agent workflow | Draft; project governance baseline candidate |
 | PULSE-GOV-REPO-002 | [Repository File Inventory and Disposition Matrix](PULSE_REPOSITORY_FILE_INVENTORY_AND_DISPOSITION_MATRIX.md) | Tracked-file inventory, proposed dispositions and repository gaps | Draft; inventory baseline, owner review pending |
 | PULSE-GOV-REPO-003 | [Master Documentation Index](PULSE_MASTER_DOCUMENTATION_INDEX.md) | Project-wide documentation navigation and authority map | Draft; this document |
+| PULSE-GOV-REPO-005 | [Document Control and Change Management Standard](PULSE_DOCUMENT_CONTROL_STANDARD.md) | Branch/PR workflow, document lifecycle, semantic versioning and edit control | Draft; proposed governance standard |
+| PULSE-GOV-REPO-006 | [Central Document Change Register](PULSE_DOCUMENT_CHANGE_REGISTER.md) | Project-wide ledger of document edits, versions, PRs, commits and approvals | Draft; initial editing ledger |
 
 ## 4. Project-wide product and engineering documentation
 
@@ -44,6 +46,8 @@ This index is a navigation and governance aid. It does not approve requirements,
 | [`docs/DATABASE_GOVERNANCE.md`](../DATABASE_GOVERNANCE.md) | Database audit, migration safety, data preservation, tenant security and testing | Project-wide database governance candidate | Architecture, AGENTS, future data register |
 | [`docs/decisions/DECISION_LOG.md`](../decisions/DECISION_LOG.md) | Project-wide decision log | Decision index candidate; domain decision linking convention to be defined | Architecture and domain decision records |
 | [`AGENTS.md`](../../AGENTS.md) | AI coding-agent instructions, architecture invariants, database/security rules and reporting | Root-level agent governance candidate; reconcile with approved governance | All project governance and implementation tasks |
+| [Document Control Standard](PULSE_DOCUMENT_CONTROL_STANDARD.md) | Controlled editing, branch/PR review, document versioning and approvals | Proposed project-wide change-control standard | Central Document Change Register |
+| [Document Change Register](PULSE_DOCUMENT_CHANGE_REGISTER.md) | Central ledger of governed document edits and review/approval evidence | Proposed project-wide editing ledger | Git commits, PRs, domain registers |
 | [`README.md`](../../README.md) | Repository overview and navigation | Entry point; contains a stale audit statement requiring a separately reviewed correction | This index and project governance |
 
 ## 5. Domain documentation
@@ -80,6 +84,10 @@ The dedicated DTE documentation area is `docs/dte/`. The detailed module and art
 | [`docs/dte/current-phase/DTE-P1_OFFLINE_TAGGING_OPERATING_MODEL.md`](../dte/current-phase/DTE-P1_OFFLINE_TAGGING_OPERATING_MODEL.md) | Offline tagging operating process | Phase 1 process candidate |
 | [`docs/dte/current-phase/DTE-P1_TEMPLATE_AND_HANDOFF_SPECIFICATION.md`](../dte/current-phase/DTE-P1_TEMPLATE_AND_HANDOFF_SPECIFICATION.md) | Offline templates and handoff | Phase 1 specification candidate; operational details remain subject to confirmation |
 | [`docs/dte/current-phase/DTE-P1_REQUIREMENTS_AND_ACCEPTANCE_BASELINE.md`](../dte/current-phase/DTE-P1_REQUIREMENTS_AND_ACCEPTANCE_BASELINE.md) | Phase 1 requirement IDs and acceptance baseline | Requirements baseline candidate; full engineering traceability remains outstanding |
+
+| [`docs/dte/CONFIGURABLE_TAGGING_SYSTEM_SCOPE_CHANGE_PROPOSAL.md`](../dte/CONFIGURABLE_TAGGING_SYSTEM_SCOPE_CHANGE_PROPOSAL.md) | Configurable institute-owned tagging, contextual mapping, governance and proposed screen architecture | Draft scope-change proposal; conflicts with current offline-only boundary and requires explicit decision | PULSE-CHG-2026-11-06-001 |
+
+**Scope conflict notice:** The configurable digital tagging proposal is not yet the controlling DTE phase baseline. The existing offline-only phase decision remains in force until the product owner explicitly chooses replacement, later-phase or separate-module treatment.
 
 #### DTE module specifications
 
@@ -191,3 +199,4 @@ Lifecycle statuses should be used consistently: Proposed, Draft, In Review, Appr
 | Version | Date | Status | Change |
 |---|---|---|---|
 | 0.1.0 | 2026-11-06 | Draft | Initial project-wide index based on the inspected main-branch inventory; proposed authority assignments remain pending review |
+| 0.2.0 | 2026-11-06 | Draft | Added document control standard, central document change register and configurable tagging scope-change proposal; explicitly preserved the offline-only DTE phase boundary pending owner decision |
