@@ -8,6 +8,14 @@
 - Repository: anshuljindalsecondbrain-art/pulse
 - Last updated: 2026-11-06
 
+## Governing scope clarification — classification management software
+
+DTE manages an institution's existing academic classification and tagging structures. It does not design, prescribe, generate or impose chapter-wise syllabus bifurcation, curriculum structure, or a universal academic hierarchy.
+
+The institution or its authorized academic administrators define the classification structure and terminology. DTE provides software to record, organize, map, search, validate, review, version, govern and report on those institution-defined structures and their assignments to questions.
+
+References to chapters, topics, concepts, sub-concepts, subjects or other academic categories are examples of data an institution may choose to manage. They are not mandatory levels, a prescribed hierarchy, or a curriculum-design responsibility of DTE.
+
 ## 1. Purpose
 
 This register establishes the working inventory of functional modules and supporting capabilities required for the PULSE Deep Tagging Engine. It is a documentation control artifact, not an implementation authorization.
