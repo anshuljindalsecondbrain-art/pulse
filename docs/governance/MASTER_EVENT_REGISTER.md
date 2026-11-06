@@ -25,3 +25,5 @@ Coverage: Initial baseline; historical backfill incomplete.
 
 Rules: Allocate the next unused global ID; never recycle IDs. Create an individual event record before or alongside substantive implementation. Keep rejected, deferred, blocked and superseded events. Update this index whenever status or evidence changes. Historical coverage is incomplete; add verified events in backfill batches and do not infer missing approvals or tests.
 | PULSE-EVT-000015 | 2026-11-06 | System A doubt management command implementation | System A | Add doubt case creation, assignment, investigation, resolution, confirmation and reopening contracts | IMPLEMENTED_PENDING_CI | [Event](events/PULSE-EVT-000015.md) |
+
+| PULSE-EVT-000018 | 2026-11-06 | Architecture decision / audit finding | Platform + System A | Reconcile canonical platform identity, System A operations, authorization and deployment boundary | RECORDED_DESIGN_ONLY | [Event](events/PULSE-EVT-000018.md) |
