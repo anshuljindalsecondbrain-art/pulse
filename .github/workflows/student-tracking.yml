@@ -17,6 +17,7 @@ on:
 
 permissions:
   contents: read
+  pull-requests: read
 
 jobs:
   governance:
@@ -25,8 +26,12 @@ jobs:
     steps:
       - name: Validate pull request traceability metadata
         env:
-          PULL_REQUEST_BODY: ${{ github.event.pull_request.body }}
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPOSITORY: ${{ github.repository }}
         run: |
+          body=$(gh api repos/$REPOSITORY/pulls/$PR_NUMBER --jq .body)
+          export PULL_REQUEST_BODY="$body"
           node <<'NODE'
           const body = process.env.PULL_REQUEST_BODY || "";
           const checks = [
