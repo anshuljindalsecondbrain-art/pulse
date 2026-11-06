@@ -7,6 +7,8 @@ A fresh, isolated frontend application for System A. It implements the first int
 ```bash
 cd apps/student-tracking
 npm install
+cp .env.example .env.local
+# Fill in the Supabase project URL and publishable key in .env.local
 npm run dev
 ```
 
@@ -18,12 +20,20 @@ npm test
 npm run build
 ```
 
+## Supabase client foundation
+
+- The browser-safe client is initialized in `src/lib/supabase.ts`.
+- Configure `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` in `.env.local`.
+- `.env.local` is ignored by Git. The committed `.env.example` contains placeholders only.
+- Only a Supabase publishable key belongs in browser code. Never expose a secret or service-role key.
+- The client foundation does not yet replace the demo adapter or write student data to Supabase.
+- No tables or migrations have been applied. Authentication, tenant authorization, RLS policies and database persistence remain unimplemented.
+
 ## Current implementation boundary
 
 - This is a **frontend prototype**, not a production-connected application.
 - Data is seeded for demonstration and persisted in browser localStorage.
 - No authentication, tenant isolation, server API, database persistence, or real-time synchronization is implemented.
-- No Supabase schema or migration is included. The connected Supabase workspace was not available for a live schema audit.
 - The A/B switch is a UI concept only. Deterministic allocation and telemetry collection are not implemented.
 - Parent token links, mentor WhatsApp dispatch, and AI clustering are not implemented.
 - Do not enter real student personal data into this preview.
@@ -42,8 +52,9 @@ npm run build
 
 ## Next engineering gates
 
-1. Replace the localStorage demo adapter with authenticated, tenant-scoped data access after the actual Supabase project is connected and audited.
-2. Extend the report/verification contracts and pure projection into append-only server-side event storage and immutable assignment/exercise versions.
-3. Implement correction cycles, attempt cycles and doubt cases as separate linked records.
-4. Add RLS, cross-tenant denial tests, idempotency and audit history.
-5. Add browser tests and accessibility checks before production deployment.
+1. Inspect and finalize the System A database schema against the live Supabase project.
+2. Design institute membership, roles and tenant-scoped RLS policies; test cross-tenant denial.
+3. Implement authenticated, server-backed repositories and replace localStorage without losing demo/test workflows.
+4. Extend report/verification contracts into append-only server-side event storage and immutable assignment/exercise versions.
+5. Implement correction cycles, attempt cycles and doubt cases as separate linked records.
+6. Add idempotency, audit history, browser tests and accessibility checks before production deployment.
