@@ -34,6 +34,7 @@ npm run build
 - Generate local numbered slots without QBMS or DTE dependency.
 - Cycle cells through Unattempted → Correct → Incorrect → Doubt → Skipped → Partially Correct.
 - Domain contracts distinguish immutable student report events from separate teacher verification decisions; a report alone does not imply verification.
+- A pure projection function rebuilds the current slot view from report and verification histories, retaining the underlying event arrays and scoping decisions to the exact report event reviewed.
 - Use keyboard shortcuts on a focused matrix cell: 1 Correct, 2 Incorrect, 3 Doubt, 4 Skipped, 5 Partially Correct, 0/Backspace Unattempted; arrow keys move between cells.
 - Filter students, inspect per-question cohort signals and export the matrix as CSV.
 - Add students to the selected demo batch.
@@ -42,7 +43,7 @@ npm run build
 ## Next engineering gates
 
 1. Replace the localStorage demo adapter with authenticated, tenant-scoped data access after the actual Supabase project is connected and audited.
-2. Extend the report/verification domain contracts into append-only server-side event storage and immutable assignment/exercise versions.
+2. Extend the report/verification contracts and pure projection into append-only server-side event storage and immutable assignment/exercise versions.
 3. Implement correction cycles, attempt cycles and doubt cases as separate linked records.
 4. Add RLS, cross-tenant denial tests, idempotency and audit history.
 5. Add browser tests and accessibility checks before production deployment.
