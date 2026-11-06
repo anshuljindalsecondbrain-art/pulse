@@ -133,3 +133,14 @@ export function projectEvidence(
       latestVerification: latestDecisionByReport.get(latestReport.id) ?? null,
     }));
 }
+
+/**
+ * Produces a quoted CSV cell and neutralizes spreadsheet formula prefixes.
+ * Prefixing an apostrophe prevents spreadsheet applications from evaluating
+ * user-controlled values as formulas when the CSV is opened interactively.
+ */
+export function toSafeCsvCell(value: unknown): string {
+  const text = String(value);
+  const safe = /^[\\s]*[=+\\-@]/.test(text) ? `'${text}` : text;
+  return `"${safe.replaceAll('"', '""')}"`;
+}
