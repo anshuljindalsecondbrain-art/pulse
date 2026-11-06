@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   prepareCorrectionClose,
   prepareCorrectionReview,
+  prepareCorrectionRestart,
   prepareCorrectionStart,
   prepareCorrectionSubmission,
   type CorrectionCycle,
@@ -88,14 +89,14 @@ describe("correction workflow command contract", () => {
   it("makes exact cycle-start retries idempotent and rejects ID conflicts", () => {
     const cycle = started();
     expect(prepareCorrectionStart({
-      command: { cycleId: cycle.id, eventId: "evt-retry", instituteId: "inst-1",
+      command: { cycleId: cycle.id, eventId: "evt-start", instituteId: "inst-1",
         studentId: "stu-1", obligationId: "obl-1", actorId: "stu-1",
         reason: "Teacher returned the work", occurredAt: cycle.startedAt },
       authorizedStudentObligationIds: ["obl-1"], originalEvidence: original,
       returnedDecision: returned, existingCycles: [cycle],
     }).outcome).toBe("IDEMPOTENT_REPLAY");
     expect(() => prepareCorrectionStart({
-      command: { cycleId: cycle.id, eventId: "evt-conflict", instituteId: "inst-1",
+      command: { cycleId: cycle.id, eventId: "evt-start", instituteId: "inst-1",
         studentId: "stu-1", obligationId: "obl-1", actorId: "stu-1",
         reason: "Different start", occurredAt: cycle.startedAt },
       authorizedStudentObligationIds: ["obl-1"], originalEvidence: original,
@@ -128,7 +129,7 @@ describe("correction workflow command contract", () => {
   it("returns the original correction record on an exact idempotent retry", () => {
     const first = submitted();
     const prior = first.value.submission;
-    const replay = submit(started(), {
+    const replay = submit(first.value.cycle, {
       idempotencyKey: "correction-key-1",
     }, [prior.evidence], [prior]);
     expect(replay.outcome).toBe("IDEMPOTENT_REPLAY");
@@ -159,7 +160,7 @@ describe("correction workflow command contract", () => {
     const first = submitted();
     const returnedReview = review(first.value.cycle, first.value.submission, { outcome: "RETURNED" });
     expect(returnedReview.value.cycle.state).toBe("REQUIRED");
-    const restarted: CorrectionCycle = { ...returnedReview.value.cycle, state: "IN_PROGRESS" };
+    const restarted = prepareCorrectionRestart({\n      cycle: returnedReview.value.cycle,\n      command: { eventId: "evt-restart", actorId: "stu-1", reason: "Continue corrections",\n        occurredAt: "2026-11-06T12:30:00.000Z" },\n    }).value;
     const second = submit(restarted, {
       idempotencyKey: "correction-key-2",
       supersedesEventId: first.value.submission.evidence.id,
@@ -174,9 +175,9 @@ describe("correction workflow command contract", () => {
   it("makes exact review retries idempotent and rejects decision ID reuse with different content", () => {
     const first = submitted();
     const accepted = review(first.value.cycle, first.value.submission);
-    const replay = review(first.value.cycle, first.value.submission, {}, [accepted.value.review]);
+    const replay = review(accepted.value.cycle, first.value.submission, {}, [accepted.value.review]);
     expect(replay.outcome).toBe("IDEMPOTENT_REPLAY");
-    expect(() => review(first.value.cycle, first.value.submission, { outcome: "RETURNED" }, [accepted.value.review]))
+    expect(() => review(accepted.value.cycle, first.value.submission, { outcome: "RETURNED" }, [accepted.value.review]))
       .toThrow(/decision ID conflict/i);
   });
 
