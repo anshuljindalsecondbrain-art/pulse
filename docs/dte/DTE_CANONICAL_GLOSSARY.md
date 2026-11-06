@@ -1,8 +1,8 @@
 # DTE Canonical Glossary
 
 - Document ID: PULSE-DTE-GLOSSARY-001
-- Version: 0.1.0
-- Status: Draft — terminology harmonization; not approved for implementation
+- Version: 0.2.0
+- Status: Draft — phase-aware terminology baseline; not approved for implementation
 - Product: PULSE — Deep Tagging Engine (DTE)
 - Scope: DTE terminology and cross-system references only
 - Last updated: 2026-11-06
@@ -10,6 +10,24 @@
 ## Governing scope clarification — classification management software
 
 DTE manages institution-defined academic classification and tagging structures; it does not design, prescribe, generate or impose chapter-wise syllabus bifurcation, curriculum structure or a universal academic hierarchy. Institutions define their own categories and terminology. DTE provides the software to configure, record, map, search, validate, review, version, govern and report on those existing structures. Academic terms such as subject, chapter, topic and concept are examples of institution-managed data, not mandatory DTE levels or a curriculum-design function.
+
+## Phase-aware terminology additions — Version 0.2.0
+
+| Term | Normative meaning |
+|---|---|
+| Offline tagging framework | Institution-approved classification definitions and rules managed by DTE before question upload/digital tagging exists |
+| Offline tagging | Human application of approved values outside the DTE digital question-ingestion/tagging workflow |
+| Work package | A bounded unit of offline tagging work, identified independently from any question entity |
+| External question locator | Institution/source-specific reference used to identify a question on a sheet; not a canonical question ID |
+| Framework version | Immutable approved version of institution-defined classification configuration |
+| Template version | Version of an offline sheet/template generated against a specific framework version |
+| Handoff manifest | Versioned record identifying framework/template/work-package references and approved tagging results sent to a future module |
+| Question upload/ingestion | Later-phase process that receives question content; not part of current DTE |
+| Digital tagging | Later-phase process that attaches approved framework values to uploaded question records |
+| Technical validation | Software checks of structure, identifiers, allowed values and completeness; not academic approval |
+| Academic approval | Explicit decision by institution-authorized academic personnel |
+
+Do not use “question ID” for an external locator on an offline sheet. Do not call a template/work-package record a question record. Do not conflate framework version, template version, work-package version and future question-content version.
 
 ## 1. Purpose and authority
 
@@ -136,3 +154,10 @@ A change to one version type must not implicitly mutate another. Explicit compat
 ## 10. Change control
 
 Any term change that affects entity identity, mapping semantics, API meaning, workflow status or historical interpretation must be treated as a governed documentation change. Update this glossary, identify impacted module specifications and contracts, record the rationale, and preserve the previous Git history. Do not treat wording-only edits as approval of an unresolved architecture policy.
+
+
+## 11. Change history
+
+| Version | Date | Status | Change |
+|---|---|---|---|
+| 0.2.0 | 2026-11-06 | Draft | Added phase-aware terms for offline tagging, work packages, external locators and future digital tagging |
