@@ -33,7 +33,7 @@ All records below remain Draft proposals and are not executable authorization.
 | 6 | PULSE-DATA-CORE-006 | `PULSE_SYSTEM_A_APPLICATION_SERVICE_AND_API_CONTRACT.md` | Trusted query/command service contracts |
 | 7 | PULSE-DATA-CORE-007 | `PULSE_SYSTEM_A_DATABASE_AUTHORIZATION_AND_TRANSACTION_DESIGN.md` | Identity, role/scope authorization, RLS and atomic transactions |
 | 8 | PULSE-DATA-CORE-008 | `PULSE_SYSTEM_A_PHYSICAL_TABLE_AUTHORIZATION_AND_INTEGRITY_MAPPING.md` | Table-by-table authorization, integrity and mutation rules |
-| 9 | PULSE-DATA-CORE-009 | Next planned: canonical physical ERD and table/column data dictionary | Consolidate shared platform and System A entities before SQL |
+| 9 | PULSE-DATA-CORE-009 | `PULSE_CANONICAL_PHYSICAL_ERD_AND_DATA_DICTIONARY.md` | Unified shared platform + System A physical model, data dictionary, constraints and open decisions |
 
 ## 3. Infrastructure and delivery governance
 
