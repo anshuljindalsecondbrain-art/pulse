@@ -16,7 +16,12 @@ PULSE is a multi-institute academic technology platform. Its long-term direction
 
 ## Documentation map
 
-- [Student Tracking app prototype](apps/student-tracking/README.md)\n- [Project master plan](docs/PROJECT_MASTER_PLAN.md)
+- [Student Tracking app prototype](apps/student-tracking/README.md)
+- [PULSE governance protocol](docs/governance/EVENT_GOVERNANCE_PROTOCOL.md)
+- [Master event register](docs/governance/MASTER_EVENT_REGISTER.md)
+- [Requirement traceability](docs/governance/REQUIREMENT_TRACEABILITY.md)
+- [Architecture decision log](docs/governance/ARCHITECTURE_DECISION_LOG.md)
+- [Project master plan](docs/PROJECT_MASTER_PLAN.md)
 - [Architecture](docs/ARCHITECTURE.md)
 - [Development roadmap](docs/DEVELOPMENT_ROADMAP.md)
 - [Decision log](docs/decisions/DECISION_LOG.md)
