@@ -14,6 +14,10 @@ DTE manages institution-defined academic classification and tagging structures. 
 
 The Relationship Mapping Engine governs links between questions, question versions, classification entities, archetypes and other approved DTE entities. It provides a normalized, typed and version-aware relationship model rather than embedding arbitrary arrays or labels in question records.
 
+## Institutional authority guardrail
+
+Relationship records may be created only between endpoints and using relationship types permitted by the institution-approved active configuration. M05 must not invent, recommend as authoritative, or publish new academic relationships or hierarchy rules.
+
 ## 2. Scope
 
 In scope:
