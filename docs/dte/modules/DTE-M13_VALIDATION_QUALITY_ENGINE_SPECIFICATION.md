@@ -1,204 +1,297 @@
 # DTE-M13 — Validation & Quality Engine Specification
 
 - Document ID: PULSE-DTE-M13
-- Version: 0.1.0
-- Status: Draft — Pending product review
-- Parent: docs/dte/DTE_MODULE_REGISTER.md
+- Version: 0.2.0
+- Status: Draft — Phase 1 rewrite; pending product, academic and technical review
+- Phase: Current — offline tagging framework and operating management
+- Governing references:
+  - `docs/dte/DTE_PRODUCT_SCOPE_AND_PHASE_ROADMAP.md`
+  - `docs/dte/DTE_MODULE_PHASE_DISPOSITION.md`
+  - `docs/dte/current-phase/DTE-P1_FRAMEWORK_CONFIGURATION_SPECIFICATION.md`
+  - `docs/dte/current-phase/DTE-P1_OFFLINE_TAGGING_OPERATING_MODEL.md`
+  - `docs/dte/current-phase/DTE-P1_REQUIREMENTS_AND_ACCEPTANCE_BASELINE.md`
+  - `docs/dte/modules/DTE-M04_CLASSIFICATION_CONFIGURATION_STUDIO_SPECIFICATION.md`
+  - `docs/dte/modules/DTE-M10_REVIEW_APPROVAL_SPECIFICATION.md`
+  - `docs/dte/modules/DTE-M11_VERSION_HISTORY_MANAGER_SPECIFICATION.md`
 - Last updated: 2026-11-06
-
-## Governing scope clarification — classification management software
-
-DTE manages institution-defined academic classification and tagging structures. It does not design, prescribe, generate or impose chapter-wise syllabus bifurcation, curriculum structure or a universal academic hierarchy. Institutions define their own categories and terminology; DTE provides software to configure, record, map, search, validate, review, version, govern and report on those existing structures. Academic terms such as subject, chapter, topic and concept are examples of institution-managed data, not mandatory DTE levels or a curriculum-design function.
+- Implementation authorization: Not granted
 
 ## 1. Purpose
 
-Validation & Quality Engine evaluates whether DTE configuration and question mappings satisfy their applicable structural, semantic, workflow and completeness rules. It provides consistent validation results to Tagging Studio, Bulk Tagging, Review & Approval, dashboards and downstream consumers.
+M13 evaluates whether Phase 1 DTE framework configurations and confirmed offline-process artifacts satisfy explicit, institution-approved structural and operational rules. It provides deterministic, explainable findings to configuration and approved offline workflows.
 
-Validation determines whether defined rules pass. Quality analytics may summarize trends, but must not replace explicit rule outcomes with an opaque single score.
+M13 determines whether defined rules pass, fail or cannot be evaluated. It does not decide academic correctness. Quality reporting, if included, summarizes rule evidence and must not replace it with an opaque score.
 
-## Institutional authority guardrail
+## 2. Governing boundaries
 
-Validation rules must be derived from the applicable institution-approved configuration and its explicitly enabled policies. The engine must not enforce a universal academic hierarchy, fixed chapter/topic/concept levels, or relationships that the institution has not configured.
+1. Institution-defined academic meaning remains authoritative. M13 checks the software representation against approved requirements; it does not judge the academic merits of the classification.
+2. Rules derive only from the configured framework and explicit institution-approved constraints. No universal subject/chapter/topic/concept hierarchy, depth or tag count may be imposed.
+3. Validation is not approval. M10 owns human review and decision workflow.
+4. M04 owns framework configuration. M13 validates; it does not create or prescribe framework definitions.
+5. M11 owns version/revision/snapshot/history semantics. M13 identifies the exact evaluated inputs and rule/profile versions.
+6. Unknown, deprecated, malformed or ambiguous values are reported, never silently replaced or auto-created.
+7. An offline question locator is an external reference, not a question record.
 
-## 2. Scope
+## 3. Phase 1 scope
 
-In scope:
-- Schema/configuration validation.
-- Question mapping validation.
-- Relationship integrity validation.
-- Question type and metadata validation.
-- Archetype link validation.
-- PYQ provenance validation.
-- Configurable completeness profiles.
-- Blocking errors, warnings and informational findings.
-- Validation snapshots tied to question, mapping and schema versions.
-- Revalidation triggers and quality exception reporting.
-- Shared validation contracts for single and bulk workflows.
+### 3.1 In scope
 
-Out of scope:
-- Difficulty scoring and exam multipliers.
-- Student performance or mastery assessment.
-- Human approval decisions.
-- Authoring or changing question content.
-- Defining taxonomy structures (M04).
+- Structural validation of framework drafts and revisions.
+- Stable identifier presence, uniqueness and reference integrity.
+- Consistency of configured groups, fields, values and explicitly defined relationships.
+- Supported field type, cardinality and required/optional/conditional rule checks.
+- Validation of institution-configured constraints.
+- Lifecycle checks for inactive, deprecated or retired configuration elements where policy prohibits use.
+- Template/instruction consistency against the pinned framework version, if templates are managed by DTE.
+- Work-package metadata and pinned-version checks, if work-package management is confirmed.
+- Structural validation of completed offline sheets/files only if DTE intake is approved.
+- Actionable findings with severity, location, explanation and remediation.
+- Versioned rules, identifiable result snapshots and revalidation controls.
+- Descriptive validation/quality reporting if explicitly approved.
 
-## 3. Validation categories
+### 3.2 Conditional — requires product-owner confirmation
 
-Candidate categories:
-1. Structural — required fields, valid types, valid references.
-2. Relationship — endpoint compatibility, cardinality, prohibited cycles, primary designation constraints.
-3. Schema compatibility — mapping uses the correct schema/version and allowed nodes.
-4. Lifecycle — inactive, deprecated or retired entities used in new assignments.
-5. Metadata — allowed values, data types, applicability and cardinality.
-6. Provenance — required evidence, valid exam references and verification state.
-7. Duplicate/conflict — duplicate mappings, conflicting primary assignments or suspected duplicate questions.
-8. Completeness — configured profile requirements.
-9. Workflow readiness — requirements to save, submit, approve or publish.
-10. Migration compatibility — whether an existing mapping remains interpretable under a new schema version.
+Do not assume these features are implementation scope:
+- Intake of completed offline sheets.
+- File parsing and row/column validation.
+- Quarantine and partial-file recovery.
+- Completeness checks over offline tagging results.
+- Quality dashboards and operational threshold alerts.
+- Scheduled/background validation jobs.
 
-## 4. Rule model
+### 3.3 Explicitly out of scope
 
-Each rule should define:
-- Stable rule ID and version.
-- Name and description.
-- Applicable entity/record types.
-- Scope/tenant/schema applicability.
-- Severity: blocking error, warning or information.
-- Evaluation logic or versioned implementation reference.
-- Effective date and active state.
-- Workflow stage at which it is enforced.
+M13 MUST NOT implement in Phase 1:
+- Question upload, OCR, extraction, parsing or question-content storage.
+- Digital question inventory or question-to-tag mapping validation.
+- Question identity, version or placement validation.
+- Question type, archetype, pedagogical metadata or PYQ provenance validation as question records.
+- Digital bulk-tagging validation.
+- AI/probabilistic academic tagging or AI validation decisions.
+- Student performance, mastery, attendance or assignment validation.
+- Test paper validation, delivery or scoring.
+- Difficulty scoring, exam multipliers or DRE calculations.
+- Human approval/rejection decisions.
+- Academic taxonomy design or correction.
+
+These capabilities require separate future-phase discovery and approval.
+
+## 4. Validation domains
+
+| Domain | Phase 1 responsibility | Boundary |
+|---|---|---|
+| Framework structure | Validate configured groups, fields, values and supported structures | Does not judge academic suitability |
+| Identifier integrity | Check stable identifiers and references | Does not invent academic identifiers |
+| Field configuration | Check supported data type, cardinality and rule consistency | Does not decide which fields are mandatory |
+| Controlled values | Check IDs, labels, aliases and lifecycle references | Does not create missing academic values |
+| Configured relationships | Check endpoints and explicitly configured constraints | Does not infer unconfigured relationships |
+| Version compatibility | Check artifact references against intended framework/template version | M11 owns version semantics |
+| Template consistency | Check template against pinned framework version | Only if DTE manages templates |
+| Work-package metadata | Check identifiers and pinned versions | Only if DTE manages packages |
+| Offline submission structure | Check file/row structure and approved values | Only if intake is approved |
+| Completeness | Check explicit institution-approved profile requirements | No universal hierarchy or tag count |
+
+## 5. Rule model and governance
+
+Each rule must define:
+- Stable rule ID and rule version.
+- Name and plain-language description.
+- Applicable artifact type and institution/tenant scope.
+- Inputs evaluated.
+- Deterministic evaluation definition or versioned implementation reference.
+- Severity: Blocking Error, Warning or Information.
+- Applicable workflow stage.
+- Effective status/date.
 - Remediation guidance.
 - Owner and change history.
+- Whether it is a technical integrity rule or institution-approved policy rule.
 
-Rules must be deterministic where possible. Any probabilistic/AI-derived signal must be labelled as such and must not masquerade as a deterministic validation failure.
+Technical integrity rules require product/architecture governance. Academic or operational constraints must come from the institution's authorized authority. A rule must not make an academic category mandatory unless the institution has approved that requirement. Rule-authoring permissions and approval are open decisions.
 
-## 5. Completeness profiles
+Rules should be deterministic for the same input snapshot and rule version. Any future probabilistic/AI signal must be labelled advisory and must not masquerade as deterministic validation.
 
-Completeness is configurable and contextual.
+## 6. Severity and findings
 
-A profile should define:
-- Stable profile ID and version.
-- Applicable tenant/schema/content scope.
-- Required classification groups/fields/relationships.
-- Conditional requirements.
-- Whether metadata, question type, archetype or provenance are required.
-- Applicable workflow stage.
-- Exclusions and eligibility rules.
-- Effective dates.
+| Severity | Meaning |
+|---|---|
+| Blocking Error | Defined technical or approved policy condition is violated; the current action cannot proceed |
+| Warning | Potential issue or non-blocking condition requiring attention |
+| Information | Contextual result that does not indicate failure |
 
-The engine must calculate completeness against the exact profile version and disclose missing requirements. It must not hardcode a six-level hierarchy or a universal count of tags.
+Each finding should identify rule ID/version, severity, result, artifact and exact revision, field/relationship/row location where available, expected and observed condition, explanation, remediation and validation run.
 
-A record may be complete under one profile and incomplete under another. Dashboard and inventory consumers must display the profile context.
+“Failed” and “not evaluated” must be distinct. Missing evidence, unsupported input or an execution error must never be represented as a pass.
 
-## 6. Validation result model
+## 7. Completeness profiles
 
-Each validation run should identify:
-- Run ID.
-- Entity/question ID and exact version.
-- Mapping revision.
-- Schema ID/version.
+Completeness is optional, contextual and institution-governed. If required in Phase 1, a profile may define:
+- Stable profile ID/version and institution scope.
+- Applicable framework/version.
+- Explicitly approved required groups, fields or relationships.
+- Conditional requirements, eligibility and exclusions.
+- Applicable workflow stage and effective dates.
+- Profile owner and approval evidence.
+
+No default six-level taxonomy or universal tag count may be hardcoded. A profile cannot add categories or fields to the framework. Results must disclose the profile version and each unmet requirement. No profile is to be seeded with assumed academic requirements.
+
+## 8. Validation run and result model
+
+Each run should identify:
+- Run ID and institution scope.
+- Artifact type and stable artifact ID.
+- Exact revision/snapshot ID.
+- Framework/template version where relevant.
+- Rule-set and individual rule versions.
 - Completeness profile/version, if used.
-- Rule-set version.
-- Initiator/source (interactive, batch, scheduled, API).
-- Start/end timestamps and status.
-- Findings with rule ID, severity, field/relationship reference and remediation.
-- Summary counts.
-- Whether the result is current or stale.
+- Initiator/source (interactive, approved file intake, scheduled or API).
+- Start/end timestamps and execution status.
+- Findings and severity counts.
+- Current/stale status.
+- Correlation/idempotency reference where relevant.
 
-Validation results must be reproducible against the recorded inputs and rule versions where technically feasible.
+A result is evidence about the exact input and rule versions evaluated. It must not be detached from that context or treated as a mutable property of an artifact.
 
-## 7. Workflow enforcement
+## 9. Workflow gates
 
-Different actions may have different validation gates:
-- Save draft: basic integrity; configurable warnings may remain.
-- Submit for review: all submission-blocking rules pass.
-- Approve: reviewer policy and validation freshness requirements pass.
-- Publish: publication-blocking rules pass against the exact approved revision.
-- Bulk commit: per-record validation and job-level constraints pass.
+Candidate gates, subject to approval:
 
-The final gate matrix is an open decision. Validation engine reports outcomes; M10 owns human decisions.
+| Action | Candidate validation requirement |
+|---|---|
+| Save framework draft | Basic structural integrity; warnings may remain |
+| Submit framework for academic review | Required structural rules pass and blocking errors are resolved |
+| Academic approval | Current result for exact submitted revision; human decision still required |
+| Activate framework | Activation checks pass against exact approved revision |
+| Generate/issue template | Template matches selected approved framework version |
+| Issue work package | Required metadata and framework/template references are valid |
+| Accept completed offline sheet | File/row rules pass or submission is quarantined with actionable findings; only if intake is approved |
 
-## 8. Revalidation and stale results
+M13 reports technical outcomes. It never automatically approves or activates a framework or work package. M10 owns human decisions; framework lifecycle authority remains separately governed.
+
+## 10. Revalidation and stale results
 
 Revalidation may be required when:
-- Mapping revision changes.
-- Schema version changes.
-- A referenced node/type/metadata definition is deprecated or retired.
-- Validation rule version changes.
-- Completeness profile changes.
-- Provenance evidence changes.
-- A migration transforms mapping references.
+- Evaluated artifact revision changes.
+- Referenced framework/template version changes.
+- Relevant rule or completeness profile version changes.
+- A configured value/relationship becomes deprecated or retired.
+- A supported template/submission is corrected or transformed.
+- An approved migration changes configuration references.
 
-A stale validation result must not be shown as current. Consumers must be able to identify the exact revision and rule/profile versions evaluated.
+A result is stale when its input revision or applicable rule/profile context no longer matches the target action's required context. Consumers must not use stale results to satisfy a gate requiring current validation. Any freshness window is a workflow-policy decision, not a hardcoded assumption.
 
-## 9. Quality indicators
+## 11. Failure and exception handling
 
-Candidate indicators include:
-- Percentage of eligible records passing a named completeness profile.
-- Count of blocking errors and warnings.
-- Duplicate mapping rate.
-- Invalid relationship rate.
-- Review rejection/rework rate.
-- Provenance verification coverage.
-- Stale validation result count.
+- Execution failure is distinct from rule failure.
+- Partial validation identifies rules run and not run.
+- Timeout/service failure is never a pass.
+- Retrying a run preserves previous result evidence.
+- File parsing failure, if intake is approved, retains the submission reference and gives actionable diagnostics.
+- Unknown values are surfaced for authorized human resolution; they are not auto-mapped.
+- Any permitted waiver requires explicit authority, reason, scope, expiry where applicable and audit evidence.
 
-Any aggregate quality measure must have a documented formula, denominator and time window. Do not create an unexplained composite quality score in this module.
+## 12. Quality reporting
 
-## 10. Security and performance
+If Phase 1 reporting is confirmed, possible descriptive indicators include:
+- Framework configurations passing/failing named structural rules.
+- Blocking errors and warnings by rule.
+- Unresolved configuration defects.
+- Offline submission outcomes, if intake is approved.
+- Completeness against a named approved profile.
+- Stale validation result counts.
+- Repeated error categories that may indicate unclear instructions.
 
-- Validate tenant scope and permissions for all reads and writes.
-- Do not expose hidden field values in findings.
-- Use asynchronous execution for large batches.
-- Cache only with rule/profile/schema/revision context in the cache key.
-- Index common validation dimensions and exception states.
-- Preserve validation history according to retention policy.
-- Prevent users from modifying rule outcomes through client-side parameters.
+Every aggregate metric must disclose formula, numerator/denominator, eligible population, exclusions, time window, rule/profile version and source/refresh timing. M13 must not create an unexplained composite score or imply that structural validity equals academic quality. Broader productivity/coverage analytics belong to the approved reporting owner.
 
-## 11. Acceptance criteria
+## 13. Security, performance and audit
 
-1. Validation rules are versioned and identifiable.
-2. Findings distinguish blocking errors, warnings and information.
-3. Completeness is evaluated against an explicit profile/version.
-4. No fixed taxonomy depth or tag count is hardcoded.
-5. Validation results identify exact question, mapping, schema and rule versions.
-6. Stale results are clearly identified and cannot satisfy current publication gates.
-7. Single-record and bulk workflows use consistent rules.
-8. Review and publication gates are configurable and explicit.
-9. Probabilistic suggestions are distinguished from deterministic validation.
-10. No difficulty or student-performance scoring is performed.
+1. Enforce tenant/resource authorization for rules, runs, findings and reports.
+2. Do not expose restricted field values or source content in findings.
+3. Record initiator and exact evaluation context.
+4. Protect approved rules/profiles from unauthorized change.
+5. Version and audit rule/profile changes.
+6. Large file/batch validation, if approved, may run asynchronously with explicit progress and failure states.
+7. Cache only when keys include artifact, revision, framework, rule and profile context.
+8. Client parameters cannot override server-side outcomes.
+9. Retain validation history under the approved retention policy.
+10. Define file/row/resource limits and performance targets before production; none are assumed here.
 
-## 12. Dependencies
+## 14. Dependencies and ownership
 
-- M04 Classification Configuration Studio.
-- M05 Relationship Mapping Engine.
-- M06 Archetype Management.
-- M07 Question Type Manager.
-- M08 Pedagogical Metadata Manager.
-- M09 PYQ Provenance Manager.
-- M10 Review & Approval.
-- M11 Version & History Manager.
-- M12 Bulk Tagging Manager.
+- **M04:** owns framework definitions and constraints; M13 validates structural consistency.
+- **M10:** owns human review decisions; M13 supplies evidence and never approves.
+- **M11:** owns version/revision/snapshot/history semantics; M13 references exact versions.
+- **Phase 1 operating workflow:** defines offline process; M13 validates only approved software-managed portions.
+- **Identity/authorization:** supplies actor and scope controls.
+- **M01:** may present authorized summaries but does not own rule outcomes.
+- **M14 or shared reporting:** may aggregate approved quality facts; metric ownership needs confirmation.
+- **Student Tracking:** remains independent; missing DTE tags/validation must not block student workflows.
 
-## 13. Open decisions
+M05–M09, M12 digital bulk tagging, question inventory, digital mapping, AI assistance, Q-GENOME and DRE are not Phase 1 implementation dependencies.
 
-| ID | Question | Status |
-|---|---|---|
-| DTE-M13-OD-001 | Which validation rules are mandatory for the initial release? | Open |
-| DTE-M13-OD-002 | Who can create/edit rule definitions and completeness profiles? | Open |
-| DTE-M13-OD-003 | Which default completeness profiles should be seeded? | Open |
-| DTE-M13-OD-004 | What are the exact save/submit/approve/publish validation gates? | Open |
-| DTE-M13-OD-005 | Which rule changes require revalidation of existing mappings? | Open |
-| DTE-M13-OD-006 | What is the acceptable validation freshness window for publication? | Open |
-| DTE-M13-OD-007 | Are quality indicators strictly descriptive or used in operational thresholds? | Open |
+## 15. Acceptance criteria
 
-## 14. Change history
+| ID | Acceptance criterion |
+|---|---|
+| M13-AC-001 | Each executed rule has an identifiable ID/version and scope. |
+| M13-AC-002 | Findings distinguish Blocking Error, Warning and Information. |
+| M13-AC-003 | Each result identifies exact artifact revision and applicable framework/template/rule/profile versions. |
+| M13-AC-004 | No fixed taxonomy depth, chapter field or universal tag count is hardcoded. |
+| M13-AC-005 | Unknown/deprecated values are reported, never silently replaced or created. |
+| M13-AC-006 | Failed/not-evaluated states are never represented as pass. |
+| M13-AC-007 | Completeness is evaluated only against an explicit approved profile. |
+| M13-AC-008 | Stale results cannot satisfy a gate requiring current validation. |
+| M13-AC-009 | Technical validation never automatically approves or activates a framework. |
+| M13-AC-010 | Rule/profile changes are versioned and auditable. |
+| M13-AC-011 | Retry preserves prior validation evidence. |
+| M13-AC-012 | Tenant/resource permissions apply to rules, results, findings and exports. |
+| M13-AC-013 | Phase 1 has no question-content ingestion or digital question-record validation path. |
+| M13-AC-014 | Student Tracking and DRE responsibilities are not duplicated. |
+| M13-AC-015 | Aggregate metrics disclose formulas, denominators and rule/profile context. |
+
+## 16. Open decisions
+
+| ID | Decision required | Owner | Status |
+|---|---|---|---|
+| DTE-M13-OD-001 | Which framework structural rules are mandatory for initial Phase 1 release? | Product + Architecture | Open |
+| DTE-M13-OD-002 | Who may create/change technical rules and institution-approved profiles? | Product + Academic Authority | Open |
+| DTE-M13-OD-003 | Are completeness profiles required; if yes, who supplies them? | Product + Academic Authority | Open |
+| DTE-M13-OD-004 | Is completed offline sheet intake into DTE required? | Product + Operations | Open |
+| DTE-M13-OD-005 | If intake is required, which formats, row limits and error-handling rules apply? | Product + Engineering | Open |
+| DTE-M13-OD-006 | What are the exact save/submit/approve/activate gates? | Product + Academic Authority | Open |
+| DTE-M13-OD-007 | Which rule/profile changes require revalidation and what freshness policy applies? | Product + Architecture | Open |
+| DTE-M13-OD-008 | Are waivers permitted; who authorizes them and under what controls? | Product + Academic Authority | Open |
+| DTE-M13-OD-009 | Which quality indicators are required and who owns their definitions? | Product Owner | Open |
+| DTE-M13-OD-010 | What performance, concurrency and retention targets apply? | Architecture + QA + Security | Open |
+| DTE-M13-OD-011 | Is asynchronous or scheduled validation required in Phase 1? | Product + Engineering | Open |
+
+## 17. Implementation readiness
+
+Before implementation:
+1. Confirm the Phase 1 artifacts M13 validates.
+2. Resolve whether completed offline sheets are ingested into DTE.
+3. Obtain institution-approved constraints and any completeness profiles.
+4. Define rule ownership, severity and change approval.
+5. Ratify gates with M04/M10/M11 owners.
+6. Define stale-result and revalidation semantics.
+7. Approve waiver, security, retention and performance controls.
+8. Trace accepted rules to UX, data, authorization and executable tests.
+9. Obtain explicit product, academic, architecture, operations, security and QA approval.
+
+This draft authorizes no schema, API, UI, validation job, automation or production change.
+
+## 18. Change history
 
 | Version | Date | Status | Change |
 |---|---|---|---|
-| 0.1.0 | 2026-11-06 | Draft | Initial validation and quality specification |
+| 0.1.0 | 2026-11-06 | Superseded Draft | Initial broad specification included digital question mapping, metadata, provenance, bulk and publication validation |
+| 0.2.0 | 2026-11-06 | Draft | Rewritten for Phase 1 framework/offline-process validation; separated technical validation from academic approval; deferred digital question and student/difficulty validation |
 
-## 15. Approval
+## 19. Approval
 
 - Product owner: Pending
-- Technical review: Pending
+- Academic authority: Pending
+- Operations owner: Pending
+- Architecture: Pending
+- Security: Pending
+- QA: Pending
 - Implementation authorization: Not granted
