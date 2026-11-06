@@ -16,6 +16,10 @@ Configuration Version Manager governs the lifecycle of classification schemas an
 
 M15 is the lifecycle authority for configuration versions. M04 provides the configuration authoring experience; M11 provides the shared revision and audit history capability.
 
+## Institutional authority guardrail
+
+M15 versions and publishes configuration artifacts representing structures defined and approved by the institution. Technical validation and publication controls do not grant DTE authority to determine academic meaning or approve curriculum structure on the institution's behalf.
+
 ## 2. Scope
 
 In scope:
