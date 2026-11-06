@@ -1,8 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { prepareAnswerEvaluation } from "./answer-evaluation-domain";
+import type { AnswerEvaluationObligation } from "./answer-evaluation-domain";
 import type { SystemAWorkEvidence, SystemAVerificationDecision } from "./workflow-domain";
 
-const obligation = Object.freeze({
+const obligation: AnswerEvaluationObligation = Object.freeze({
   id: "obligation-1", instituteId: "inst-1", studentId: "student-1",
   exerciseSlotId: "slot-1", eligibility: "ELIGIBLE" as const,
 });
