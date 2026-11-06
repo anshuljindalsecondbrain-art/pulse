@@ -140,14 +140,15 @@ export function buildTeacherVerificationQueue(input: {
       const slot = version?.slots.find((item) => item.id === obligation.exerciseSlotId);
       if (!version || !slot) return [];
 
-      const report = latestByRecordedAt(input.evidence.filter((item) =>
+      const latestReport = latestByRecordedAt(input.evidence.filter((item) =>
         item.obligationId === obligation.id &&
         item.studentId === obligation.studentId &&
         item.instituteId === obligation.instituteId &&
-        item.source === "STUDENT_SELF_REPORT" &&
-        item.workProgress === "SUBMITTED",
+        item.source === "STUDENT_SELF_REPORT",
       ));
-      if (!report) return [];
+      // A later report supersedes an earlier submission for queue purposes.
+      if (!latestReport || latestReport.workProgress !== "SUBMITTED") return [];
+      const report = latestReport;
 
       const decision = latestDecision(input.decisions, report.id, "COMPLETION");
       const state: TeacherVerificationQueueItem["state"] =
