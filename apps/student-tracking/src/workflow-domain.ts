@@ -163,8 +163,8 @@ export function createWorkEvidence(input: SystemAWorkEvidence): SystemAWorkEvide
   if (input.source === "AUTHORIZED_GUARDIAN_INPUT" && input.actorRole !== "PARENT") {
     throw new Error("Guardian input must be attributed to a parent actor.");
   }
-  if (input.workProgress === "SKIPPED" && input.source === "STUDENT_SELF_REPORT" && input.actorRole !== "STUDENT") {
-    throw new Error("A student skip report must be attributed to the student.");
+  if (input.source === "SYSTEM_IMPORT" && input.actorRole !== "SYSTEM") {
+    throw new Error("System import evidence must be attributed to the system actor.");
   }
   return Object.freeze({ ...input });
 }
@@ -250,19 +250,19 @@ export function deriveSystemAMetrics(input: {
   const attempted = new Set(studentReports
     .filter((event) => event.workProgress === "ATTEMPTED" || event.workProgress === "SUBMITTED")
     .map((event) => event.obligationId)).size;
-  const skipped = new Set(studentReports
-    .filter((event) => event.workProgress === "SKIPPED")
-    .map((event) => event.obligationId)).size;
+  const skipped = [...latestStudentReport.values()]
+    .filter((event) => event.workProgress === "SKIPPED").length;
 
   let verifiedComplete = 0;
-  for (const [obligationId, event] of latestStudentReport) {
+  const currentReportIds = new Set([...latestStudentReport.values()].map((event) => event.id));
+  for (const event of latestStudentReport.values()) {
     const completion = latestDecision.get(`${event.id}|COMPLETION`);
     const correction = latestDecision.get(`${event.id}|CORRECTION`);
     if (completion?.outcome === "CONFIRMED" || correction?.outcome === "ACCEPTED") verifiedComplete += 1;
-    void obligationId;
   }
 
   const evaluations = [...latestDecision.values()].filter((decision) =>
+    currentReportIds.has(decision.evidenceEventId) &&
     decision.purpose === "ANSWER_EVALUATION" &&
     ["CORRECT", "INCORRECT", "PARTIALLY_CORRECT"].includes(decision.outcome),
   );
