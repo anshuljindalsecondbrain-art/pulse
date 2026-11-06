@@ -95,6 +95,28 @@ describe("read-only evidence timeline projection", () => {
     expect(result.entries.filter(x => x.sourceType === "VERIFICATION_DECISION")).toHaveLength(2);
   });
 
+  it("does not expose foreign-scope evidence or decision supersession links", () => {
+    const foreignEvidence = evidence({
+      id: "foreign-evidence", studentId: "student-2", actorId: "student-2",
+      supersedesEventId: "ev-1",
+    });
+    const priorDecision = decision({ id: "prior-in-scope" });
+    const foreignDecision = decision({
+      id: "foreign-decision", evidenceEventId: "foreign-evidence",
+      supersedesDecisionId: "prior-in-scope",
+    });
+    const result = buildEvidenceTimeline({
+      ...empty, evidence: [evidence(), foreignEvidence],
+      decisions: [priorDecision, foreignDecision],
+    });
+    const originalEvidence = result.entries.find(x => x.sourceReference.id === "ev-1");
+    const originalDecision = result.entries.find(x => x.sourceReference.id === "prior-in-scope");
+    expect(originalEvidence?.supersededByEventId).toBeUndefined();
+    expect(originalDecision?.supersededByDecisionId).toBeUndefined();
+    expect(result.entries.some(x => x.sourceReference.id === "foreign-evidence")).toBe(false);
+    expect(result.entries.some(x => x.sourceReference.id === "foreign-decision")).toBe(false);
+  });
+
   it("projects correction lifecycle transitions only through a matching cycle", () => {
     const result = buildEvidenceTimeline({ ...empty, correctionCycles: [cycle],
       correctionTransitions: [correctionEvent(), correctionEvent({ id: "ct-2", action: "RETURN", fromState: "RESUBMITTED", toState: "REQUIRED" }),
