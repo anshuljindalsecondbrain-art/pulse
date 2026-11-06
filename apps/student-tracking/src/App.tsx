@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from "react";\nimport type { FormEvent, KeyboardEvent, ReactNode } from "react";
+import { useEffect, useMemo, useState } from "react";
+import type { FormEvent, KeyboardEvent, ReactNode } from "react";
 import { Activity, ArrowRight, Bell, BookOpen, CalendarDays, Check, CheckCheck, ChevronDown, CircleHelp, ClipboardList, Command, Download, GraduationCap, LayoutDashboard, Plus, Search, Settings2, ShieldCheck, Sparkles, Users, X } from "lucide-react";
 
 type Status = "U" | "C" | "I" | "D" | "S" | "P";
@@ -9,8 +10,9 @@ const statusMeta: Record<Status, { label: string; tone: string; next: Status }> 
   U: { label: "Unattempted", tone: "neutral", next: "C" },
   C: { label: "Correct", tone: "green", next: "I" },
   I: { label: "Incorrect", tone: "red", next: "D" },
-  D: { label: "Doubt", tone: "amber", next: "T" },
-  S: { label: "Skipped", tone: "neutral", next: "P" },\n  P: { label: "Partially correct", tone: "violet", next: "U" }
+  D: { label: "Doubt", tone: "amber", next: "S" },
+  S: { label: "Skipped", tone: "neutral", next: "P" },
+  P: { label: "Partially correct", tone: "violet", next: "U" }
 };
 const initialStudents: Student[] = [
   { id: "s1", name: "Aarav Sharma", roll: "P-021", batch: "JEE XII · Alpha" },
@@ -57,7 +59,8 @@ function App() {
   const [due, setDue] = useState("2026-11-08");
   const [toast, setToast] = useState("");
   const [filter, setFilter] = useState("All students");
-  const [experiment, setExperiment] = useState<"A" | "B">("B");\n  const [focusedCell, setFocusedCell] = useState({ studentIndex: 0, questionIndex: 0 });
+  const [experiment, setExperiment] = useState<"A" | "B">("B");
+  const [focusedCell, setFocusedCell] = useState({ studentIndex: 0, questionIndex: 0 });
 
   useEffect(() => { localStorage.setItem("pulse.students", JSON.stringify(students)); }, [students]);
   useEffect(() => { localStorage.setItem("pulse.exercises", JSON.stringify(exercises)); }, [exercises]);
@@ -95,14 +98,36 @@ function App() {
     const csv = rows.map(r => r.map(v => `"${String(v).replaceAll('"','""')}"`).join(",")).join("\n");
     const url = URL.createObjectURL(new Blob([csv],{type:"text/csv"})); const a=document.createElement("a"); a.href=url; a.download=`${exercise.name.replaceAll(" ","-")}-matrix.csv`; a.click(); URL.revokeObjectURL(url);
   }
-  function addStudent(e: React.FormEvent) {
+  function addStudent(e: FormEvent<HTMLFormElement>) {
     e.preventDefault(); const form = e.currentTarget as HTMLFormElement; const data = new FormData(form);
     const name=String(data.get("name")||"").trim(); if(!name) return;
     setStudents(prev=>[...prev,{id:`s${Date.now()}`,name,roll:String(data.get("roll")||`P-${String(prev.length+1).padStart(3,"0")}`),batch}]); form.reset(); setShowStudents(false); setToast("Student added to the selected batch.");
   }
   function handleKeys(e: KeyboardEvent<HTMLDivElement>) {
-    if ((e.target as HTMLElement).tagName === "INPUT" || (e.target as HTMLElement).tagName === "SELECT" || (e.target as HTMLElement).tagName === "TEXTAREA") return;
-    if (["1","2","3","4","5"].includes(e.key)) { e.preventDefault(); const states:Status[]=["U","C","I","D","T"]; const el=document.activeElement as HTMLElement; const sid=el?.dataset?.student; const q=Number(el?.dataset?.question); if(sid&&q) updateMark(sid,q,states[Number(e.key)-1]); }
+    const target = e.target as HTMLElement;
+    if (target.matches("input, select, textarea, [contenteditable='true']")) return;
+    const cells = Array.from(e.currentTarget.querySelectorAll<HTMLButtonElement>(".status-cell"));
+    const activeIndex = cells.indexOf(document.activeElement as HTMLButtonElement);
+
+    if (e.key === "ArrowRight" || e.key === "ArrowLeft" || e.key === "ArrowDown" || e.key === "ArrowUp") {
+      if (!cells.length) return;
+      e.preventDefault();
+      const current = activeIndex < 0 ? 0 : activeIndex;
+      const rowWidth = exercise?.count ?? 1;
+      const delta = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : e.key === "ArrowDown" ? rowWidth : -rowWidth;
+      cells[Math.max(0, Math.min(cells.length - 1, current + delta))]?.focus();
+      return;
+    }
+
+    const shortcuts: Record<string, Status> = { "1": "C", "2": "I", "3": "D", "4": "S", "5": "P", "0": "U", Backspace: "U" };
+    const nextStatus = shortcuts[e.key];
+    const activeCell = document.activeElement as HTMLButtonElement;
+    const studentId = activeCell?.dataset?.student;
+    const questionNumber = Number(activeCell?.dataset?.question);
+    if (nextStatus && studentId && questionNumber) {
+      e.preventDefault();
+      updateMark(studentId, questionNumber, nextStatus);
+    }
   }
 
   return <div className="app-shell">
