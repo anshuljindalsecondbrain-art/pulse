@@ -1,8 +1,8 @@
 # PULSE — Central Document Change Register
 
 - Document ID: PULSE-GOV-REPO-006
-- Version: 0.1.0
-- Status: Draft — initial central editing ledger
+- Version: 0.1.1
+- Status: Draft — active PR review
 - Owner: Product Owner / Repository Maintainer
 - Repository: `anshuljindalsecondbrain-art/pulse`
 - Canonical branch: `main`
@@ -48,18 +48,18 @@ A change may be merged while its product decision remains Draft or Proposed.
 
 | Change ID | Date | Class | Summary | Branch / PR | Affected documents | Version change | Approval | Status |
 |---|---|---|---|---|---|---|---|---|
-| PULSE-CHG-2026-11-06-001 | 2026-11-06 | SPEC / ADR / GOV / INDEX | Record configurable institute-owned tagging proposal; establish central document editing control; reconcile the proposal with the existing offline-only DTE boundary without overwriting it | `docs/configurable-tagging-governance-2026-11-06` / PR pending | PULSE-DTE-CHG-001; PULSE-GOV-REPO-003; PULSE-GOV-REPO-005; PULSE-GOV-REPO-006; PULSE-DTE-REG-002; D-010 | New docs 0.1.0; index 0.2.0; DTE register 0.4.7; decision log appended | Product owner pending; architecture review pending; academic authority pending | In Progress |
+| PULSE-CHG-2026-11-06-001 | 2026-11-06 | SPEC / ADR / GOV / INDEX | Record configurable institute-owned tagging proposal; establish central document editing control; reconcile the proposal with the existing offline-only DTE boundary without overwriting it | `docs/configurable-tagging-governance-2026-11-06` / [PR #3](https://github.com/anshuljindalsecondbrain-art/pulse/pull/3) — commit `809c2831aaa7da49cc251e275707089dfcff5c2d` | PULSE-DTE-CHG-001; PULSE-GOV-REPO-003; PULSE-GOV-REPO-005; PULSE-GOV-REPO-006; PULSE-DTE-REG-002; D-010 | New docs 0.1.0; index 0.2.0; DTE register 0.4.7; decision log appended | Product owner pending; architecture review pending; academic authority pending | In Review |
 
 ## 5. Document edit ledger
 
 | Change ID | Document ID | Canonical path | Previous version | New version | Edit summary |
 |---|---|---|---|---|---|
 | PULSE-CHG-2026-11-06-001 | PULSE-GOV-REPO-005 | `docs/00_PROJECT_GOVERNANCE/PULSE_DOCUMENT_CONTROL_STANDARD.md` | N/A | 0.1.0 | Created branch/PR, document lifecycle, semantic versioning and edit-control standard |
-| PULSE-CHG-2026-11-06-001 | PULSE-GOV-REPO-006 | `docs/00_PROJECT_GOVERNANCE/PULSE_DOCUMENT_CHANGE_REGISTER.md` | N/A | 0.1.0 | Created central document editing and approval ledger |
+| PULSE-CHG-2026-11-06-001 | PULSE-GOV-REPO-006 | `docs/00_PROJECT_GOVERNANCE/PULSE_DOCUMENT_CHANGE_REGISTER.md` | 0.1.0 | 0.1.1 | Added PR #3 and commit reference; status moved to In Review |
 | PULSE-CHG-2026-11-06-001 | PULSE-GOV-REPO-003 | `docs/00_PROJECT_GOVERNANCE/PULSE_MASTER_DOCUMENTATION_INDEX.md` | 0.1.0 | 0.2.0 | Added document control, central editing ledger and configurable tagging proposal navigation |
 | PULSE-CHG-2026-11-06-001 | PULSE-DTE-CHG-001 | `docs/dte/CONFIGURABLE_TAGGING_SYSTEM_SCOPE_CHANGE_PROPOSAL.md` | N/A | 0.1.0 | Captured Parts 2.1–2.7 as a proposed digital configurable tagging scope with DTE/DRE/STS ownership boundaries |
 | PULSE-CHG-2026-11-06-001 | PULSE-DTE-REG-002 | `docs/dte/DTE_MASTER_DOCUMENTATION_REGISTER.md` | 0.4.6 | 0.4.7 | Added pending scope-change proposal; retained offline-phase authority |
-| PULSE-CHG-2026-11-06-001 | PULSE-ADR-D-010 | `docs/decisions/DECISION_LOG.md` | Existing log | Appended proposal | Recorded digital configurable tagging scope change as proposed, not accepted |
+| PULSE-CHG-2026-11-06-001 | D-010 (decision-log entry) | `docs/decisions/DECISION_LOG.md` | Existing log | Appended proposal | Recorded digital configurable tagging scope change as proposed, not accepted |
 
 ## 6. Review and approval record
 
@@ -85,3 +85,4 @@ A change may be merged while its product decision remains Draft or Proposed.
 | Version | Date | Status | Change |
 |---|---|---|---|
 | 0.1.0 | 2026-11-06 | Draft | Initial central editing ledger and first governed change entry |
+| 0.1.1 | 2026-11-06 | Draft | Recorded PR #3, branch commit SHA and In Review status |
