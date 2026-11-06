@@ -1,7 +1,7 @@
 # DTE Master Documentation Register
 
 - Document ID: PULSE-DTE-REG-002
-- Version: 0.4.5
+- Version: 0.4.6
 - Status: Draft — full phase-aware documentation baseline
 - Product: PULSE — Deep Tagging Engine (DTE)
 - Scope: DTE only. Other PULSE systems appear only as external owners/consumers in DTE contracts.
@@ -124,7 +124,7 @@ The following 18 legacy module specifications exist as draft documents. Their ap
 
 | Module | Document | Repository path | Status |
 |---|---|---|---|
-| M01 | DTE Dashboard Specification | `docs/dte/modules/DTE-M01_DASHBOARD_SPECIFICATION.md` | Existing — Draft |
+| M01 | DTE Dashboard Specification | `docs/dte/modules/DTE-M01_DASHBOARD_SPECIFICATION.md` | Rewritten v0.2.0 — Draft; Phase 1 |
 | M02 | Question Inventory Specification | `docs/dte/modules/DTE-M02_QUESTION_INVENTORY_SPECIFICATION.md` | Existing — Draft |
 | M03 | Tagging Studio Specification | `docs/dte/modules/DTE-M03_TAGGING_STUDIO_SPECIFICATION.md` | Existing — Draft |
 | M04 | Classification Configuration Studio Specification | `docs/dte/modules/DTE-M04_CLASSIFICATION_CONFIGURATION_STUDIO_SPECIFICATION.md` | Rewritten v0.2.0 — Draft; Phase 1 |
@@ -320,7 +320,7 @@ Decision papers additionally record options considered, selected direction, cons
 | Version | Date | Status | Change |
 |---|---|---|---|
 | 0.2.0 | 2026-11-06 | Draft | Audited and consolidated documentation architecture; established 50 core documents, mapped 18 existing module specifications and existing audit/decision records, added ownership, dependencies, gates and open-decision tracking |
-| 0.3.0 | 2026-11-06 | Draft | Rebased current scope to offline tagging framework definition/management; deferred question upload, digital inventory/tagging, question identity/version and Q-GENOME decisions to a separate later phase; added phase applicability and revised approval gates |\n| 0.4.0 | 2026-11-06 | Draft | Added full phase-aware audit, product roadmap, legacy module disposition and Phase 1 operating model, framework configuration, template/handoff and requirements baselines |\n| 0.4.1 | 2026-11-06 | Draft | Added future question upload and digital-tagging discovery brief to the controlled documentation register |\n| 0.4.2 | 2026-11-06 | Draft | Updated M04 register status after complete Phase 1 rewrite and GitHub verification |\n| 0.4.3 | 2026-11-06 | Draft | Updated M10 register status after complete Phase 1 review/approval rewrite; aligned header version with latest changelog |\n| 0.4.4 | 2026-11-06 | Draft | Updated M11 register status after complete Phase 1 version/history rewrite |\n| 0.4.5 | 2026-11-06 | Draft | Updated M13 register status after complete Phase 1 validation/quality rewrite |
+| 0.3.0 | 2026-11-06 | Draft | Rebased current scope to offline tagging framework definition/management; deferred question upload, digital inventory/tagging, question identity/version and Q-GENOME decisions to a separate later phase; added phase applicability and revised approval gates |\n| 0.4.0 | 2026-11-06 | Draft | Added full phase-aware audit, product roadmap, legacy module disposition and Phase 1 operating model, framework configuration, template/handoff and requirements baselines |\n| 0.4.1 | 2026-11-06 | Draft | Added future question upload and digital-tagging discovery brief to the controlled documentation register |\n| 0.4.2 | 2026-11-06 | Draft | Updated M04 register status after complete Phase 1 rewrite and GitHub verification |\n| 0.4.3 | 2026-11-06 | Draft | Updated M10 register status after complete Phase 1 review/approval rewrite; aligned header version with latest changelog |\n| 0.4.4 | 2026-11-06 | Draft | Updated M11 register status after complete Phase 1 version/history rewrite |\n| 0.4.5 | 2026-11-06 | Draft | Updated M13 register status after complete Phase 1 validation/quality rewrite |\n| 0.4.6 | 2026-11-06 | Draft | Updated M01 register status after complete Phase 1 dashboard rewrite |
 
 ## 13. Approval
 
