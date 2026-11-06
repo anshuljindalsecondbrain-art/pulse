@@ -134,3 +134,20 @@ Added `src/teacher-verification-domain.ts` and `src/teacher-verification-domain.
 - Supports exact decision retry and rejects conflicting decision-ID reuse.
 
 **Boundary:** The authorized obligation list is supplied by the caller and is not itself authorization. The server must derive reviewer role and scope from authenticated context. The helper does not persist decisions or enforce RLS/transactional uniqueness.
+
+
+
+## Correction workflow command increment (2026-11-06)
+
+Added `src/correction-workflow-domain.ts` and `src/correction-workflow-domain.test.ts`:
+
+- Starts a correction cycle only from the exact RETURNED completion decision attached to the original submitted student evidence.
+- Binds the cycle to institute, learner, obligation, question slot, original evidence, original attempt-cycle ID and originating return decision.
+- Appends a new immutable student evidence event for correction; requires the original attempt-cycle ID to be preserved and the latest event in the correction chain to be superseded.
+- Supports exact idempotent start, submission and review retries; rejects conflicting identifier reuse.
+- Supports teacher/academic-reviewer acceptance or return of the exact latest correction submission.
+- Repeated returns restart the same correction cycle and retain the complete prior evidence and review chain.
+- Closes only after the latest correction submission has an ACCEPTED correction decision.
+- Every transition requires an actor, reason and valid timestamp.
+
+**Boundary:** This is a pure domain command contract. It does not authenticate users, authorize tenant/assignment scope, persist records, guarantee concurrent idempotency, or replace RLS and server-side role validation. No database schema or production data was changed.
