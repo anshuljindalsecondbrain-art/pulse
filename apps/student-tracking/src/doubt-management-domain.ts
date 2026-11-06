@@ -187,7 +187,8 @@ function sameTransitionPayload(existing: DoubtEvent, c: DoubtTransitionCommand, 
     existing.action === c.action &&
     existing.reason === c.reason.trim() &&
     existing.occurredAt === c.occurredAt &&
-    existing.assignedToId === c.assignedToId &&\n    existing.resolutionNote === c.resolutionNote;
+    existing.assignedToId === c.assignedToId &&
+    existing.resolutionNote === c.resolutionNote;
 }
 
 /** Append one authorized transition to the immutable history of a doubt case. */
