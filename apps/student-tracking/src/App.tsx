@@ -3,6 +3,7 @@ import type { FormEvent, KeyboardEvent, ReactNode } from "react";
 import { isAttemptedStatus, nextStatus, toSafeCsvCell, type Status } from "./domain";
 import { DEMO_BATCHES, DEMO_EXERCISES, DEMO_MARKS, DEMO_STUDENTS } from "./demo-data";
 import { OFFLINE_MODULES } from "./offline-catalog";
+import { evaluateAcademicEligibility } from "./academic-eligibility-domain";
 import { Activity, ArrowRight, Bell, BookOpen, CalendarDays, Check, CheckCheck, ChevronDown, CircleHelp, ClipboardList, Command, Download, GraduationCap, LayoutDashboard, Plus, Search, Settings2, ShieldCheck, Sparkles, Users, X } from "lucide-react";
 
 type Student = { id: string; name: string; roll: string; batch: string };
@@ -49,6 +50,22 @@ function App() {
   const exercise = exercises.find(e => e.id === activeExercise) ?? exercises[0];
   const selectedModule = OFFLINE_MODULES.find(module => module.id === selectedModuleId) ?? OFFLINE_MODULES[0];
   const roster = students.filter(s => s.batch === selectedBatch);
+  const assignmentRoster = students.filter(s => s.batch === batch);
+  const batchClass = batch.includes("XI") ? "XI" : batch.includes("XII") ? "XII" : null;
+  const assignmentEligibility = useMemo(() => {
+    if (!batchClass) return { eligible: [], excluded: assignmentRoster.map(student => ({ student, reason: "INVALID_CONTEXT" as const })) };
+    const evaluated = assignmentRoster.map(student => ({
+      student,
+      result: evaluateAcademicEligibility(
+        { learnerId: student.id, classLevel: batchClass, stream: "JEE" },
+        { contentId: selectedModule.id, classLevel: selectedModule.classLevel, stream: selectedModule.examTrack, subject: selectedModule.subject },
+      ),
+    }));
+    return {
+      eligible: evaluated.filter(item => item.result.eligible).map(item => item.student),
+      excluded: evaluated.filter(item => !item.result.eligible).map(item => ({ student: item.student, reason: item.result.reason })),
+    };
+  }, [assignmentRoster, batchClass, selectedModule]);
   const visibleStudents = roster.filter(s => s.name.toLowerCase().includes(query.toLowerCase()) || s.roll.toLowerCase().includes(query.toLowerCase())).filter(s => filter === "All students" || (filter === "Needs attention" && Array.from({length: exercise?.count ?? 0}, (_,i) => marks[`${s.id}-${exercise?.id}-${i+1}`] ?? "U").some(v => v === "D" || v === "I")));
   const questionStats = useMemo(() => Array.from({length: exercise?.count ?? 0}, (_,i) => {
     const states = roster.map(s => marks[`${s.id}-${exercise?.id}-${i+1}`] ?? "U");
@@ -68,6 +85,10 @@ function App() {
   function assignFromOfflineModule(e: FormEvent) {
     e.preventDefault();
     if (!selectedModule || selectedQuestionIds.length === 0) return;
+    if (assignmentEligibility.eligible.length === 0) {
+      setToast("No students in this batch are academically eligible for the selected module.");
+      return;
+    }
     const item: Exercise = {
       id: `assignment-${Date.now()}`,
       name: selectedModule.title,
@@ -85,7 +106,7 @@ function App() {
     setSelectedBatch(item.batch);
     setShowCreator(false);
     setTab("matrix");
-    setToast(`Assigned ${selectedQuestionIds.length} existing questions from ${selectedModule.chapter}.`);
+    setToast(`Assigned ${selectedQuestionIds.length} questions to ${assignmentEligibility.eligible.length} eligible learners.`);
   }
   function toggleQuestion(questionId: string) {
     setSelectedQuestionIds(current => current.includes(questionId)
@@ -175,7 +196,12 @@ function App() {
         <footer className="footer"><span>© 2026 PULSE Academic OS</span><span>ABHYAS MATRIX <i>·</i> SYSTEM A</span><span>Built for focused academic operations</span></footer>
       </div>
     </main>
-    {showCreator&&<div className="modal-backdrop" onMouseDown={e=>{if(e.target===e.currentTarget)setShowCreator(false);}}><form className="modal" onSubmit={assignFromOfflineModule}><div className="modal-head"><div><div className="panel-kicker">OFFLINE MODULE CATALOGUE</div><h2>Assign existing questions</h2><p>Select a module and its existing question references. No new questions are created.</p></div><button type="button" className="icon-btn" onClick={()=>setShowCreator(false)}><X size={18}/></button></div><label>Academic module<select value={selectedModuleId} onChange={e=>{const module=OFFLINE_MODULES.find(item=>item.id===e.target.value);if(module){setSelectedModuleId(module.id);setSelectedQuestionIds(module.questions.slice(0,Math.min(12,module.questions.length)).map(q=>q.id));}}}>{OFFLINE_MODULES.map(module=><option key={module.id} value={module.id}>{module.title} · {module.subject} · Class {module.classLevel}</option>)}</select></label><div className="form-grid"><label>Subject<input value={selectedModule.subject} readOnly/></label><label>Chapter<input value={selectedModule.chapter} readOnly/></label></div><div className="form-grid"><label>Exam / Class<input value={selectedModule.examTrack+" · Class "+selectedModule.classLevel} readOnly/></label><label>Assign to batch<select value={batch} onChange={e=>setBatch(e.target.value)}>{DEMO_BATCHES.map(item=><option key={item}>{item}</option>)}</select></label></div><div className="question-picker-head"><b>Select questions</b><span>{selectedQuestionIds.length} of {selectedModule.questions.length} selected</span><button type="button" className="text-btn" onClick={()=>setSelectedQuestionIds(selectedModule.questions.map(q=>q.id))}>Select all</button><button type="button" className="text-btn" onClick={()=>setSelectedQuestionIds([])}>Clear</button></div><div className="question-picker">{selectedModule.questions.map(question=><label className="question-option" key={question.id}><input type="checkbox" checked={selectedQuestionIds.includes(question.id)} onChange={()=>toggleQuestion(question.id)}/><span>{question.label}</span><small>{question.difficulty}</small></label>)}</div><label>Due date<input type="date" value={due} onChange={e=>setDue(e.target.value)}/></label><div className="slot-preview"><div><b>Assignment preview</b><span>Selected source question IDs are retained with the assignment.</span></div><div className="slot-samples"><span>{selectedQuestionIds.length} questions</span><span>{selectedModule.subject}</span></div></div><div className="modal-actions"><button type="button" className="btn secondary" onClick={()=>setShowCreator(false)}>Cancel</button><button type="submit" className="btn primary" disabled={selectedQuestionIds.length===0}><Plus size={15}/> Assign selected questions</button></div></form></div>}
+    {showCreator&&<div className="modal-backdrop" onMouseDown={e=>{if(e.target===e.currentTarget)setShowCreator(false);}}><form className="modal" onSubmit={assignFromOfflineModule}><div className="modal-head"><div><div className="panel-kicker">OFFLINE MODULE CATALOGUE</div><h2>Assign existing questions</h2><p>Select a module and its existing question references. No new questions are created.</p></div><button type="button" className="icon-btn" onClick={()=>setShowCreator(false)}><X size={18}/></button></div><label>Academic module<select value={selectedModuleId} onChange={e=>{const module=OFFLINE_MODULES.find(item=>item.id===e.target.value);if(module){setSelectedModuleId(module.id);setSelectedQuestionIds(module.questions.slice(0,Math.min(12,module.questions.length)).map(q=>q.id));}}}>{OFFLINE_MODULES.map(module=><option key={module.id} value={module.id}>{module.title} · {module.subject} · Class {module.classLevel}</option>)}</select></label><div className="form-grid"><label>Subject<input value={selectedModule.subject} readOnly/></label><label>Chapter<input value={selectedModule.chapter} readOnly/></label></div><div className="form-grid"><label>Exam / Class<input value={selectedModule.examTrack+" · Class "+selectedModule.classLevel} readOnly/></label><label>Assign to batch<select value={batch} onChange={e=>setBatch(e.target.value)}>{DEMO_BATCHES.map(item=><option key={item}>{item}</option>)}</select></label></div><div className="question-picker-head"><b>Select questions</b><span>{selectedQuestionIds.length} of {selectedModule.questions.length} selected</span><button type="button" className="text-btn" onClick={()=>setSelectedQuestionIds(selectedModule.questions.map(q=>q.id))}>Select all</button><button type="button" className="text-btn" onClick={()=>setSelectedQuestionIds([])}>Clear</button></div><div className="question-picker">{selectedModule.questions.map(question=><label className="question-option" key={question.id}><input type="checkbox" checked={selectedQuestionIds.includes(question.id)} onChange={()=>toggleQuestion(question.id)}/><span>{question.label}</span><small>{question.difficulty}</small></label>)}</div><label>Due date<input type="date" value={due} onChange={e=>setDue(e.target.value)}/></label><div className="eligibility-preview" role="status" aria-live="polite">
+        <div className="eligibility-summary"><ShieldCheck size={15}/><b>{assignmentEligibility.eligible.length} of {assignmentRoster.length} learners eligible</b><span>{assignmentEligibility.excluded.length} excluded by academic rules</span></div>
+        {assignmentEligibility.excluded.length > 0 && <ul>{assignmentEligibility.excluded.slice(0, 4).map(({ student, reason }) => <li key={student.id}>{student.name}: {reason.replaceAll("_", " ").toLowerCase()}</li>)}</ul>}
+        <small>Eligibility uses the selected batch's demo class/stream and the module's class/stream metadata. Server-side validation is required in production.</small>
+      </div>
+      <div className="slot-preview"><div><b>Assignment preview</b><span>Selected source question IDs are retained with the assignment.</span></div><div className="slot-samples"><span>{selectedQuestionIds.length} questions</span><span>{selectedModule.subject}</span></div></div><div className="modal-actions"><button type="button" className="btn secondary" onClick={()=>setShowCreator(false)}>Cancel</button><button type="submit" className="btn primary" disabled={selectedQuestionIds.length===0 || assignmentEligibility.eligible.length===0}><Plus size={15}/> Assign selected questions</button></div></form></div>}
     {showStudents&&<div className="modal-backdrop" onMouseDown={e=>{if(e.target===e.currentTarget)setShowStudents(false);}}><form className="modal compact-modal" onSubmit={addStudent}><div className="modal-head"><div><div className="panel-kicker">ROSTER MANAGEMENT</div><h2>Add a student</h2><p>Add a learner to the currently selected batch.</p></div><button type="button" className="icon-btn" onClick={()=>setShowStudents(false)}><X size={18}/></button></div><label>Student name<input name="name" autoFocus required placeholder="Full name"/></label><label>Roll number<input name="roll" placeholder="e.g. P-064"/></label><label>Batch<select value={batch} onChange={e=>setBatch(e.target.value)}><option>JEE XII · Alpha</option><option>JEE XII · Beta</option><option>JEE XI · Alpha</option></select></label><div className="modal-actions"><button type="button" className="btn secondary" onClick={()=>setShowStudents(false)}>Cancel</button><button type="submit" className="btn primary"><Plus size={15}/> Add student</button></div></form></div>}
     {toast&&<div className="toast"><Check size={16}/>{toast}</div>}
   </div>;
