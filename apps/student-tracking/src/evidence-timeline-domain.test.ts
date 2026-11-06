@@ -102,6 +102,40 @@ describe("read-only evidence timeline projection", () => {
     expect(result.entries.map(x => x.kind)).toEqual(["CORRECTION_STARTED", "CORRECTION_RETURNED"]);
   });
 
+  it("projects correction reviews and links them to their exact correction evidence", () => {
+    const correctionDecision: SystemAVerificationDecision = {
+      id: "correction-review-1", instituteId: "inst-1", obligationId: "obl-1",
+      evidenceEventId: "ev-correction", verifierId: "teacher-1", purpose: "CORRECTION",
+      outcome: "ACCEPTED", reason: "Correction is complete", decidedAt: "2026-11-06T11:30:00.000Z",
+    };
+    const correctionEvidence = evidence({
+      id: "ev-correction", occurredAt: "2026-11-06T11:20:00.000Z",
+      recordedAt: "2026-11-06T11:21:00.000Z", supersedesEventId: "ev-1",
+    });
+    const submission: CorrectionSubmission = {
+      correctionCycleId: "cycle-1", originatingReturnedDecisionId: "return-1",
+      evidence: correctionEvidence, submittedAt: correctionEvidence.recordedAt,
+    };
+    const review: CorrectionReviewRecord = { correctionCycleId: "cycle-1", decision: correctionDecision };
+    const result = buildEvidenceTimeline({
+      ...empty, evidence: [evidence(), correctionEvidence], correctionCycles: [cycle],
+      correctionSubmissions: [submission], correctionReviews: [review],
+    });
+    const entry = result.entries.find(x => x.sourceReference.id === "correction-review-1");
+    expect(entry?.kind).toBe("CORRECTION_REVIEW");
+    expect(entry?.relatedEvidenceEventId).toBe("ev-correction");
+    expect(result.entries.find(x => x.sourceReference.id === "ev-correction")?.kind).toBe("CORRECTION_SUBMISSION");
+  });
+
+  it("does not misclassify unrelated verification purposes as answer evaluations", () => {
+    const result = buildEvidenceTimeline({ ...empty, evidence: [evidence()], decisions: [
+      decision({ purpose: "ATTEMPT", outcome: "CONFIRMED" }),
+      decision({ id: "solve", purpose: "INDEPENDENT_SOLVE", outcome: "CORRECT" }),
+    ] });
+    expect(result.entries).toHaveLength(1);
+    expect(result.entries[0].kind).toBe("STUDENT_SUBMISSION");
+  });
+
   it("projects doubt raise, resolution, confirmation and reopening events", () => {
     const result = buildEvidenceTimeline({ ...empty, doubtCases: [doubt], doubtEvents: [
       doubtEvent(), doubtEvent({ id: "de-2", action: "RESOLVE", actorId: "teacher-1", actorRole: "TEACHER", fromState: "IN_PROGRESS", toState: "RESOLVED" }),
