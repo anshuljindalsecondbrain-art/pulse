@@ -33,7 +33,7 @@ export const DEMO_MARKS: Record<string, "U" | "C" | "I" | "D" | "S" | "P"> = Obj
   DEMO_STUDENTS.flatMap((student, studentIndex) =>
     Array.from({ length: 12 }, (_, questionIndex) => {
       const status = sampleStatuses[(studentIndex * 3 + questionIndex * 5 + (studentIndex % 3)) % sampleStatuses.length];
-      return [`${student.id}-demo-e1-${questionIndex + 1}`, status];
+      return [`${student.id}-demo-e1-${questionIndex + 1}`, status] as const;
     }),
   ),
 );
