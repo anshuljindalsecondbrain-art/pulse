@@ -57,3 +57,23 @@ Teacher observation is a separate evidence event and actor source; it must not b
 - Do not apply the proposed migration to production until the authorization design, academic decisions and database tests are approved.
 - Do not expose a Supabase secret/service-role key in browser code.
 - Do not mark System A production-ready merely because a frontend preview builds.
+
+
+## Additional domain implementation (2026-11-06)
+
+The following domain-only increment has been added after the initial repository adapter:
+
+- `src/workflow-domain.ts`
+  - Canonical work progress, answer evaluation, doubt, verification and correction dimensions.
+  - Evidence source and actor-role contracts.
+  - Immutable typed evidence and purpose-specific verification decision constructors.
+  - Separately denominated reported progress, verified progress and answer accuracy projections.
+  - Explicit handling for eligible, exempted and removed obligations.
+  - Accuracy is calculated only from answer-evaluation decisions attached to the current report; completion confirmation does not imply correctness.
+- `src/workflow-transitions.ts`
+  - Doubt assignment, work, resolution, student confirmation and reopening transitions.
+  - Correction start, resubmission, return, acceptance and closure transitions.
+  - Actor-category and reason validation at the domain boundary.
+- Corresponding unit tests are in `workflow-domain.test.ts` and `workflow-transitions.test.ts`.
+
+**Boundary:** These are pure domain contracts and deterministic helpers. They do not persist events, enforce tenant membership, prove role grants, implement database transactions, or replace RLS. Academic policy approval, server-side authorization, integration tests and operational UI remain outstanding.
