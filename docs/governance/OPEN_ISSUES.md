@@ -60,3 +60,12 @@ The following are the verified live states at the time of this refresh. These ar
 | PULSE-ISSUE-0021 | Shared Platform / Academic Core | D-001 product decision permits multiple concurrent active enrollments within and across institutes; Academic Owner confirmation remains outstanding | High | OPEN | Academic Owner to confirm enrollment semantics, overlap rules and uniqueness business keys before schema freeze; preserve tenant isolation and explicit active-context resolution |
 
 Evidence: PULSE-EVT-000020 and PULSE-DATA-CORE-010. Product decision recorded; this does not authorize SQL or migration changes.
+
+
+## 2026-11-06 — D-003 hybrid authorization product decision recorded
+
+| Issue ID | Module | Description | Severity | Status | Dependency / next action |
+|---|---|---|---|---|---|
+| PULSE-ISSUE-0022 | Shared Platform / Authorization | D-003 product decision selects hybrid RBAC + resource/assignment scope + explicit action permissions; Security Owner approval remains outstanding | Blocking | OPEN | Security Owner to approve role catalogue, permission semantics, scope hierarchy, trusted enforcement points and deny-by-default tests before schema freeze or live authorization enablement |
+
+Evidence: PULSE-EVT-000021 and PULSE-DATA-CORE-010. Product decision recorded; no SQL, RLS or grant changes authorized.
