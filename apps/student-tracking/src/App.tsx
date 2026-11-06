@@ -32,7 +32,8 @@ function App() {
   const [marks, setMarks] = useState<Marks>(() => readStore("pulse.demo.v2.marks", seedMarks));
   const [activeExercise, setActiveExercise] = useState("demo-e1");
   const [query, setQuery] = useState("");
-  const [showCreator, setShowCreator] = useState(false);\n  const [showExerciseBuilder, setShowExerciseBuilder] = useState(false);
+  const [showCreator, setShowCreator] = useState(false);
+  const [showExerciseBuilder, setShowExerciseBuilder] = useState(false);
   const [showStudents, setShowStudents] = useState(false);
   const [tab, setTab] = useState<"matrix" | "overview">("matrix");
   const [selectedModuleId, setSelectedModuleId] = useState("offline-phy-rot-xii");
