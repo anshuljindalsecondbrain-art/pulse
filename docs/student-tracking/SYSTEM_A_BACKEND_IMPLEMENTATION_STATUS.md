@@ -272,3 +272,14 @@ Added pure TypeScript contracts and tests:
 - `createAttemptCycle` validates explicit INITIAL/REVISION/RETEST/CORRECTION cycle semantics.
 
 These are pure domain modules. They do not yet alter the demo UI, persist records, enforce authorization or implement the database constraints. Academic owner confirmation is still required for the final semantics of COMMON batches and the Partially Correct interaction state.
+
+
+## Assignment eligibility UI integration — 2026-11-06
+
+- The assignment creator now evaluates the selected offline module against the selected demo batch's academic context.
+- XI batches are blocked from XII-only modules; XII batches can receive XI revision modules.
+- Stream/subject compatibility is evaluated using the pure academic eligibility domain.
+- The creator shows the eligible learner count, excluded count and exclusion reasons, and disables assignment when no learner is eligible.
+- Assignment toast reports the eligible learner count.
+- This is a demo-UI integration only. Demo batch metadata is inferred from the sample batch label and uses JEE as its stream; production must load authoritative, effective-dated academic context from the trusted backend and repeat the eligibility check server-side.
+- Existing localStorage persistence and fictional roster remain unchanged. No live student data or Supabase write path was introduced.
