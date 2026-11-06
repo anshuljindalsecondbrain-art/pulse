@@ -272,6 +272,12 @@ export function buildEvidenceTimeline(input: {
     }));
   }
 
+  const timelineIds = new Set<string>();
+  for (const entry of entries) {
+    if (timelineIds.has(entry.id)) throw new Error(`Composite timeline ID collision: ${entry.id}.`);
+    timelineIds.add(entry.id);
+  }
+
   entries.sort((a, b) =>
     Date.parse(a.eventAt) - Date.parse(b.eventAt) || a.id.localeCompare(b.id));
   return Object.freeze({
