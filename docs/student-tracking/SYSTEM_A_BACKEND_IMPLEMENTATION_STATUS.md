@@ -104,3 +104,17 @@ Added `src/worklist-domain.ts` and `src/worklist-domain.test.ts`:
 - Matches completion decisions to the exact evidence event and resolves decision history deterministically.
 
 **Boundary:** These are pure read-model projections. They do not authenticate the learner, authorize teacher batch scope, query Supabase, persist verification decisions, or provide operational UI. Server-side identity and tenant authorization remain mandatory.
+
+
+## Student evidence submission command increment (2026-11-06)
+
+Added `src/evidence-submission-domain.ts` and `src/evidence-submission-domain.test.ts`:
+
+- Validates that a self-report is attributed to the learner identity supplied by the trusted caller.
+- Checks institute, learner, eligible obligation, assignment version and exact question-slot consistency.
+- Recognizes an exact idempotent retry and returns the original immutable evidence record.
+- Rejects reuse of an idempotency key with a changed submission payload.
+- Requires a resubmission to supersede evidence for the same learner and obligation; correction resubmission preserves the original attempt-cycle identifier.
+- Creates a new append-only evidence event and never mutates historical records.
+
+**Boundary:** This is a pure command-preparation contract. It does not authenticate the actor, authorize tenant membership, read or write Supabase, or enforce concurrent idempotency. Production requires server-derived identity and scope, database uniqueness constraints, and a transactional write path.
