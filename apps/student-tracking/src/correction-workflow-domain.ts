@@ -345,7 +345,8 @@ export function prepareCorrectionReview(input: {
   const evidence = submission.evidence;
   if (c.instituteId !== cycle.instituteId || c.obligationId !== cycle.obligationId ||
       evidence.instituteId !== cycle.instituteId || evidence.obligationId !== cycle.obligationId ||
-      evidence.studentId !== cycle.studentId || evidence.attemptCycleId !== cycle.originalAttemptCycleId ||\n      evidence.source !== "STUDENT_SELF_REPORT" || evidence.actorRole !== "STUDENT" || evidence.workProgress !== "SUBMITTED") {
+      evidence.studentId !== cycle.studentId || evidence.attemptCycleId !== cycle.originalAttemptCycleId ||
+      evidence.source !== "STUDENT_SELF_REPORT" || evidence.actorRole !== "STUDENT" || evidence.workProgress !== "SUBMITTED") {
     throw new Error("Correction review crosses institute, learner, obligation or attempt scope.");
   }
   if (c.reviewerId === cycle.studentId) throw new Error("A learner cannot review their own correction.");
