@@ -236,6 +236,9 @@ export function prepareCorrectionSubmission(input: {
   if (c.instituteId !== cycle.instituteId || c.obligationId !== cycle.obligationId) {
     throw new Error("Correction submission crosses institute or obligation scope.");
   }
+  if (c.workProgress !== "SUBMITTED") {
+    throw new Error("A correction reviewable submission must have SUBMITTED work progress.");
+  }
   if (c.attemptCycleId !== cycle.originalAttemptCycleId) {
     throw new Error("Correction must preserve the original attemptCycleId.");
   }
