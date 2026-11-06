@@ -192,3 +192,20 @@ Added `src/answer-evaluation-domain.ts` and `src/answer-evaluation-domain.test.t
 - Keeps completion decisions separate; evaluation neither confirms nor implies completion.
 
 **Boundary:** Pure domain command contract only. Authorized obligation scope and evaluator role are caller-supplied validation inputs, not proof of authorization. Server-derived identity/role/scope, persistence, RLS, database integration tests and operational review UI remain outstanding. No database schema or production data was changed.
+
+
+## Evidence timeline projection increment (2026-11-06)
+
+Added `src/evidence-timeline-domain.ts` and `src/evidence-timeline-domain.test.ts`:
+
+- Builds a read-only chronological projection from existing immutable work evidence, verification decisions, correction transitions/submissions/reviews and doubt events.
+- Preserves distinct kinds for student submissions, teacher observations, completion verification, answer evaluation, correction lifecycle/review and doubt lifecycle.
+- Uses composite source IDs and exact source references to avoid collisions between event collections.
+- Joins decisions through exact evidence event IDs and matching institute/obligation scope; correction events through exact correction cycles; doubt events through exact doubt cases.
+- Filters by institute and learner, with optional obligation and exercise-slot scope.
+- Retains event time separately from evidence recorded time and decision time.
+- Preserves superseded evidence and decisions and exposes supersession relationships where represented by source contracts.
+- Sorts deterministically by event time and composite timeline ID; freezes output without mutating source records.
+- Does not synthesize assignment publication events because no immutable assignment-publication event contract is available.
+
+**Boundary:** Domain-only projection. Input scope and source arrays are caller-supplied and are not authorization. Production requires tenant-scoped server retrieval, RLS, persistent query/index design, API integration and browser/accessibility tests. No database migration or production data write was performed.
