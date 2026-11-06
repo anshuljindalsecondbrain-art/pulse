@@ -37,7 +37,10 @@ No decision may be marked APPROVED solely because it appears in a design documen
 - **Why it matters:** Determines enrollment cardinality, active-context selection, batch membership, reporting and authorization joins.
 - **Required approver:** Product Owner + Academic Owner.
 - **Schema impact:** Shared enrollment and batch-membership constraints; active-context resolution.
-- **Status:** OPEN.
+- **Product decision recorded (2026-11-06):** ALLOW multiple concurrent active enrollments. Scope: both within the same institute (including across centres/programmes/sessions where independently valid) and across different institutes. Multiple batch memberships are permitted when each membership is valid under its associated enrollment and institutional rules. No global one-active-enrollment-per-student uniqueness constraint is permitted.
+- **Operational implication:** Active academic context must be selected/resolved explicitly; it must not be inferred from a single globally unique active enrollment. Cross-institute access remains tenant-isolated and requires a separate authorized membership in each institute.
+- **Approval status:** Product decision recorded at the user's direction; Academic Owner approval remains pending.
+- **Status:** BLOCKED — awaiting Academic Owner approval.
 
 ### D-002 — Guardian identity and relationship verification
 
