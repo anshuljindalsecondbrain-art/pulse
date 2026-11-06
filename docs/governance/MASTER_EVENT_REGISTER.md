@@ -11,5 +11,6 @@ Coverage: Initial baseline; historical backfill incomplete.
 | PULSE-EVT-000004 | 2026-11-06 | Prototype stabilization | System A | Fix batch view mutation and subject persistence | IMPLEMENTED_PENDING_CI | [Event](events/PULSE-EVT-000004.md) |
 | PULSE-EVT-000005 | 2026-11-06 | Prototype stabilization / data safety | System A | Harden CSV export and keyboard reset | IMPLEMENTED_PENDING_CI | [Event](events/PULSE-EVT-000005.md) |
 | PULSE-EVT-000006 | 2026-11-06 | Database architecture / migration | System A | Add proposed System A database baseline (not applied) | PROPOSED_NOT_APPLIED | [Event](events/PULSE-EVT-000006.md) |
+| PULSE-EVT-000007 | 2026-11-06 | Engineering quality / database delivery | System A | Add System A CI and Supabase migration runbook | IMPLEMENTED_PENDING_CI | [Event](events/PULSE-EVT-000007.md) |
 
 Rules: Allocate the next unused global ID; never recycle IDs. Create an individual event record before or alongside substantive implementation. Keep rejected, deferred, blocked and superseded events. Update this index whenever status or evidence changes. Historical coverage is incomplete; add verified events in backfill batches and do not infer missing approvals or tests.
