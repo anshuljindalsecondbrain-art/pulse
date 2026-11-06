@@ -59,7 +59,7 @@ describe("read-only evidence timeline projection", () => {
     const result = buildEvidenceTimeline({ ...empty, evidence: [evidence()], decisions: [
       decision(), decision({ id: "decision-2", purpose: "ANSWER_EVALUATION", outcome: "INCORRECT" }),
     ] });
-    expect(result.entries.map(x => x.kind)).toEqual(["COMPLETION_VERIFICATION", "ANSWER_EVALUATION", "STUDENT_SUBMISSION"]);
+    expect(result.entries.map(x => x.kind)).toEqual(["STUDENT_SUBMISSION", "COMPLETION_VERIFICATION", "ANSWER_EVALUATION"]);
   });
 
   it("does not infer completion from an answer-evaluation decision", () => {
