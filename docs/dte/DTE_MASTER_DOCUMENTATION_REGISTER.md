@@ -127,7 +127,7 @@ The following 18 legacy module specifications exist as draft documents. Their ap
 | M01 | DTE Dashboard Specification | `docs/dte/modules/DTE-M01_DASHBOARD_SPECIFICATION.md` | Existing — Draft |
 | M02 | Question Inventory Specification | `docs/dte/modules/DTE-M02_QUESTION_INVENTORY_SPECIFICATION.md` | Existing — Draft |
 | M03 | Tagging Studio Specification | `docs/dte/modules/DTE-M03_TAGGING_STUDIO_SPECIFICATION.md` | Existing — Draft |
-| M04 | Classification Configuration Studio Specification | `docs/dte/modules/DTE-M04_CLASSIFICATION_CONFIGURATION_STUDIO_SPECIFICATION.md` | Existing — Draft |
+| M04 | Classification Configuration Studio Specification | `docs/dte/modules/DTE-M04_CLASSIFICATION_CONFIGURATION_STUDIO_SPECIFICATION.md` | Rewritten v0.2.0 — Draft; Phase 1 |
 | M05 | Relationship Mapping Engine Specification | `docs/dte/modules/DTE-M05_RELATIONSHIP_MAPPING_ENGINE_SPECIFICATION.md` | Existing — Draft |
 | M06 | Archetype Management Specification | `docs/dte/modules/DTE-M06_ARCHETYPE_MANAGEMENT_SPECIFICATION.md` | Existing — Draft |
 | M07 | Question Type Manager Specification | `docs/dte/modules/DTE-M07_QUESTION_TYPE_MANAGER_SPECIFICATION.md` | Existing — Draft |
@@ -320,7 +320,7 @@ Decision papers additionally record options considered, selected direction, cons
 | Version | Date | Status | Change |
 |---|---|---|---|
 | 0.2.0 | 2026-11-06 | Draft | Audited and consolidated documentation architecture; established 50 core documents, mapped 18 existing module specifications and existing audit/decision records, added ownership, dependencies, gates and open-decision tracking |
-| 0.3.0 | 2026-11-06 | Draft | Rebased current scope to offline tagging framework definition/management; deferred question upload, digital inventory/tagging, question identity/version and Q-GENOME decisions to a separate later phase; added phase applicability and revised approval gates |\n| 0.4.0 | 2026-11-06 | Draft | Added full phase-aware audit, product roadmap, legacy module disposition and Phase 1 operating model, framework configuration, template/handoff and requirements baselines |\n| 0.4.1 | 2026-11-06 | Draft | Added future question upload and digital-tagging discovery brief to the controlled documentation register |
+| 0.3.0 | 2026-11-06 | Draft | Rebased current scope to offline tagging framework definition/management; deferred question upload, digital inventory/tagging, question identity/version and Q-GENOME decisions to a separate later phase; added phase applicability and revised approval gates |\n| 0.4.0 | 2026-11-06 | Draft | Added full phase-aware audit, product roadmap, legacy module disposition and Phase 1 operating model, framework configuration, template/handoff and requirements baselines |\n| 0.4.1 | 2026-11-06 | Draft | Added future question upload and digital-tagging discovery brief to the controlled documentation register |\n| 0.4.2 | 2026-11-06 | Draft | Updated M04 register status after complete Phase 1 rewrite and GitHub verification |
 
 ## 13. Approval
 
