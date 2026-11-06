@@ -151,3 +151,13 @@ Added `src/correction-workflow-domain.ts` and `src/correction-workflow-domain.te
 - Every transition requires an actor, reason and valid timestamp.
 
 **Boundary:** This is a pure domain command contract. It does not authenticate users, authorize tenant/assignment scope, persist records, guarantee concurrent idempotency, or replace RLS and server-side role validation. No database schema or production data was changed.
+
+
+## Correction workflow command increment — validation result (2026-11-06)
+
+- Exact validated branch head: `3b64343a999e4d78869ef0de3d0e1248500cc857`.
+- System A CI: passed (typecheck, complete unit test suite, production build, migration static guardrails).
+- Student Tracking prototype workflow: passed (typecheck, complete unit test suite, production build and governance metadata).
+- Correction workflow test file contains 16 test cases; the full System A test suite passed.
+- The correction workflow remains DOMAIN_ONLY. Authentication, trusted authorization, persistence, RLS, database integration tests and operational UI are not implemented by this increment.
+- No Supabase migration was applied and no production student data was changed.
