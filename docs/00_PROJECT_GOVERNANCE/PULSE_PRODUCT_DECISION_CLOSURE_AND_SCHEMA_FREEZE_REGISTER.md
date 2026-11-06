@@ -58,7 +58,10 @@ No decision may be marked APPROVED solely because it appears in a design documen
 - **Why it matters:** Role-name-only checks cannot safely express centre, batch, student or assigned-resource boundaries.
 - **Required approver:** Product Owner + Security Owner.
 - **Schema impact:** Role catalogue, role-permission mapping, membership assignments, scope grants and trusted authorization functions.
-- **Status:** OPEN.
+- **Product decision recorded (2026-11-06):** HYBRID authorization: combine role-based access control (RBAC), resource/assignment scope, and explicit action permissions. A role alone never grants unrestricted access to all resources. Authorization must evaluate the actor's tenant membership, assigned resource scope and permission for the requested action; absent or ambiguous grants deny access by default.
+- **Operational implication:** Role definitions, permission catalogue, role-permission assignments and resource-scope grants are distinct concepts. Scope checks must be enforced at trusted service/database boundaries, not only in UI navigation or client-side filtering.
+- **Approval status:** Product decision recorded at the user's direction; Security Owner approval remains pending.
+- **Status:** BLOCKED — awaiting Security Owner approval.
 
 ### D-004 — Teacher/reviewer resource scope representation
 
