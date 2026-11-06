@@ -42,7 +42,8 @@ const submit = (cycle: CorrectionCycle, overrides: Record<string, unknown> = {},
       reason: "Corrected the derivation", supersedesEventId: "e-original", ...overrides,
     },
     existingEvidence: [original, ...evidence], existingSubmissions: submissions,
-    newEvidenceId: overrides.idempotencyKey === "correction-key-2" ? "e-correction-2" : "e-correction-1",\n    eventId: overrides.idempotencyKey === "correction-key-2" ? "evt-submit-2" : "evt-submit-1",
+    newEvidenceId: overrides.idempotencyKey === "correction-key-2" ? "e-correction-2" : "e-correction-1",
+    eventId: overrides.idempotencyKey === "correction-key-2" ? "evt-submit-2" : "evt-submit-1",
   });
 const submitted = () => submit(started());
 const review = (cycle: CorrectionCycle, submission: CorrectionSubmission, overrides: Record<string, unknown> = {}, history: CorrectionReviewRecord[] = []) =>
