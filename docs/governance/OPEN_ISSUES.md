@@ -71,3 +71,12 @@ Evidence: PULSE-EVT-000020 and PULSE-DATA-CORE-010. Product decision recorded; t
 Evidence: PULSE-EVT-000021 and PULSE-DATA-CORE-010. Product decision recorded; no SQL, RLS or grant changes authorized.
 
 | PULSE-ISSUE-0024 | System A / Assignments | D-005 hybrid publication roster decision recorded; Academic Owner approval and lifecycle policy sign-off remain outstanding | Blocking | OPEN | Approve immutable publication snapshots with explicit, audited teacher-controlled additions/removals before schema freeze |
+
+
+## 2026-11-06 — D-004 hybrid resource-scope product decision recorded
+
+| Issue ID | Module | Description | Severity | Status | Dependency / next action |
+|---|---|---|---|---|---|
+| PULSE-ISSUE-0023 | Shared Platform / Authorization | D-004 selects typed assignments for core academic resources plus a controlled extension mechanism for future resource types; Technical Owner and Security Owner approval remain outstanding | Blocking | OPEN | Define typed tenant-qualified core assignment relations and the extension registration contract; approve authorization, lifecycle/revocation, referential integrity and cross-tenant negative tests before schema freeze |
+
+Evidence: PULSE-EVT-000022 and PULSE-DATA-CORE-010. Product decision recorded; no SQL, RLS, grants or migration changes authorized.
