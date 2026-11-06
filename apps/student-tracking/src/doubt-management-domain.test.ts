@@ -101,9 +101,9 @@ describe("System A doubt management command contract", () => {
     const first = opened();
     const assigned = advance(first.value, [first.event!], "ASSIGN", "teacher-1", "TEACHER",
       { assignedToId: "teacher-1" });
-    expect(() => advance(assigned.value.doubtCase, [first.event!, assigned.event],
+    expect(() => advance(assigned.value.doubtCase, [first.event!, assigned.value.event],
       "START_INVESTIGATION", "teacher-2", "TEACHER")).toThrow(/assigned academic actor/i);
-    const started = advance(assigned.value.doubtCase, [first.event!, assigned.event],
+    const started = advance(assigned.value.doubtCase, [first.event!, assigned.value.event],
       "START_INVESTIGATION", "teacher-1", "TEACHER");
     expect(started.value.doubtCase.state).toBe("IN_PROGRESS");
   });
@@ -112,18 +112,18 @@ describe("System A doubt management command contract", () => {
     const first = opened();
     const assigned = advance(first.value, [first.event!], "ASSIGN", "teacher-1", "TEACHER",
       { assignedToId: "teacher-1" });
-    const started = advance(assigned.value.doubtCase, [first.event!, assigned.event],
+    const started = advance(assigned.value.doubtCase, [first.event!, assigned.value.event],
       "START_INVESTIGATION", "teacher-1", "TEACHER");
-    expect(() => advance(started.value.doubtCase, [first.event!, assigned.event, started.event],
+    expect(() => advance(started.value.doubtCase, [first.event!, assigned.value.event, started.value.event],
       "RESOLVE", "teacher-1", "TEACHER", { resolutionNote: " " })).toThrow(/resolutionNote/i);
-    const resolved = advance(started.value.doubtCase, [first.event!, assigned.event, started.event],
+    const resolved = advance(started.value.doubtCase, [first.event!, assigned.value.event, started.value.event],
       "RESOLVE", "teacher-1", "TEACHER", { resolutionNote: "Explained the vector decomposition" });
     expect(resolved.value.doubtCase.state).toBe("RESOLVED");
     expect(() => advance(resolved.value.doubtCase,
-      [first.event!, assigned.event, started.event, resolved.event],
+      [first.event!, assigned.value.event, started.value.event, resolved.value.event],
       "CONFIRM_BY_STUDENT", "teacher-1", "TEACHER")).toThrow(/affected student/i);
     const confirmed = advance(resolved.value.doubtCase,
-      [first.event!, assigned.event, started.event, resolved.event],
+      [first.event!, assigned.value.event, started.value.event, resolved.value.event],
       "CONFIRM_BY_STUDENT", "stu-1", "STUDENT");
     expect(confirmed.value.doubtCase.state).toBe("STUDENT_CONFIRMED");
   });
@@ -132,18 +132,18 @@ describe("System A doubt management command contract", () => {
     const first = opened();
     const assigned = advance(first.value, [first.event!], "ASSIGN", "teacher-1", "TEACHER",
       { assignedToId: "teacher-1" });
-    const started = advance(assigned.value.doubtCase, [first.event!, assigned.event],
+    const started = advance(assigned.value.doubtCase, [first.event!, assigned.value.event],
       "START_INVESTIGATION", "teacher-1", "TEACHER");
-    const resolved = advance(started.value.doubtCase, [first.event!, assigned.event, started.event],
+    const resolved = advance(started.value.doubtCase, [first.event!, assigned.value.event, started.value.event],
       "RESOLVE", "teacher-1", "TEACHER", { resolutionNote: "Explained" });
     const reopened = advance(resolved.value.doubtCase,
-      [first.event!, assigned.event, started.event, resolved.event],
+      [first.event!, assigned.value.event, started.value.event, resolved.value.event],
       "REOPEN", "stu-1", "STUDENT");
     expect(reopened.value.doubtCase.state).toBe("REOPENED");
     expect(reopened.value.doubtCase.assignedToId).toBeUndefined();
     expect(reopened.value.doubtCase.resolvedAt).toBe(resolved.value.doubtCase.resolvedAt);
     expect(() => advance(reopened.value.doubtCase,
-      [first.event!, assigned.event, started.event, resolved.event, reopened.event],
+      [first.event!, assigned.value.event, started.value.event, resolved.value.event, reopened.value.event],
       "START_INVESTIGATION", "teacher-1", "TEACHER")).toThrow();
   });
 
@@ -166,19 +166,19 @@ describe("System A doubt management command contract", () => {
       { assignedToId: "teacher-1" });
     const replay = prepareDoubtTransition({
       doubtCase: assigned.value.doubtCase,
-      command: { eventId: assigned.event.id, instituteId: "inst-1", actorId: "teacher-1",
-        actorRole: "TEACHER", action: "ASSIGN", reason: assigned.event.reason,
-        occurredAt: assigned.event.occurredAt, assignedToId: "teacher-1" },
+      command: { eventId: assigned.value.event.id, instituteId: "inst-1", actorId: "teacher-1",
+        actorRole: "TEACHER", action: "ASSIGN", reason: assigned.value.event.reason,
+        occurredAt: assigned.value.event.occurredAt, assignedToId: "teacher-1" },
       authorizedObligationIds: ["obl-1"], authorizedAssigneeIds: ["teacher-1"],
-      existingEvents: [first.event!, assigned.event],
+      existingEvents: [first.event!, assigned.value.event],
     });
     expect(replay.outcome).toBe("IDEMPOTENT_REPLAY");
     expect(() => prepareDoubtTransition({
       doubtCase: assigned.value.doubtCase,
-      command: { eventId: assigned.event.id, instituteId: "inst-1", actorId: "teacher-1",
+      command: { eventId: assigned.value.event.id, instituteId: "inst-1", actorId: "teacher-1",
         actorRole: "TEACHER", action: "REOPEN", reason: "Different action",
-        occurredAt: assigned.event.occurredAt },
-      authorizedObligationIds: ["obl-1"], existingEvents: [first.event!, assigned.event],
+        occurredAt: assigned.value.event.occurredAt },
+      authorizedObligationIds: ["obl-1"], existingEvents: [first.event!, assigned.value.event],
     })).toThrow(/ID conflict/i);
   });
 
@@ -198,8 +198,8 @@ describe("System A doubt management command contract", () => {
     const first = opened();
     const assigned = advance(first.value, [first.event!], "ASSIGN", "teacher-1", "TEACHER",
       { assignedToId: "teacher-1" });
-    expect(assigned.event.previousEventId).toBe(first.event!.id);
-    expect(Object.isFrozen(assigned.event)).toBe(true);
+    expect(assigned.value.event.previousEventId).toBe(first.event!.id);
+    expect(Object.isFrozen(assigned.value.event)).toBe(true);
     expect(Object.isFrozen(assigned.value.doubtCase)).toBe(true);
   });
 });
