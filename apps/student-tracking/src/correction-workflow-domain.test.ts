@@ -36,7 +36,7 @@ const submit = (cycle: CorrectionCycle, overrides: Record<string, unknown> = {},
   prepareCorrectionSubmission({
     cycle,
     command: {
-      instituteId: "inst-1", studentId: "stu-1", obligationId: "obl-1", actorId: "stu-1",
+      instituteId: "inst-1", studentId: "stu-1", obligationId: "obl-1", exerciseSlotId: "slot-1", actorId: "stu-1",
       workProgress: "SUBMITTED", attemptCycleId: "attempt-1", idempotencyKey: "correction-key-1",
       occurredAt: "2026-11-06T11:00:00.000Z", recordedAt: "2026-11-06T11:01:00.000Z",
       reason: "Corrected the derivation", supersedesEventId: "e-original", ...overrides,
