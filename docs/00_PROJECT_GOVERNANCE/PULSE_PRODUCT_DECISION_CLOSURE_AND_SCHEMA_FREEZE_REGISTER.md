@@ -70,7 +70,10 @@ No decision may be marked APPROVED solely because it appears in a design documen
 - **Why it matters:** Determines query filtering, RLS predicates, referential integrity and future module extensibility.
 - **Required approver:** Technical Owner + Security Owner + Product Owner.
 - **Schema impact:** Resource-scope grant tables, composite FKs, indexes and authorization predicates.
-- **Status:** OPEN.
+- **Product decision recorded (2026-11-06):** TYPED resource assignments. Use explicit, tenant-qualified relationships for supported resource types rather than a universal generic resource registry for the initial architecture.
+- **Operational implication:** Model core assignments to centres, batches, students, exercises, assignments and review queues with typed references and enforceable tenant-qualified foreign keys. Authorization still requires the D-003 hybrid checks: role, explicit action permission and applicable resource scope. Adding a new resource type requires an explicit schema/API extension and review.
+- **Approval status:** Product decision recorded at the user's direction; Technical Owner and Security Owner approval remain pending.
+- **Status:** BLOCKED — awaiting Technical Owner and Security Owner approval.
 
 ### D-005 — Assignment publication roster semantics
 
