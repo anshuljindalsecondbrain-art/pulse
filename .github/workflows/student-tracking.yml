@@ -26,4 +26,5 @@ jobs:
           cache-dependency-path: apps/student-tracking/package.json
       - run: npm install
       - run: npm run typecheck
+      - run: npm test
       - run: npm run build
