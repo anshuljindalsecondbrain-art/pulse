@@ -149,7 +149,8 @@ export function prepareCorrectionStart(input: {
   if (prior) {
     const same = prior.instituteId === c.instituteId && prior.studentId === c.studentId &&
       prior.obligationId === c.obligationId && prior.originalEvidenceEventId === evidence.id &&
-      prior.originatingReturnedDecisionId === decision.id && prior.startedAt === c.occurredAt &&\n      prior.startEventId === c.eventId && prior.startReason === reason;
+      prior.originatingReturnedDecisionId === decision.id && prior.startedAt === c.occurredAt &&
+      prior.startEventId === c.eventId && prior.startReason === reason;
     if (!same) throw new Error("Correction cycle ID conflict: identifier already belongs to different content.");
     return Object.freeze({ outcome: "IDEMPOTENT_REPLAY", value: prior });
   }
