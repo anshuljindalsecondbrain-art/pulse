@@ -118,3 +118,19 @@ Added `src/evidence-submission-domain.ts` and `src/evidence-submission-domain.te
 - Creates a new append-only evidence event and never mutates historical records.
 
 **Boundary:** This is a pure command-preparation contract. It does not authenticate the actor, authorize tenant membership, read or write Supabase, or enforce concurrent idempotency. Production requires server-derived identity and scope, database uniqueness constraints, and a transactional write path.
+
+
+## Teacher verification command increment (2026-11-06)
+
+Added `src/teacher-verification-domain.ts` and `src/teacher-verification-domain.test.ts`:
+
+- Restricts completion decisions to teacher and academic-reviewer roles.
+- Requires the obligation to be included in the trusted caller's authorized scope.
+- Validates institute, obligation and exact evidence-event identity.
+- Accepts only submitted student self-reports; teacher observations and in-progress reports cannot enter this completion queue.
+- Prevents a learner from verifying their own submission.
+- Restricts outcomes to CONFIRMED, NOT_CONFIRMED, RETURNED and REJECTED.
+- Preserves decision history; a new decision must explicitly supersede the latest decision for that exact report.
+- Supports exact decision retry and rejects conflicting decision-ID reuse.
+
+**Boundary:** The authorized obligation list is supplied by the caller and is not itself authorization. The server must derive reviewer role and scope from authenticated context. The helper does not persist decisions or enforce RLS/transactional uniqueness.
