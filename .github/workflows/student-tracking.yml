@@ -4,14 +4,46 @@ on:
   pull_request:
     paths:
       - "apps/student-tracking/**"
+      - "docs/governance/**"
+      - ".github/**"
       - ".github/workflows/student-tracking.yml"
   push:
     branches: [main]
     paths:
       - "apps/student-tracking/**"
+      - "docs/governance/**"
+      - ".github/**"
       - ".github/workflows/student-tracking.yml"
 
+permissions:
+  contents: read
+
 jobs:
+  governance:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate pull request traceability metadata
+        env:
+          PULL_REQUEST_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          node <<'NODE'
+          const body = process.env.PULL_REQUEST_BODY || "";
+          const checks = [
+            [/PULSE-EVT-\\d{6}/, "At least one PULSE Event ID"],
+            [/Requirement ID/i, "Requirement ID section"],
+            [/Impact and risk/i, "Impact and risk section"],
+            [/Validation/i, "Validation section"],
+            [/Documentation/i, "Documentation section"],
+          ];
+          const missing = checks.filter(([pattern]) => !pattern.test(body)).map(([, label]) => label);
+          if (missing.length) {
+            console.error("PR governance metadata missing: " + missing.join(", "));
+            process.exit(1);
+          }
+          console.log("PR governance metadata check passed.");
+          NODE
+
   build:
     runs-on: ubuntu-latest
     defaults:
