@@ -2,6 +2,7 @@ name: Student Tracking prototype
 
 on:
   pull_request:
+    types: [opened, synchronize, reopened, edited]
     paths:
       - "apps/student-tracking/**"
       - "docs/governance/**"
