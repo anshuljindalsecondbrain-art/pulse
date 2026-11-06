@@ -211,7 +211,7 @@ The following 18 legacy module specifications exist as draft documents. Their ap
 | P1-REQ | Phase 1 Requirements & Acceptance Baseline | `docs/dte/current-phase/DTE-P1_REQUIREMENTS_AND_ACCEPTANCE_BASELINE.md` | New — Draft |
 | PHASE-ROADMAP | Product Scope & Phase Roadmap | `docs/dte/DTE_PRODUCT_SCOPE_AND_PHASE_ROADMAP.md` | New — Draft |
 | MODULE-DISPOSITION | Module Phase Disposition | `docs/dte/DTE_MODULE_PHASE_DISPOSITION.md` | New — Draft |
-| FULL-AUDIT-002 | Full Documentation Audit | `docs/dte/audits/DTE_FULL_DOCUMENTATION_AUDIT_002.md` | New — Draft |
+| FULL-AUDIT-002 | Full Documentation Audit | `docs/dte/audits/DTE_FULL_DOCUMENTATION_AUDIT_002.md` | New — Draft |\n| FUTURE-ARCH | Future Upload & Digital Tagging Discovery | `docs/dte/future-phases/DTE-FUTURE_UPLOAD_AND_DIGITAL_TAGGING_DISCOVERY.md` | New — Draft — Deferred phase design input |
 
 ## 7. Existing audit and decision records
 
@@ -320,7 +320,7 @@ Decision papers additionally record options considered, selected direction, cons
 | Version | Date | Status | Change |
 |---|---|---|---|
 | 0.2.0 | 2026-11-06 | Draft | Audited and consolidated documentation architecture; established 50 core documents, mapped 18 existing module specifications and existing audit/decision records, added ownership, dependencies, gates and open-decision tracking |
-| 0.3.0 | 2026-11-06 | Draft | Rebased current scope to offline tagging framework definition/management; deferred question upload, digital inventory/tagging, question identity/version and Q-GENOME decisions to a separate later phase; added phase applicability and revised approval gates |\n| 0.4.0 | 2026-11-06 | Draft | Added full phase-aware audit, product roadmap, legacy module disposition and Phase 1 operating model, framework configuration, template/handoff and requirements baselines |
+| 0.3.0 | 2026-11-06 | Draft | Rebased current scope to offline tagging framework definition/management; deferred question upload, digital inventory/tagging, question identity/version and Q-GENOME decisions to a separate later phase; added phase applicability and revised approval gates |\n| 0.4.0 | 2026-11-06 | Draft | Added full phase-aware audit, product roadmap, legacy module disposition and Phase 1 operating model, framework configuration, template/handoff and requirements baselines |\n| 0.4.1 | 2026-11-06 | Draft | Added future question upload and digital-tagging discovery brief to the controlled documentation register |
 
 ## 13. Approval
 
