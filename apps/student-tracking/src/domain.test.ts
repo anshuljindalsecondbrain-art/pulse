@@ -5,6 +5,7 @@ import {
   isAttemptedStatus,
   nextStatus,
   summarizeStatuses,
+  toSafeCsvCell,
   STATUSES,
 } from "./domain";
 
@@ -125,5 +126,22 @@ describe("Rebuildable evidence projection", () => {
     const b = projectEvidence([current], [newDecision, oldDecision]);
     expect(a).toEqual(b);
     expect(a[0].latestVerification?.id).toBe("v2");
+  });
+});
+
+describe("CSV export safety", () => {
+  it("quotes cells and escapes embedded quotes", () => {
+    expect(toSafeCsvCell('A "quoted" value')).toBe('"A ""quoted"" value"');
+  });
+
+  it.each(["=1+1", "+SUM(A1:A2)", "-2+3", "@cmd", "  =HYPERLINK(\"https://example.com\")"])(
+    "neutralizes spreadsheet formula prefix: %s",
+    (value) => {
+      expect(toSafeCsvCell(value)).toBe(`"'${value}"`);
+    },
+  );
+
+  it("preserves ordinary values", () => {
+    expect(toSafeCsvCell("Physics")).toBe('"Physics"');
   });
 });
