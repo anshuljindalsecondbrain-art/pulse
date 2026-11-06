@@ -220,3 +220,43 @@ Added `src/evidence-timeline-domain.ts` and `src/evidence-timeline-domain.test.t
 - Requirement: `PULSE-REQ-SYA-015`, status `DOMAIN_ONLY`.
 - Validation is limited to pure domain behavior. Database persistence, server-derived authorization, RLS, API integration, operational UI and browser/accessibility tests remain unimplemented.
 - No Supabase migration was applied and no production student data was written.
+
+
+## Live infrastructure and repository reconciliation — 2026-11-06
+
+This section is the current connector-verified snapshot; earlier implementation validation entries refer to their stated commit SHAs and must not be generalized to the current branch head.
+
+### Supabase live project
+- Project: PULSE (`nnvssbfezkliavwxhgbh`), region `ap-south-1`, PostgreSQL 17.11, ACTIVE_HEALTHY.
+- Public application tables: none.
+- Applied migration history: none.
+- Edge Functions: none.
+- Security, performance and health advisor scans reported no lints on the currently empty schema. This does not validate the future schema or its authorization model.
+- Preview-only environment configuration exists in Vercel for the feature branch; no Production environment variables were listed.
+- The proposed System A baseline remains unapplied and fail-closed. No migration or production data write was performed during this refresh.
+
+### GitHub and implementation
+- Repository: `anshuljindalsecondbrain-art/pulse`.
+- Branch: `feat/system-a-abhyas-foundation`.
+- PR #2 remains open, draft and unmerged.
+- System A domain contracts include separate evidence, completion verification, answer evaluation, correction, doubt and a read-only Evidence Timeline.
+- PULSE-DATA-CORE-001 through 008 and PULSE-EVT-000018 record a proposed canonical platform and System A persistence/authorization architecture. These documents remain draft design artifacts, not implementation authorization.
+- The next planned architecture item is PULSE-DATA-CORE-009: canonical physical ERD and table/column data dictionary.
+
+### Website / Vercel
+- The primary `App.tsx` still seeds and persists students, exercises and marks in browser `localStorage` under `pulse.demo.v2.*`.
+- The Supabase browser client and repository adapter exist, but the primary UI does not import or call the repository adapter.
+- The latest READY deployment observed in the connected Vercel project was for commit `81fd420af18eb9b016b187a71b68073ebf325979`; later branch changes exist. Exact-head deployment is therefore not confirmed.
+- The Preview is protected by Vercel Authentication. Vercel reported the Hobby deployment rate limit (`api-deployments-young-hobby-team-24h`) for subsequent attempts.
+- Do not put real student personal data in the demo or Preview.
+
+### Required before live persistence
+1. Product/academic decisions in CORE-DEC-001 through CORE-DEC-010 are resolved and recorded.
+2. A unified physical schema reconciles V10 and the proposed System A model; no duplicate canonical identity/tenant system.
+3. Tenant-qualified FK integrity, trusted Auth UID-to-person mapping, role grants and resource-scope authorization are approved.
+4. RLS and minimum grants are implemented together; no broad tenant-wide reads, client-supplied actor roles or service-role keys in the browser.
+5. Assignment publication/obligation expansion, evidence, answer evaluation, correction and doubt commands are transactional and DB-idempotent.
+6. Disposable database migration replay, RLS/RPC/cross-tenant negative tests, concurrency tests and append-only integrity tests pass.
+7. UI integration is made through the approved service/query/command boundary and keeps demo mode isolated.
+8. Exact PR head CI, Vercel Preview for the exact commit, browser QA and accessibility tests pass.
+9. Separate explicit owner authorization is recorded for live migration and production deployment.
