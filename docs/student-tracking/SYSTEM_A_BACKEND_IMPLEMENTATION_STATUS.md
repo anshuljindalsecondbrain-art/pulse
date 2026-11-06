@@ -283,3 +283,26 @@ These are pure domain modules. They do not yet alter the demo UI, persist record
 - Assignment toast reports the eligible learner count.
 - This is a demo-UI integration only. Demo batch metadata is inferred from the sample batch label and uses JEE as its stream; production must load authoritative, effective-dated academic context from the trusted backend and repeat the eligibility check server-side.
 - Existing localStorage persistence and fictional roster remain unchanged. No live student data or Supabase write path was introduced.
+
+
+## Exercise Builder v2 increment (2026-11-06)
+
+Added:
+- `src/exercise-builder-domain.ts` and `src/exercise-builder-domain.test.ts`.
+- `src/ExerciseBuilder.tsx`, a local UI for creating an exercise shell with single-chapter, multi-chapter or full-syllabus scope; subject; chapter list; numbered manual slots; and question-level, marks-based or hybrid assessment mode.
+- The main System A workspace now exposes a separate **Create exercise** action alongside the existing **Assign module** workflow. The two workflows are intentionally distinct: exercise scaffolding does not require QBMS/DTE question references; module assignment continues to select existing question references.
+- Exercise-domain validation enforces unique chapter/slot IDs and order, chapter membership for every slot, source references for QBMS/offline slots, valid slot maximum marks, and an explicit versioned marking scheme for marks-based/hybrid assessment.
+- Publish/revision domain functions create immutable published snapshots and retain earlier published versions when a new draft is revised and republished.
+- Decimal and negative marking reuse the existing integer-minor-unit scoring domain.
+
+Current UI boundary:
+- The new UI creates a local DRAFT in browser localStorage. It does not yet provide a complete edit-existing-draft or publish/revision screen; those lifecycle transitions currently exist as tested domain functions only.
+- Manual slots are numbered placeholders; question content and QBMS/offline source attachment are not yet implemented in this new builder UI.
+- Full-syllabus scope records the chapter list explicitly entered by the teacher; no canonical syllabus service is connected.
+- Batch, due date and learner eligibility are not yet part of the new standalone exercise draft flow. Assignment to learners remains the separate existing workflow.
+- The new draft is visible in the existing local matrix prototype. It is not a server-published assignment and does not create student obligations.
+
+Validation and release boundary:
+- CI is triggered for the code commits; exact latest-head completion must be verified before claiming validation.
+- Browser/device and accessibility QA remain outstanding.
+- No Supabase schema, migration, production data or deployment was changed.
