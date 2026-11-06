@@ -260,3 +260,15 @@ This section is the current connector-verified snapshot; earlier implementation 
 7. UI integration is made through the approved service/query/command boundary and keeps demo mode isolated.
 8. Exact PR head CI, Vercel Preview for the exact commit, browser QA and accessibility tests pass.
 9. Separate explicit owner authorization is recorded for live migration and production deployment.
+
+
+## Additional source-driven domain increment — 2026-11-06
+
+Added pure TypeScript contracts and tests:
+- `src/academic-eligibility-domain.ts`: XI/XII/Dropper revision eligibility, JEE/NEET/COMMON stream compatibility and explicit rejection reasons. This is a deterministic domain rule only; the server/database must apply it against trusted effective-dated academic context.
+- `src/academic-eligibility-domain.test.ts`: tests XI-to-XII denial, XII/Dropper XI revision, COMMON Physics/Chemistry and invalid contexts.
+- `src/marking-scheme-domain.ts`: versioned scoring scheme, decimal marks, negative penalties, per-question overrides and integer-minor-unit summation to avoid floating-point accumulation drift.
+- `src/marking-scheme-domain.test.ts`: tests negative marking, decimal marks, overrides, skipped/unattempted and duplicate question references.
+- `createAttemptCycle` validates explicit INITIAL/REVISION/RETEST/CORRECTION cycle semantics.
+
+These are pure domain modules. They do not yet alter the demo UI, persist records, enforce authorization or implement the database constraints. Academic owner confirmation is still required for the final semantics of COMMON batches and the Partially Correct interaction state.
