@@ -160,7 +160,11 @@ describe("correction workflow command contract", () => {
     const first = submitted();
     const returnedReview = review(first.value.cycle, first.value.submission, { outcome: "RETURNED" });
     expect(returnedReview.value.cycle.state).toBe("REQUIRED");
-    const restarted = prepareCorrectionRestart({\n      cycle: returnedReview.value.cycle,\n      command: { eventId: "evt-restart", actorId: "stu-1", reason: "Continue corrections",\n        occurredAt: "2026-11-06T12:30:00.000Z" },\n    }).value;
+    const restarted = prepareCorrectionRestart({
+      cycle: returnedReview.value.cycle,
+      command: { eventId: "evt-restart", actorId: "stu-1", reason: "Continue corrections",
+        occurredAt: "2026-11-06T12:30:00.000Z" },
+    }).value;
     const second = submit(restarted, {
       idempotencyKey: "correction-key-2",
       supersedesEventId: first.value.submission.evidence.id,
