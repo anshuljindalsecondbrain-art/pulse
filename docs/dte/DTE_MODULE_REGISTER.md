@@ -1,8 +1,8 @@
 # DTE Module Register
 
 - Document ID: PULSE-DTE-REG-001
-- Version: 0.1.0
-- Status: Draft — source-consolidation baseline
+- Version: 0.2.0
+- Status: Draft — legacy module inventory with phase-aware disposition
 - Product: PULSE — Deep Tagging Engine (DTE)
 - Scope: DTE only; other PULSE systems are referenced only through integration contracts.
 - Repository: anshuljindalsecondbrain-art/pulse
@@ -15,6 +15,33 @@ DTE manages an institution's existing academic classification and tagging struct
 The institution or its authorized academic administrators define the classification structure and terminology. DTE provides software to record, organize, map, search, validate, review, version, govern and report on those institution-defined structures and their assignments to questions.
 
 References to chapters, topics, concepts, sub-concepts, subjects or other academic categories are examples of data an institution may choose to manage. They are not mandatory levels, a prescribed hierarchy, or a curriculum-design responsibility of DTE.
+
+## Phase-aware scope override — Version 0.2.0
+
+This module register is a legacy capability inventory. It must be read together with:
+- `docs/dte/DTE_PRODUCT_SCOPE_AND_PHASE_ROADMAP.md`
+- `docs/dte/DTE_MODULE_PHASE_DISPOSITION.md`
+- `docs/dte/audits/DTE_FULL_DOCUMENTATION_AUDIT_002.md`
+
+The current phase is offline tagging framework and operating management. It does not include question upload, ingestion, question-content storage, digital question inventory or digital question-to-tag mapping. M02, digital portions of M03/M05/M09/M12, M16, M17 and M18 are deferred or split as described in the disposition matrix. The 18 legacy modules are not an approved implementation architecture.
+
+### Current scope — corrected
+
+- Manage institution-approved classification framework definitions and versions.
+- Manage approved question-type, archetype and pedagogical descriptor catalogues only where selected by the institution.
+- Provide offline tagging instructions and versioned templates/work packages.
+- Manage offline work allocation/status, returned-file validation and review only if confirmed as required.
+- Preserve framework/work-package audit history and quality evidence.
+- Report current-phase framework readiness and offline work quality where required.
+
+### Explicit current-phase exclusions
+
+- Question upload, OCR, ingestion, content storage or authoring.
+- Digital question inventory and digital tagging workspace.
+- Question identity, question-version and placement database.
+- Digital question-to-tag mapping persistence.
+- Q-GENOME, Student Tracking historical enrichment or DRE integration.
+- AI-generated tagging or academic hierarchy.
 
 ## 1. Purpose
 
@@ -208,7 +235,7 @@ Where later architectural decisions supersede older proposals, this register rec
 
 | Version | Date | Status | Change |
 |---|---|---|---|
-| 0.1.0 | 2026-11-06 | Draft | Initial DTE-only module inventory and scope boundaries consolidated for review |
+| 0.1.0 | 2026-11-06 | Draft | Initial DTE-only module inventory and scope boundaries consolidated for review |\n| 0.2.0 | 2026-11-06 | Draft | Added phase-aware scope override; legacy modules governed by current/future disposition matrix; removed any implication that all 18 modules are current-phase requirements |
 
 ## 13. Approval
 
