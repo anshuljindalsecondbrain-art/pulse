@@ -14,3 +14,14 @@
 | PULSE-ISSUE-0010 | System A | Current six-state UI vocabulary and older five-state notes conflict | High | OPEN | Preserve U/C/I/D/S/P in current UI; obtain academic-owner approval for metric and transition semantics |
 
 Close issues only with evidence; preserve closed issue history. Link each issue to its event and PR.
+
+
+## 2026-11-06 — PULSE architecture and infrastructure reconciliation update
+
+| Issue ID | Module | Description | Severity | Status | Dependency / next action |
+|---|---|---|---|---|---|
+| PULSE-ISSUE-0011 | Platform / Database | Canonical V10 + System A physical schema not yet unified; both initial migration proposals must not be applied as-is | Blocking | OPEN | Complete PULSE-DATA-CORE-009 physical ERD/data dictionary; approve constraints, parent verification, enrollment and catalogue ownership decisions |
+| PULSE-ISSUE-0012 | System A / Authorization | Physical RLS, grants, identity resolver and transactional command layer do not exist in live Supabase | Blocking | OPEN | Implement only after approval; isolated RLS/RPC/cross-tenant tests are mandatory |
+| PULSE-ISSUE-0013 | Website / Vercel | Feature-branch Preview READY but not production-connected; preview variables branch-scoped; current latest deployment may lag documentation commits | High | OPEN | Re-deploy Preview after documentation change; verify exact branch SHA and run browser QA; Production environment remains unconfigured |
+| PULSE-ISSUE-0014 | Governance | PULSE master documentation index was missing from current System A branch tree | Medium | CLOSED | Consolidated index created on feature branch; verify against PR head |
+| PULSE-ISSUE-0015 | Website / UX | Main UI still uses localStorage and fictional data; Supabase repository adapter is not integrated | Blocking | OPEN | Implement approved authentication and service boundary; preserve isolated demo mode until connected path acceptance |
