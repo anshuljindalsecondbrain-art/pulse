@@ -82,8 +82,8 @@ export function evaluateAcademicEligibility(
 
   const streamAllowed =
     content.stream === "COMMON" ||
-    learner.stream === "COMMON" ||
-    learner.stream === content.stream;
+    learner.stream === content.stream ||
+    (learner.stream === "COMMON" && (content.subject === "Physics" || content.subject === "Chemistry"));
   if (!streamAllowed) {
     return Object.freeze({ eligible: false, reason: "STREAM_MISMATCH" });
   }
