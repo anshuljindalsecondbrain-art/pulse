@@ -12,17 +12,17 @@ DTE manages institution-defined academic classification and tagging structures. 
 
 ## 1. Purpose
 
-The Classification Configuration Studio defines the classification schemas that drive DTE tagging. It allows authorized administrators to configure classification groups, fields, nodes, relationships, labels, constraints and validation behaviour without hardcoding a particular academic taxonomy into the application.
+The Classification Configuration Studio provides the software interface for encoding and maintaining classification schemas already defined and approved by an institution. It represents that existing structure in DTE; it does not design, prescribe or decide the institution's academic structure. It allows authorized administrators to configure classification groups, fields, nodes, relationships, labels, constraints and validation behaviour without hardcoding a particular academic taxonomy into the application.
 
 A schema is a governed configuration artifact. It is distinct from the mappings that associate questions with its classification entities.
 
 ## 2. Scope
 
 In scope:
-- Create and edit draft classification schemas.
-- Define multiple classification groups within a schema.
-- Configure hierarchical and non-hierarchical classification structures.
-- Define node/field types, relationship types, cardinality and constraints.
+- Create and edit draft configuration records representing institution-defined and institution-approved classification schemas.
+- Record the classification groups specified by the institution in its approved schema.
+- Encode institution-approved hierarchical or non-hierarchical structures without imposing a standard hierarchy.
+- Encode node/field types, relationship types, cardinality and constraints specified by the institution.
 - Configure required/optional rules, dependencies and display ordering.
 - Manage canonical identifiers, tenant labels, aliases and localization.
 - Preview the schema as it will appear in Tagging Studio.
