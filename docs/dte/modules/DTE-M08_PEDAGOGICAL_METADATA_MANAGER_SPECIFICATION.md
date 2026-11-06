@@ -14,6 +14,10 @@ DTE manages institution-defined academic classification and tagging structures. 
 
 Pedagogical Metadata Manager defines configurable descriptors that communicate teaching, learning or question-design characteristics not adequately represented by the classification taxonomy or question type. It provides controlled vocabularies and assignment rules for these descriptors.
 
+## Institutional authority guardrail
+
+Metadata definitions and descriptor values represent choices made by the institution. Examples in this specification are illustrative only; they must not be seeded as mandatory academic categories or imposed on a tenant.
+
 ## 2. Scope
 
 In scope:
