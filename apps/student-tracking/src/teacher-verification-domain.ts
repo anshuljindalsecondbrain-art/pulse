@@ -65,6 +65,22 @@ export function prepareTeacherVerification(input: {
     throw new Error("A learner cannot verify their own submission.");
   }
 
+  const duplicateId = input.decisionHistory.find((item) => item.id === command.decisionId);
+  if (duplicateId) {
+    const samePayload =
+      duplicateId.instituteId === command.instituteId &&
+      duplicateId.obligationId === command.obligationId &&
+      duplicateId.evidenceEventId === command.evidenceEventId &&
+      duplicateId.verifierId === command.reviewerId &&
+      duplicateId.purpose === "COMPLETION" &&
+      duplicateId.outcome === command.outcome &&
+      duplicateId.reason === command.reason.trim() &&
+      duplicateId.decidedAt === command.decidedAt &&
+      duplicateId.supersedesDecisionId === command.supersedesDecisionId;
+    if (samePayload) return Object.freeze({ outcome: "IDEMPOTENT_REPLAY", decision: duplicateId });
+    throw new Error("Decision ID conflict: this identifier already belongs to a different decision.");
+  }
+
   const history = input.decisionHistory.filter((item) =>
     item.instituteId === command.instituteId &&
     item.obligationId === command.obligationId &&
@@ -80,22 +96,6 @@ export function prepareTeacherVerification(input: {
   }
   if (!latest && command.supersedesDecisionId) {
     throw new Error("There is no prior completion decision to supersede.");
-  }
-
-  const duplicateId = input.decisionHistory.find((item) => item.id === command.decisionId);
-  if (duplicateId) {
-    const samePayload =
-      duplicateId.instituteId === command.instituteId &&
-      duplicateId.obligationId === command.obligationId &&
-      duplicateId.evidenceEventId === command.evidenceEventId &&
-      duplicateId.verifierId === command.reviewerId &&
-      duplicateId.purpose === "COMPLETION" &&
-      duplicateId.outcome === command.outcome &&
-      duplicateId.reason === command.reason.trim() &&
-      duplicateId.decidedAt === command.decidedAt &&
-      duplicateId.supersedesDecisionId === command.supersedesDecisionId;
-    if (samePayload) return Object.freeze({ outcome: "IDEMPOTENT_REPLAY", decision: duplicateId });
-    throw new Error("Decision ID conflict: this identifier already belongs to a different decision.");
   }
 
   const decision = createSystemAVerificationDecision({
