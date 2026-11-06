@@ -53,6 +53,7 @@ export type DoubtEvent = Readonly<{
   occurredAt: string;
   previousEventId?: string;
   assignedToId?: string;
+  resolutionNote?: string;
 }>;
 
 export type DoubtCommandResult<T> = Readonly<{
@@ -186,7 +187,7 @@ function sameTransitionPayload(existing: DoubtEvent, c: DoubtTransitionCommand, 
     existing.action === c.action &&
     existing.reason === c.reason.trim() &&
     existing.occurredAt === c.occurredAt &&
-    existing.assignedToId === c.assignedToId;
+    existing.assignedToId === c.assignedToId &&\n    existing.resolutionNote === c.resolutionNote;
 }
 
 /** Append one authorized transition to the immutable history of a doubt case. */
@@ -204,6 +205,12 @@ export function prepareDoubtTransition(input: {
   const reason = requireText(c.reason, "reason");
   requireTimestamp(c.occurredAt, "occurredAt");
 
+  if (c.instituteId !== doubtCase.instituteId) {
+    throw new Error("Doubt transition crosses institute scope.");
+  }
+  if (!input.authorizedObligationIds.includes(doubtCase.obligationId)) {
+    throw new Error("Actor is not authorized for this doubt obligation.");
+  }
   const priorById = input.existingEvents.find((item) => item.id === c.eventId);
   if (priorById) {
     if (!sameTransitionPayload(priorById, { ...c, reason }, doubtCase)) {
@@ -215,15 +222,12 @@ export function prepareDoubtTransition(input: {
     });
   }
 
-  if (c.instituteId !== doubtCase.instituteId) {
-    throw new Error("Doubt transition crosses institute scope.");
-  }
-  if (!input.authorizedObligationIds.includes(doubtCase.obligationId)) {
-    throw new Error("Actor is not authorized for this doubt obligation.");
-  }
   const latestHistoryEvent = input.existingEvents.find((item) => item.id === doubtCase.latestEventId);
   if (!latestHistoryEvent || latestHistoryEvent.doubtCaseId !== doubtCase.id ||
       latestHistoryEvent.instituteId !== doubtCase.instituteId ||
+      latestHistoryEvent.studentId !== doubtCase.studentId ||
+      latestHistoryEvent.obligationId !== doubtCase.obligationId ||
+      latestHistoryEvent.exerciseSlotId !== doubtCase.exerciseSlotId ||
       latestHistoryEvent.toState !== doubtCase.state) {
     throw new Error("Doubt case latest-event pointer does not match its immutable history.");
   }
@@ -291,6 +295,7 @@ export function prepareDoubtTransition(input: {
     fromState: doubtCase.state, toState: nextState, reason,
     occurredAt: c.occurredAt, previousEventId: doubtCase.latestEventId,
     ...(c.action === "ASSIGN" && assignedToId ? { assignedToId } : {}),
+    ...(c.action === "RESOLVE" && resolutionNote ? { resolutionNote } : {}),
   });
   const nextCase: DoubtCase = Object.freeze({
     ...doubtCase, state: nextState, latestEventId: event.id,
