@@ -161,3 +161,19 @@ Added `src/correction-workflow-domain.ts` and `src/correction-workflow-domain.te
 - Correction workflow test file contains 16 test cases; the full System A test suite passed.
 - The correction workflow remains DOMAIN_ONLY. Authentication, trusted authorization, persistence, RLS, database integration tests and operational UI are not implemented by this increment.
 - No Supabase migration was applied and no production student data was changed.
+
+
+## Doubt management command increment (2026-11-06)
+
+Added `src/doubt-management-domain.ts` and `src/doubt-management-domain.test.ts`:
+
+- Raises a doubt against one exact eligible learner-question obligation; cross-institute, cross-learner, exempted and removed references are rejected.
+- Restricts student-raised doubts to the affected learner's own work.
+- Supports academic assignment to an assignee in the caller-supplied academic scope.
+- Requires the assigned academic actor to start investigation.
+- Requires a resolution explanation and keeps student confirmation as a separate action.
+- Allows the affected student or an academic actor to reopen a resolved case; prior resolution timestamps and event history remain preserved.
+- Appends immutable events linked through previous-event IDs and checks the case latest-event pointer.
+- Supports exact idempotent case/event retries and rejects conflicting identifier reuse.
+
+**Boundary:** Pure domain command contracts only. Caller-supplied authorization lists are not proof of authorization. Server-side identity/scope validation, transactional persistence, RLS, database integration tests and operational UI remain outstanding. No database schema or production data was changed.
