@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import type { FormEvent, KeyboardEvent, ReactNode } from "react";
 import { isAttemptedStatus, nextStatus, toSafeCsvCell, type Status } from "./domain";
+import { DEMO_BATCHES, DEMO_EXERCISES, DEMO_MARKS, DEMO_STUDENTS } from "./demo-data";
 import { Activity, ArrowRight, Bell, BookOpen, CalendarDays, Check, CheckCheck, ChevronDown, CircleHelp, ClipboardList, Command, Download, GraduationCap, LayoutDashboard, Plus, Search, Settings2, ShieldCheck, Sparkles, Users, X } from "lucide-react";
 
 type Student = { id: string; name: string; roll: string; batch: string };
@@ -14,40 +15,18 @@ const statusMeta: Record<Status, { label: string; tone: string; next: Status }> 
   S: { label: "Skipped", tone: "neutral", next: "P" },
   P: { label: "Partially correct", tone: "violet", next: "U" }
 };
-const initialStudents: Student[] = [
-  { id: "s1", name: "Aarav Sharma", roll: "P-021", batch: "JEE XII · Alpha" },
-  { id: "s2", name: "Ananya Gupta", roll: "P-024", batch: "JEE XII · Alpha" },
-  { id: "s3", name: "Dev Mehta", roll: "P-028", batch: "JEE XII · Alpha" },
-  { id: "s4", name: "Ishita Jain", roll: "P-031", batch: "JEE XII · Alpha" },
-  { id: "s5", name: "Kabir Rathore", roll: "P-037", batch: "JEE XII · Alpha" },
-  { id: "s6", name: "Meera Soni", roll: "P-042", batch: "JEE XII · Alpha" },
-  { id: "s7", name: "Raghav Bansal", roll: "P-046", batch: "JEE XII · Alpha" },
-  { id: "s8", name: "Sara Khan", roll: "P-051", batch: "JEE XII · Alpha" }
-];
-const initialExercises: Exercise[] = [
-  { id: "e1", name: "DPP-08 · Rotational Motion", chapter: "Rotational Motion", subject: "Physics", count: 12, batch: "JEE XII · Alpha", due: "2026-11-07", created: "Today" },
-  { id: "e2", name: "DPP-07 · Work, Energy & Power", chapter: "Work, Energy & Power", subject: "Physics", count: 10, batch: "JEE XII · Alpha", due: "2026-11-06", created: "Yesterday" },
-  { id: "e3", name: "Practice Set · Electrostatics", chapter: "Electrostatics", subject: "Physics", count: 15, batch: "JEE XII · Alpha", due: "2026-11-05", created: "Nov 3" }
-];
-const seedMarks: Marks = Object.fromEntries([
-  ["s1-e1-1","C"],["s1-e1-2","C"],["s1-e1-3","I"],["s1-e1-4","D"],["s1-e1-5","C"],
-  ["s2-e1-1","C"],["s2-e1-2","I"],["s2-e1-3","I"],["s2-e1-4","D"],["s2-e1-5","C"],
-  ["s3-e1-1","C"],["s3-e1-2","C"],["s3-e1-3","C"],["s3-e1-4","P"],["s3-e1-5","U"],
-  ["s4-e1-1","I"],["s4-e1-2","D"],["s4-e1-3","I"],["s4-e1-4","U"],["s4-e1-5","U"],
-  ["s5-e1-1","C"],["s5-e1-2","C"],["s5-e1-3","D"],["s5-e1-4","C"],["s5-e1-5","C"],
-  ["s6-e1-1","C"],["s6-e1-2","I"],["s6-e1-3","D"],["s6-e1-4","D"],["s6-e1-5","U"],
-  ["s7-e1-1","C"],["s7-e1-2","C"],["s7-e1-3","C"],["s7-e1-4","C"],["s7-e1-5","C"],
-  ["s8-e1-1","I"],["s8-e1-2","D"],["s8-e1-3","I"],["s8-e1-4","U"],["s8-e1-5","U"]
-] as [string, Status][]);
+const initialStudents: Student[] = DEMO_STUDENTS;
+const initialExercises: Exercise[] = DEMO_EXERCISES;
+const seedMarks: Marks = DEMO_MARKS;
 
 function readStore<T>(key: string, fallback: T): T {
   try { const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) as T : fallback; } catch { return fallback; }
 }
 function App() {
-  const [students, setStudents] = useState<Student[]>(() => readStore("pulse.students", initialStudents));
-  const [exercises, setExercises] = useState<Exercise[]>(() => readStore("pulse.exercises", initialExercises));
-  const [marks, setMarks] = useState<Marks>(() => readStore("pulse.marks", seedMarks));
-  const [activeExercise, setActiveExercise] = useState("e1");
+  const [students, setStudents] = useState<Student[]>(() => readStore("pulse.demo.v2.students", initialStudents));
+  const [exercises, setExercises] = useState<Exercise[]>(() => readStore("pulse.demo.v2.exercises", initialExercises));
+  const [marks, setMarks] = useState<Marks>(() => readStore("pulse.demo.v2.marks", seedMarks));
+  const [activeExercise, setActiveExercise] = useState("demo-e1");
   const [query, setQuery] = useState("");
   const [showCreator, setShowCreator] = useState(false);
   const [showStudents, setShowStudents] = useState(false);
@@ -63,9 +42,9 @@ function App() {
   const [filter, setFilter] = useState("All students");
   const [experiment, setExperiment] = useState<"A" | "B">("B");
 
-  useEffect(() => { localStorage.setItem("pulse.students", JSON.stringify(students)); }, [students]);
-  useEffect(() => { localStorage.setItem("pulse.exercises", JSON.stringify(exercises)); }, [exercises]);
-  useEffect(() => { localStorage.setItem("pulse.marks", JSON.stringify(marks)); }, [marks]);
+  useEffect(() => { localStorage.setItem("pulse.demo.v2.students", JSON.stringify(students)); }, [students]);
+  useEffect(() => { localStorage.setItem("pulse.demo.v2.exercises", JSON.stringify(exercises)); }, [exercises]);
+  useEffect(() => { localStorage.setItem("pulse.demo.v2.marks", JSON.stringify(marks)); }, [marks]);
   useEffect(() => { if (!toast) return; const t = window.setTimeout(() => setToast(""), 2500); return () => window.clearTimeout(t); }, [toast]);
 
   const exercise = exercises.find(e => e.id === activeExercise) ?? exercises[0];
@@ -162,7 +141,7 @@ function App() {
         </div>
         <div className="section-toolbar"><div className="tabs"><button className={tab==="matrix"?"selected":""} onClick={()=>setTab("matrix")}>Question matrix</button><button className={tab==="overview"?"selected":""} onClick={()=>setTab("overview")}>Exercise overview</button></div><div className="toolbar-right"><span className="live-indicator"><i/> LIVE WORKSPACE</span><span className="divider-v"/><button className="text-btn" onClick={()=>setShowStudents(true)}><Users size={15}/> Manage roster</button></div></div>
         {tab==="matrix" ? <section className="panel">
-          <div className="panel-head"><div><div className="panel-kicker">LIVE TRACKING GRID</div><h2>Student performance matrix</h2><p>Tap a cell to cycle through six operational states.</p></div><div className="panel-controls"><label className="select-wrap"><span>Exercise</span><select value={activeExercise} onChange={e=>setActiveExercise(e.target.value)}>{exercises.map(x=><option key={x.id} value={x.id}>{x.name}</option>)}</select><ChevronDown size={14}/></label><label className="select-wrap batch-select"><span>Batch</span><select value={selectedBatch} onChange={e=>setSelectedBatch(e.target.value)}><option>JEE XII · Alpha</option><option>JEE XII · Beta</option><option>JEE XI · Alpha</option></select><ChevronDown size={14}/></label></div></div>
+          <div className="panel-head"><div><div className="panel-kicker">LIVE TRACKING GRID</div><h2>Student performance matrix</h2><p>Tap a cell to cycle through six operational states.</p></div><div className="panel-controls"><label className="select-wrap"><span>Exercise</span><select value={activeExercise} onChange={e=>setActiveExercise(e.target.value)}>{exercises.map(x=><option key={x.id} value={x.id}>{x.name}</option>)}</select><ChevronDown size={14}/></label><label className="select-wrap batch-select"><span>Batch</span><select value={selectedBatch} onChange={e=>setSelectedBatch(e.target.value)}>{DEMO_BATCHES.map(item => <option key={item}>{item}</option>)}</select><ChevronDown size={14}/></label></div></div>
           <div className="exercise-strip"><div className="exercise-symbol"><BookOpen size={18}/></div><div className="exercise-info"><b>{exercise?.name}</b><span>{exercise?.subject} <i>·</i> {exercise?.chapter} <i>·</i> {exercise?.count} questions</span></div><div className="exercise-meta"><span><Users size={14}/> {roster.length} students</span><span><CalendarDays size={14}/> Due {exercise?.due}</span></div><div className="completion-mini"><b>{completion}%</b><span>ATTEMPTED</span><div><i style={{width:completion+"%"}}/></div></div></div>
           <div className="matrix-toolbar"><div className="legend">{(["C","I","D","S","P","U"] as Status[]).map(s=><span key={s}><i className={"legend-dot "+statusMeta[s].tone}/>{statusMeta[s].label}</span>)}</div><div className="matrix-tools"><label className="search-box"><Search size={14}/><input placeholder="Find student..." value={query} onChange={e=>setQuery(e.target.value)}/></label><select className="filter-select" value={filter} onChange={e=>setFilter(e.target.value)}><option>All students</option><option>Needs attention</option></select><button className="icon-btn small" title="Export CSV" onClick={exportCsv}><Download size={15}/></button></div></div>
           <div className="table-wrap" tabIndex={0} onKeyDown={handleKeys}><table className="matrix-table"><thead><tr><th className="student-col"><span>STUDENT / ROLL NO.</span></th>{Array.from({length:exercise?.count??0},(_,i)=><th key={i}><span>Q{i+1}</span></th>)}<th className="summary-col"><span>ATTEMPTED</span></th></tr></thead><tbody>
@@ -176,7 +155,7 @@ function App() {
         <footer className="footer"><span>© 2026 PULSE Academic OS</span><span>ABHYAS MATRIX <i>·</i> SYSTEM A</span><span>Built for focused academic operations</span></footer>
       </div>
     </main>
-    {showCreator&&<div className="modal-backdrop" onMouseDown={e=>{if(e.target===e.currentTarget)setShowCreator(false);}}><form className="modal" onSubmit={createExercise}><div className="modal-head"><div><div className="panel-kicker">15-SECOND EXERCISE SCAFFOLDER</div><h2>Create a quick DPP</h2><p>Start tracking now. Question identities and deep tags can be linked later.</p></div><button type="button" className="icon-btn" onClick={()=>setShowCreator(false)}><X size={18}/></button></div><label>Exercise name<input autoFocus required placeholder="DPP-09 · Centre of Mass" value={exerciseName} onChange={e=>setExerciseName(e.target.value)}/></label><div className="form-grid"><label>Subject<select value={subject} onChange={e=>setSubject(e.target.value)}><option>Physics</option><option>Chemistry</option><option>Mathematics</option><option>Biology</option></select></label><label>Chapter<select value={chapter} onChange={e=>setChapter(e.target.value)}><option>Rotational Motion</option><option>Work, Energy & Power</option><option>Electrostatics</option><option>Current Electricity</option><option>Kinematics</option><option>Thermodynamics</option><option>Full Syllabus</option></select></label></div><div className="form-grid"><label>Question count<input type="number" min="1" max="100" value={questionCount} onChange={e=>setQuestionCount(Number(e.target.value))}/></label><label>Assign to batch<select value={batch} onChange={e=>setBatch(e.target.value)}><option>JEE XII · Alpha</option><option>JEE XII · Beta</option><option>JEE XI · Alpha</option></select></label></div><label>Due date<input type="date" value={due} onChange={e=>setDue(e.target.value)}/></label><div className="slot-preview"><div><b>Auto-generated slots</b><span>Numbered Q1–Q{questionCount||0} · no QBMS dependency</span></div><div className="slot-samples"><span>Q1</span><span>Q2</span><span>Q3</span><i>···</i><span>Q{questionCount||0}</span></div></div><div className="modal-actions"><button type="button" className="btn secondary" onClick={()=>setShowCreator(false)}>Cancel</button><button type="submit" className="btn primary"><Plus size={15}/> Create & open matrix</button></div></form></div>}
+    {showCreator&&<div className="modal-backdrop" onMouseDown={e=>{if(e.target===e.currentTarget)setShowCreator(false);}}><form className="modal" onSubmit={createExercise}><div className="modal-head"><div><div className="panel-kicker">15-SECOND EXERCISE SCAFFOLDER</div><h2>Create a quick DPP</h2><p>Start tracking now. Question identities and deep tags can be linked later.</p></div><button type="button" className="icon-btn" onClick={()=>setShowCreator(false)}><X size={18}/></button></div><label>Exercise name<input autoFocus required placeholder="DPP-09 · Centre of Mass" value={exerciseName} onChange={e=>setExerciseName(e.target.value)}/></label><div className="form-grid"><label>Subject<select value={subject} onChange={e=>setSubject(e.target.value)}><option>Physics</option><option>Chemistry</option><option>Mathematics</option><option>Biology</option></select></label><label>Chapter<select value={chapter} onChange={e=>setChapter(e.target.value)}><option>Rotational Motion</option><option>Work, Energy & Power</option><option>Electrostatics</option><option>Current Electricity</option><option>Kinematics</option><option>Thermodynamics</option><option>Chemical Bonding</option><option>Periodic Table</option><option>Quadratic Equations</option><option>Sequence & Series</option><option>Sets & Relations</option><option>Full Syllabus</option></select></label></div><div className="form-grid"><label>Question count<input type="number" min="1" max="100" value={questionCount} onChange={e=>setQuestionCount(Number(e.target.value))}/></label><label>Assign to batch<select value={batch} onChange={e=>setBatch(e.target.value)}><option>JEE XII · Alpha</option><option>JEE XII · Beta</option><option>JEE XI · Alpha</option></select></label></div><label>Due date<input type="date" value={due} onChange={e=>setDue(e.target.value)}/></label><div className="slot-preview"><div><b>Auto-generated slots</b><span>Numbered Q1–Q{questionCount||0} · no QBMS dependency</span></div><div className="slot-samples"><span>Q1</span><span>Q2</span><span>Q3</span><i>···</i><span>Q{questionCount||0}</span></div></div><div className="modal-actions"><button type="button" className="btn secondary" onClick={()=>setShowCreator(false)}>Cancel</button><button type="submit" className="btn primary"><Plus size={15}/> Create & open matrix</button></div></form></div>}
     {showStudents&&<div className="modal-backdrop" onMouseDown={e=>{if(e.target===e.currentTarget)setShowStudents(false);}}><form className="modal compact-modal" onSubmit={addStudent}><div className="modal-head"><div><div className="panel-kicker">ROSTER MANAGEMENT</div><h2>Add a student</h2><p>Add a learner to the currently selected batch.</p></div><button type="button" className="icon-btn" onClick={()=>setShowStudents(false)}><X size={18}/></button></div><label>Student name<input name="name" autoFocus required placeholder="Full name"/></label><label>Roll number<input name="roll" placeholder="e.g. P-064"/></label><label>Batch<select value={batch} onChange={e=>setBatch(e.target.value)}><option>JEE XII · Alpha</option><option>JEE XII · Beta</option><option>JEE XI · Alpha</option></select></label><div className="modal-actions"><button type="button" className="btn secondary" onClick={()=>setShowStudents(false)}>Cancel</button><button type="submit" className="btn primary"><Plus size={15}/> Add student</button></div></form></div>}
     {toast&&<div className="toast"><Check size={16}/>{toast}</div>}
   </div>;
