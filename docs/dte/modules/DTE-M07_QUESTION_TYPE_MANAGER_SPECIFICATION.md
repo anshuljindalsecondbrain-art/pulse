@@ -6,6 +6,10 @@
 - Parent: docs/dte/DTE_MODULE_REGISTER.md
 - Last updated: 2026-11-06
 
+## Governing scope clarification — classification management software
+
+DTE manages institution-defined academic classification and tagging structures. It does not design, prescribe, generate or impose chapter-wise syllabus bifurcation, curriculum structure or a universal academic hierarchy. Institutions define their own categories and terminology; DTE provides software to configure, record, map, search, validate, review, version, govern and report on those existing structures. Academic terms such as subject, chapter, topic and concept are examples of institution-managed data, not mandatory DTE levels or a curriculum-design function.
+
 ## 1. Purpose
 
 Question Type Manager maintains configurable definitions for question formats and response structures used by tagging workflows, inventory filters and downstream consumers. Question type is a distinct classification dimension and must not be conflated with difficulty, archetype or pedagogical metadata.
