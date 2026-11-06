@@ -25,3 +25,25 @@ Close issues only with evidence; preserve closed issue history. Link each issue 
 | PULSE-ISSUE-0013 | Website / Vercel | Feature-branch Preview READY but not production-connected; preview variables branch-scoped; current latest deployment may lag documentation commits | High | OPEN | Re-deploy Preview after documentation change; verify exact branch SHA and run browser QA; Production environment remains unconfigured |
 | PULSE-ISSUE-0014 | Governance | PULSE master documentation index was missing from current System A branch tree | Medium | CLOSED | Consolidated index created on feature branch; verify against PR head |
 | PULSE-ISSUE-0015 | Website / UX | Main UI still uses localStorage and fictional data; Supabase repository adapter is not integrated | Blocking | OPEN | Implement approved authentication and service boundary; preserve isolated demo mode until connected path acceptance |
+
+
+## 2026-11-06 — live reconciliation refresh
+
+The following are the verified live states at the time of this refresh. These are not approvals to change production.
+
+| Issue ID | Module | Description | Severity | Status | Dependency / next action |
+|---|---|---|---|---|---|
+| PULSE-ISSUE-0016 | GitHub / CI | Current PR head changes during concurrent work; exact-head checks must be confirmed before release claims | High | OPEN | Re-read PR #2 head and require both System A CI and Student Tracking prototype workflows on the exact final SHA |
+| PULSE-ISSUE-0017 | Website / Vercel | Most recent READY preview currently observed is tied to commit `81fd420af18eb9b016b187a71b68073ebf325979`; newer source changes exist and Vercel reported preview build-rate limiting | High | OPEN | Deploy only after build-rate window allows; verify exact commit in deployment metadata, auth protection and browser QA |
+| PULSE-ISSUE-0018 | Platform / Supabase | Live project remains empty: no application tables, no migrations and no Edge Functions | Blocking | OPEN | Preserve fail-closed state until canonical physical ERD, approvals, unified migration, RLS/grants and integration tests are complete |
+| PULSE-ISSUE-0019 | System A / UI integration | Main App.tsx continues to use localStorage demo data; repository adapter is not invoked by the UI | Blocking | OPEN | Implement approved auth/query/command integration without migrating demo records or bypassing service boundaries |
+| PULSE-ISSUE-0020 | Platform / Vercel configuration | Two preview-only environment variables exist on the System A feature branch; no Production variables were listed | High | OPEN | Keep preview config branch-scoped; configure production only after production backend, auth and release approvals |
+
+### Verified platform snapshot
+
+- Supabase project `nnvssbfezkliavwxhgbh`: ACTIVE_HEALTHY, region `ap-south-1`, PostgreSQL 17.11.
+- `public` tables: none; migration history: none; Edge Functions: none.
+- Security, performance and health advisor lints: none on the current empty application schema; not a validation of proposed schema/RLS.
+- Vercel project `pulse` has a READY feature-branch Preview for commit `81fd420af18eb9b016b187a71b68073ebf325979`. The latest source SHA is not proven to be deployed.
+- Vercel deployment comments report the Hobby team build/deployment rate limit (`api-deployments-young-hobby-team-24h`) for subsequent preview deployments.
+- GitHub PR #2 is open, draft and unmerged. Exact PR head and CI must be refreshed at each release checkpoint.
