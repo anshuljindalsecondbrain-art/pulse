@@ -15,6 +15,8 @@ export type CorrectionCycle = Readonly<{
   originalEvidenceEventId: string;
   originalAttemptCycleId: string;
   originatingReturnedDecisionId: string;
+  startEventId: string;
+  startReason: string;
   state: CorrectionState;
   latestCorrectionEvidenceEventId?: string;
   latestReviewDecisionId?: string;
@@ -147,7 +149,7 @@ export function prepareCorrectionStart(input: {
   if (prior) {
     const same = prior.instituteId === c.instituteId && prior.studentId === c.studentId &&
       prior.obligationId === c.obligationId && prior.originalEvidenceEventId === evidence.id &&
-      prior.originatingReturnedDecisionId === decision.id && prior.startedAt === c.occurredAt;
+      prior.originatingReturnedDecisionId === decision.id && prior.startedAt === c.occurredAt &&\n      prior.startEventId === c.eventId && prior.startReason === reason;
     if (!same) throw new Error("Correction cycle ID conflict: identifier already belongs to different content.");
     return Object.freeze({ outcome: "IDEMPOTENT_REPLAY", value: prior });
   }
@@ -167,6 +169,33 @@ export function prepareCorrectionStart(input: {
     relatedDecisionId: decision.id,
   });
   return Object.freeze({ outcome: "CREATED", value: cycle, event });
+}
+
+
+/** Resume the same correction cycle after a teacher returns a later correction submission. */
+export function prepareCorrectionRestart(input: {
+  cycle: CorrectionCycle;
+  command: { eventId: string; actorId: string; reason: string; occurredAt: string };
+}): CorrectionCommandResult<CorrectionCycle> {
+  const { cycle, command: c } = input;
+  requireText(c.eventId, "eventId");
+  requireText(c.actorId, "actorId");
+  const reason = requireReason(c.reason);
+  requireTimestamp(c.occurredAt, "occurredAt");
+  if (c.actorId !== cycle.studentId) throw new Error("Only the original student may restart correction.");
+  if (cycle.state !== "REQUIRED") throw new Error("Only returned correction work can be restarted.");
+  const nextCycle: CorrectionCycle = Object.freeze({
+    ...cycle, state: "IN_PROGRESS", updatedAt: c.occurredAt,
+  });
+  const event = makeEvent({
+    id: c.eventId, correctionCycleId: cycle.id, instituteId: cycle.instituteId,
+    obligationId: cycle.obligationId, actorId: c.actorId, actorRole: "STUDENT",
+    action: "START", fromState: "REQUIRED", toState: "IN_PROGRESS",
+    reason, occurredAt: c.occurredAt,
+    ...(cycle.latestCorrectionEvidenceEventId ? { relatedEvidenceEventId: cycle.latestCorrectionEvidenceEventId } : {}),
+    ...(cycle.latestReviewDecisionId ? { relatedDecisionId: cycle.latestReviewDecisionId } : {}),
+  });
+  return Object.freeze({ outcome: "CREATED", value: nextCycle, event });
 }
 
 export type CorrectionSubmissionCommand = Readonly<{
