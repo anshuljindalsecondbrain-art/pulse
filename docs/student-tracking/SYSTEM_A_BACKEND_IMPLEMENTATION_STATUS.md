@@ -91,3 +91,16 @@ Added `src/assignment-domain.ts` and `src/assignment-domain.test.ts`:
 - Rejects duplicate question selections, duplicate learners, empty targets, foreign question references and due dates before publication.
 
 **Boundary:** This is a pure planning function. It does not resolve the authoritative roster, authorize the publisher, persist assignment versions, atomically create obligations, send notifications or enforce database idempotency. Those remain server/database responsibilities and are blocked on the authorization/RLS design.
+
+
+## Student worklist and teacher verification projection increment (2026-11-06)
+
+Added `src/worklist-domain.ts` and `src/worklist-domain.test.ts`:
+
+- Builds a learner-specific worklist from eligible obligations and immutable assignment-version slots.
+- Excludes exempted obligations and reports belonging to other learners or institutes.
+- Projects submission and completion verification as distinct states.
+- Builds a teacher review queue from the latest submitted student report per eligible obligation.
+- Matches completion decisions to the exact evidence event and resolves decision history deterministically.
+
+**Boundary:** These are pure read-model projections. They do not authenticate the learner, authorize teacher batch scope, query Supabase, persist verification decisions, or provide operational UI. Server-side identity and tenant authorization remain mandatory.
