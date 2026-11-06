@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";\nimport type { FormEvent, KeyboardEvent, ReactNode } from "react";
 import { Activity, ArrowRight, Bell, BookOpen, CalendarDays, Check, CheckCheck, ChevronDown, CircleHelp, ClipboardList, Command, Download, GraduationCap, LayoutDashboard, Plus, Search, Settings2, ShieldCheck, Sparkles, Users, X } from "lucide-react";
 
 type Status = "U" | "C" | "I" | "D" | "T";
@@ -82,7 +82,7 @@ function App() {
     const key = `${studentId}-${exercise.id}-${q}`;
     setMarks(prev => ({...prev, [key]: next ?? statusMeta[prev[key] ?? "U"].next}));
   }
-  function createExercise(e: React.FormEvent) {
+  function createExercise(e: FormEvent) {
     e.preventDefault();
     if (!exerciseName.trim() || questionCount < 1 || questionCount > 100) return;
     const item: Exercise = { id: `e${Date.now()}`, name: exerciseName.trim(), chapter, subject: "Physics", count: questionCount, batch, due, created: "Just now" };
@@ -100,7 +100,7 @@ function App() {
     const name=String(data.get("name")||"").trim(); if(!name) return;
     setStudents(prev=>[...prev,{id:`s${Date.now()}`,name,roll:String(data.get("roll")||`P-${String(prev.length+1).padStart(3,"0")}`),batch}]); form.reset(); setShowStudents(false); setToast("Student added to the selected batch.");
   }
-  function handleKeys(e: React.KeyboardEvent<HTMLDivElement>) {
+  function handleKeys(e: KeyboardEvent<HTMLDivElement>) {
     if ((e.target as HTMLElement).tagName === "INPUT" || (e.target as HTMLElement).tagName === "SELECT" || (e.target as HTMLElement).tagName === "TEXTAREA") return;
     if (["1","2","3","4","5"].includes(e.key)) { e.preventDefault(); const states:Status[]=["U","C","I","D","T"]; const el=document.activeElement as HTMLElement; const sid=el?.dataset?.student; const q=Number(el?.dataset?.question); if(sid&&q) updateMark(sid,q,states[Number(e.key)-1]); }
   }
@@ -155,5 +155,5 @@ function App() {
     {toast&&<div className="toast"><Check size={16}/>{toast}</div>}
   </div>;
 }
-function Metric({icon,label,value,detail,accent=""}:{icon:React.ReactNode;label:string;value:string;detail:string;accent?:string}) { return <div className="metric-card"><div className={"metric-icon "+accent}>{icon}</div><div className="metric-label">{label}</div><div className="metric-value">{value}</div><div className="metric-detail">{detail}</div></div>; }
+function Metric({icon,label,value,detail,accent=""}:{icon:ReactNode;label:string;value:string;detail:string;accent?:string}) { return <div className="metric-card"><div className={"metric-icon "+accent}>{icon}</div><div className="metric-label">{label}</div><div className="metric-value">{value}</div><div className="metric-detail">{detail}</div></div>; }
 export default App;
