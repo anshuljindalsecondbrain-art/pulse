@@ -14,6 +14,10 @@ DTE manages institution-defined academic classification and tagging structures. 
 
 AI Assistance Interface provides machine-generated candidate classifications and metadata suggestions to assist authorized DTE users. It is an advisory layer: suggestions must be explainable, traceable and subject to configured human review. AI must not silently publish or overwrite governed mappings.
 
+## Institutional authority guardrail
+
+AI may suggest only identifiers and values that already exist in the applicable institution-approved configuration. If no suitable configured value exists, it must report that no match is available or request human action. It must not invent academic categories, create hierarchy nodes, or recommend chapter-wise syllabus bifurcation.
+
 ## 2. Scope
 
 In scope:
