@@ -97,3 +97,33 @@ Before a unified migration or live application enablement:
 ## 8. Change control
 
 This index is navigational. It does not supersede source-specific documents, erase historical audit records or mark proposals approved. Record dated corrections rather than silently rewriting historical conclusions.
+
+
+## 9. Live synchronization refresh — 2026-11-06
+
+This section records a live connector audit and supersedes older deployment/database snapshot statements above where they differ.
+
+### Supabase
+- Project `nnvssbfezkliavwxhgbh`, name PULSE, active/healthy, `ap-south-1`, PostgreSQL 17.11.
+- Live public application tables: none.
+- Applied migration history: none.
+- Edge Functions: none.
+- Security, performance and health advisors: no lints on the empty current schema. This is not approval or certification of proposed tables, policies or commands.
+- Browser-safe publishable key is configured for the feature-branch Preview only. No key value is recorded in this document.
+
+### GitHub
+- Repository: `anshuljindalsecondbrain-art/pulse`.
+- Active work branch: `feat/system-a-abhyas-foundation`.
+- PR #2 remains open, draft and unmerged. The head was changing during the concurrent audit; do not treat any older SHA as the final validation target.
+- Current implementation includes System A domain contracts, the Evidence Timeline and design documents PULSE-DATA-CORE-001 through 008, plus governance event PULSE-EVT-000018.
+- The core data and authorization documents remain drafts. PULSE-DATA-CORE-009 is the next planned design stage.
+
+### Website / Vercel
+- Vercel project `pulse` is linked to this repository.
+- The newest READY deployment observed during the audit was the feature-branch deployment for commit `81fd420af18eb9b016b187a71b68073ebf325979`; later changes exist, so the latest source is not proven deployed.
+- Preview is protected by Vercel Authentication and is not production-connected.
+- Preview environment variables `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` are branch-scoped to `feat/system-a-abhyas-foundation`. No Production environment variables were listed.
+- Vercel reported `api-deployments-young-hobby-team-24h` rate limiting on subsequent preview deployments. Re-deploy only after the provider permits it, then verify the exact source SHA.
+
+### Non-negotiable release boundary
+The primary UI remains localStorage/demo-backed. The Supabase client/repository adapter is not integrated into the main UI. Do not enter real student data, apply the existing V10 or System A migration unchanged, create production tables/policies, merge PR #2, or promote a production deployment until the canonical physical schema, product/academic/security approvals, RLS/grants, transactional command layer, cross-tenant tests, migration replay and exact-commit browser QA are complete.
