@@ -56,6 +56,8 @@ export type EvidenceTimelineEntry = Readonly<{
   supersededByEventId?: string;
   supersedesDecisionId?: string;
   supersededByDecisionId?: string;
+  relatedEvidenceEventId?: string;
+  relatedDecisionId?: string;
   sourceReference: Readonly<{ type: EvidenceTimelineSourceType; id: string }>;
 }>;
 
@@ -183,7 +185,7 @@ export function buildEvidenceTimeline(input: {
   }
 
   for (const decision of input.decisions) {
-    if (decision.purpose === "CORRECTION" || correctionDecisionIds.has(decision.id)) continue;
+    if (decision.purpose !== "COMPLETION" && decision.purpose !== "ANSWER_EVALUATION") continue;
     const event = evidenceById.get(decision.evidenceEventId);
     if (!event || event.instituteId !== decision.instituteId ||
         event.obligationId !== decision.obligationId || !scoped(scope, event)) continue;
@@ -218,9 +220,33 @@ export function buildEvidenceTimeline(input: {
       exerciseSlotId: cycle.exerciseSlotId, actorId: event.actorId,
       actorRole: event.actorRole, eventAt: event.occurredAt, reason: event.reason,
       outcome: event.toState,
-      ...(event.relatedEvidenceEventId ? { supersedesEventId: event.relatedEvidenceEventId } : {}),
-      ...(event.relatedDecisionId ? { supersedesDecisionId: event.relatedDecisionId } : {}),
+      ...(event.relatedEvidenceEventId ? { relatedEvidenceEventId: event.relatedEvidenceEventId } : {}),
+      ...(event.relatedDecisionId ? { relatedDecisionId: event.relatedDecisionId } : {}),
       sourceReference: Object.freeze({ type: "CORRECTION_TRANSITION", id: event.id }),
+    }));
+  }
+
+  for (const review of input.correctionReviews) {
+    const cycle = cyclesById.get(review.correctionCycleId);
+    const decision = review.decision;
+    const event = evidenceById.get(decision.evidenceEventId);
+    if (!cycle || !event || decision.purpose !== "CORRECTION" ||
+        decision.instituteId !== cycle.instituteId || decision.obligationId !== cycle.obligationId ||
+        event.instituteId !== cycle.instituteId || event.studentId !== cycle.studentId ||
+        event.obligationId !== cycle.obligationId || event.exerciseSlotId !== cycle.exerciseSlotId ||
+        !scoped(scope, cycle)) continue;
+    validDate(decision.decidedAt, "correctionReview.decidedAt");
+    entries.push(Object.freeze({
+      id: timelineId("VERIFICATION_DECISION", decision.id),
+      sourceType: "VERIFICATION_DECISION", kind: "CORRECTION_REVIEW",
+      instituteId: cycle.instituteId, studentId: cycle.studentId,
+      obligationId: cycle.obligationId, exerciseSlotId: cycle.exerciseSlotId,
+      actorId: decision.verifierId, eventAt: decision.decidedAt,
+      reason: decision.reason, outcome: decision.outcome,
+      ...(decision.supersedesDecisionId ? { supersedesDecisionId: decision.supersedesDecisionId } : {}),
+      ...(supersededDecisions.has(decision.id) ? { supersededByDecisionId: supersededDecisions.get(decision.id) } : {}),
+      relatedEvidenceEventId: event.id,
+      sourceReference: Object.freeze({ type: "VERIFICATION_DECISION", id: decision.id }),
     }));
   }
 
