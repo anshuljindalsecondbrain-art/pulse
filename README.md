@@ -2,7 +2,7 @@
 
 PULSE is a multi-institute academic technology platform. Its long-term direction is to connect academic content, question-bank operations, student work tracking, assessment, and AI-supported learning workflows through a governed, versioned platform.
 
-> **Repository status (2026-11-06):** documentation foundation in progress. The initial repository audit found only documentation on the `main` branch; no deployable application source or Supabase migration tree was present in the inspected branch. This repository is the source of truth for project code, specifications, architecture decisions, migrations, tests, and delivery history.
+> **Repository status (2026-11-06):** the repository now contains a fresh System A frontend prototype under `apps/student-tracking/`. It is an isolated Vite/React application with local demo persistence; production auth, database integration, RLS and deployment are not yet implemented. This repository is the source of truth for project code, specifications, architecture decisions, migrations, tests, and delivery history.
 
 ## Principles
 
@@ -16,7 +16,7 @@ PULSE is a multi-institute academic technology platform. Its long-term direction
 
 ## Documentation map
 
-- [Project master plan](docs/PROJECT_MASTER_PLAN.md)
+- [Student Tracking app prototype](apps/student-tracking/README.md)\n- [Project master plan](docs/PROJECT_MASTER_PLAN.md)
 - [Architecture](docs/ARCHITECTURE.md)
 - [Development roadmap](docs/DEVELOPMENT_ROADMAP.md)
 - [Decision log](docs/decisions/DECISION_LOG.md)
@@ -29,7 +29,7 @@ PULSE is a multi-institute academic technology platform. Its long-term direction
 
 ## Development status
 
-System A (Abhyas Matrix) is the first operational delivery priority. Its database and phased implementation baselines are documented under `docs/student-tracking/`. The implementation audit is blocked until the authoritative application source and connected Supabase project are identified. Do not apply production schema changes until the as-built audit and proposed change plan have been reviewed.
+System A (Abhyas Matrix) is the first operational delivery priority. A frontend prototype and implementation baselines are in this repository. The production data layer remains blocked on connecting and auditing the intended Supabase project. Do not apply production schema changes until the as-built audit and proposed change plan have been reviewed.
 
 ## Working with this repository
 
