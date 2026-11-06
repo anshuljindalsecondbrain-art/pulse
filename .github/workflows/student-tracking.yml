@@ -30,7 +30,7 @@ jobs:
           node <<'NODE'
           const body = process.env.PULL_REQUEST_BODY || "";
           const checks = [
-            [/PULSE-EVT-\\d{6}/, "At least one PULSE Event ID"],
+            [/PULSE-EVT-\d{6}/, "At least one PULSE Event ID"],
             [/Requirement ID/i, "Requirement ID section"],
             [/Impact and risk/i, "Impact and risk section"],
             [/Validation/i, "Validation section"],
