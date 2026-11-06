@@ -58,3 +58,14 @@ This log records current working decisions. New decisions should be appended wit
 - Search, async job and event infrastructure.
 - Approval defaults and configurable publication controls.
 - Formal status/event vocabulary for student tracking.
+
+
+## D-010 — Configurable digital tagging scope change (proposed)
+- **Date:** 2026-11-06
+- **Status:** Proposed — not accepted; owner decision required
+- **Source:** Product-planning discussion consolidated in `docs/dte/CONFIGURABLE_TAGGING_SYSTEM_SCOPE_CHANGE_PROPOSAL.md`.
+- **Proposal:** Extend the institute-configurable classification framework toward multiple named structures per institute, context-specific assignments, independent contextual question mappings, a digital tagging workspace and governed integrations.
+- **Conflict:** The existing `PULSE-DTE-DEC-004` and DTE Master Documentation Register define the current phase as offline framework management and explicitly defer digital question inventory and digital tagging.
+- **Decision required:** Product owner must choose whether digital configurable tagging replaces the current phase, is a later phase, or is a separate module.
+- **Architecture constraints:** QBMS/Q-GENOME owns canonical question identity/content unless a separate decision changes that boundary; DRE owns difficulty rules/calculation/history; Student Tracking owns student attempts and evidence; tagging completeness must not block Student Tracking.
+- **Consequence while pending:** Existing offline-only phase boundary remains the controlling baseline. No schema, code, migration or deployment work is authorized by this proposal.

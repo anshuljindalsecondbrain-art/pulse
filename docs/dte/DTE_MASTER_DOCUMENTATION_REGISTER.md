@@ -1,7 +1,7 @@
 # DTE Master Documentation Register
 
 - Document ID: PULSE-DTE-REG-002
-- Version: 0.4.6
+- Version: 0.4.7
 - Status: Draft — full phase-aware documentation baseline
 - Product: PULSE — Deep Tagging Engine (DTE)
 - Scope: DTE only. Other PULSE systems appear only as external owners/consumers in DTE contracts.
@@ -321,6 +321,7 @@ Decision papers additionally record options considered, selected direction, cons
 |---|---|---|---|
 | 0.2.0 | 2026-11-06 | Draft | Audited and consolidated documentation architecture; established 50 core documents, mapped 18 existing module specifications and existing audit/decision records, added ownership, dependencies, gates and open-decision tracking |
 | 0.3.0 | 2026-11-06 | Draft | Rebased current scope to offline tagging framework definition/management; deferred question upload, digital inventory/tagging, question identity/version and Q-GENOME decisions to a separate later phase; added phase applicability and revised approval gates |\n| 0.4.0 | 2026-11-06 | Draft | Added full phase-aware audit, product roadmap, legacy module disposition and Phase 1 operating model, framework configuration, template/handoff and requirements baselines |\n| 0.4.1 | 2026-11-06 | Draft | Added future question upload and digital-tagging discovery brief to the controlled documentation register |\n| 0.4.2 | 2026-11-06 | Draft | Updated M04 register status after complete Phase 1 rewrite and GitHub verification |\n| 0.4.3 | 2026-11-06 | Draft | Updated M10 register status after complete Phase 1 review/approval rewrite; aligned header version with latest changelog |\n| 0.4.4 | 2026-11-06 | Draft | Updated M11 register status after complete Phase 1 version/history rewrite |\n| 0.4.5 | 2026-11-06 | Draft | Updated M13 register status after complete Phase 1 validation/quality rewrite |\n| 0.4.6 | 2026-11-06 | Draft | Updated M01 register status after complete Phase 1 dashboard rewrite |
+| 0.4.7 | 2026-11-06 | Draft | Added configurable tagging scope-change proposal while retaining the existing offline-only phase boundary pending explicit product decision |
 
 ## 13. Approval
 
@@ -329,3 +330,30 @@ Decision papers additionally record options considered, selected direction, cons
 - Security review: Pending
 - QA review: Pending
 - Implementation authorization: Not granted
+
+
+## 14. Pending configurable-tagging scope-change proposal
+
+A new proposal, [Configurable Tagging System: Scope and Functional Proposal](CONFIGURABLE_TAGGING_SYSTEM_SCOPE_CHANGE_PROPOSAL.md), was added under change ID `PULSE-CHG-2026-11-06-001`.
+
+The proposal consolidates institute-owned configurable structures, multiple named structures, contextual mappings, teaching-structure separation, governance/versioning, screen inventory and foundational UI/UX requirements developed in product planning.
+
+**This proposal does not supersede the existing offline-only current-phase boundary.** It explicitly requests a product-owner decision on whether digital configurable tagging replaces the current phase, becomes a later phase, or is delivered as a separate module. It also preserves the existing DRE difficulty-ownership and Student Tracking evidence-ownership boundaries.
+
+| Proposal item | Status |
+|---|---|
+| Configurable structure requirements | Draft proposal |
+| Digital contextual question mapping | Scope conflict; pending phase decision |
+| Teaching structure integration | Ownership/contract review pending |
+| Contextual difficulty display | DRE contract required; DTE scoring prohibited |
+| Student/batch analytics | Student Tracking/Analytics ownership; not DTE-owned |
+| Screen inventory and foundational UI/UX | Draft proposal; cross-domain review required |
+| Database/API/implementation | Not authorized |
+
+## 15. Governance document additions
+
+- Project-wide document editing and version-control rules: `docs/00_PROJECT_GOVERNANCE/PULSE_DOCUMENT_CONTROL_STANDARD.md`.
+- Central editing ledger: `docs/00_PROJECT_GOVERNANCE/PULSE_DOCUMENT_CHANGE_REGISTER.md`.
+- Project navigation updated in `docs/00_PROJECT_GOVERNANCE/PULSE_MASTER_DOCUMENTATION_INDEX.md`.
+
+These documents are governance proposals pending owner approval; GitHub history and PR review remain the evidence of actual edits.
