@@ -177,3 +177,18 @@ Added `src/doubt-management-domain.ts` and `src/doubt-management-domain.test.ts`
 - Supports exact idempotent case/event retries and rejects conflicting identifier reuse.
 
 **Boundary:** Pure domain command contracts only. Caller-supplied authorization lists are not proof of authorization. Server-side identity/scope validation, transactional persistence, RLS, database integration tests and operational UI remain outstanding. No database schema or production data was changed.
+
+
+## Independent answer evaluation command increment (2026-11-06)
+
+Added `src/answer-evaluation-domain.ts` and `src/answer-evaluation-domain.test.ts`:
+
+- Creates answer-evaluation decisions independently of completion verification.
+- Supports CORRECT, INCORRECT and PARTIALLY_CORRECT outcomes with a required rationale.
+- Binds each decision to the exact submitted student self-report, institute, learner, obligation and exercise slot.
+- Rejects ineligible obligations, non-submitted evidence, teacher observations, self-evaluation and cross-scope references.
+- Preserves answer-evaluation history; a revised decision must supersede the latest evaluation for the same evidence event.
+- Supports exact idempotent retries and rejects conflicting decision-ID reuse.
+- Keeps completion decisions separate; evaluation neither confirms nor implies completion.
+
+**Boundary:** Pure domain command contract only. Authorized obligation scope and evaluator role are caller-supplied validation inputs, not proof of authorization. Server-derived identity/role/scope, persistence, RLS, database integration tests and operational review UI remain outstanding. No database schema or production data was changed.
