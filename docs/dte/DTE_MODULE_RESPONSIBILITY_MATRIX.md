@@ -1,8 +1,8 @@
 # DTE Module Responsibility Matrix
 
 - Document ID: PULSE-DTE-RACI-001
-- Version: 0.1.0
-- Status: Draft — proposed ownership model; not approved for implementation
+- Version: 0.2.0
+- Status: Draft — phase-aware responsibility model; not approved for implementation
 - Product: PULSE — Deep Tagging Engine (DTE)
 - Scope: Logical ownership and module boundaries for DTE-M01 through DTE-M18
 - Last updated: 2026-11-06
@@ -10,6 +10,18 @@
 ## Governing scope clarification — classification management software
 
 DTE manages institution-defined academic classification and tagging structures; it does not design, prescribe, generate or impose chapter-wise syllabus bifurcation, curriculum structure or a universal academic hierarchy. Institutions define their own categories and terminology. DTE provides the software to configure, record, map, search, validate, review, version, govern and report on those existing structures. Academic terms such as subject, chapter, topic and concept are examples of institution-managed data, not mandatory DTE levels or a curriculum-design function.
+
+## Phase-aware responsibility override — Version 0.2.0
+
+The current phase does not operate on uploaded question records. Accordingly, any ownership row below that assigns DTE responsibility for question identity, question versions, placements, question-to-classification mappings or downstream enrichment is a future-phase proposal only.
+
+Current authoritative responsibilities are limited to:
+- Institution-approved framework configuration and its version lifecycle.
+- Offline tagging instructions/templates and work-package metadata, if confirmed.
+- Offline submission validation, checking, correction, approval and audit, if confirmed.
+- Current-phase framework and offline-work quality reporting.
+
+Question content and canonical identity remain outside current DTE scope. Student Tracking retains student evidence. DRE retains difficulty calculations. The later upload/digital-tagging phase must create a new approved ownership matrix before implementation.
 
 ## 1. Purpose
 
@@ -165,3 +177,24 @@ Once this matrix is reviewed and approved:
 6. Update the audit remediation tracker with evidence and closure status.
 
 No module should be marked implementation-ready solely because this matrix is approved. All P0 findings in the audit must be closed and their dependent specifications reviewed.
+
+
+## 9. Phase 1 ownership baseline (provisional)
+
+| Capability | Current owner | Boundary |
+|---|---|---|
+| Academic classification decisions | Institution's authorized academic authority | DTE does not author or prescribe academic structure |
+| Framework configuration and version | DTE framework administration | Encodes approved decisions; technical validation is not academic approval |
+| Offline template/work package | DTE, subject to confirmed workflow | Contains external locators, not DTE question entities |
+| Offline tagging work | Human tagger / institution | Applied outside digital question inventory |
+| Checking and academic adjudication | Institution-designated checker/reviewer | Approval authority must be explicit |
+| Structural validation and audit | DTE | Does not decide ambiguous academic meaning |
+| Student attempt/attendance/doubt evidence | Student Tracking | Independent of deep-tagging completion |
+| Difficulty evaluation | DRE | No DTE calculation |
+| Question upload and digital identity | Separate future module/domain | Deferred; requires a new approved ownership matrix |
+
+## 10. Change history
+
+| Version | Date | Status | Change |
+|---|---|---|---|
+| 0.2.0 | 2026-11-06 | Draft | Added phase-aware responsibility override and current Phase 1 ownership boundaries |
