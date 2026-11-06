@@ -82,7 +82,10 @@ No decision may be marked APPROVED solely because it appears in a design documen
 - **Why it matters:** Affects fairness, historical reporting, reproducibility and transactional publication.
 - **Required approver:** Academic Owner + Product Owner.
 - **Schema impact:** Publication snapshot, obligation expansion, assignment lifecycle events and idempotent publication transaction.
-- **Status:** OPEN.
+- **Product decision recorded (2026-11-06):** HYBRID — immutable publication snapshot by default, with explicit teacher-controlled additions and removals recorded as auditable lifecycle events.
+- **Operational implication:** The initial publication roster is fixed and reproducible. Students joining the batch later do not automatically inherit the assignment. Authorized teacher actions may add or remove/cancel a student's obligation through explicit commands; preserve the original snapshot and append actor-attributed events with reason and timestamp. Do not silently rewrite historical membership or publication evidence.
+- **Approval status:** Product decision recorded at the user's direction; Academic Owner approval remains pending.
+- **Status:** BLOCKED — awaiting Academic Owner approval.
 
 ### D-006 — Author, approver and publisher separation
 
