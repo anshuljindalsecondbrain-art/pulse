@@ -1,7 +1,7 @@
 # DTE Master Documentation Register
 
 - Document ID: PULSE-DTE-REG-002
-- Version: 0.4.0
+- Version: 0.4.3
 - Status: Draft — full phase-aware documentation baseline
 - Product: PULSE — Deep Tagging Engine (DTE)
 - Scope: DTE only. Other PULSE systems appear only as external owners/consumers in DTE contracts.
@@ -133,7 +133,7 @@ The following 18 legacy module specifications exist as draft documents. Their ap
 | M07 | Question Type Manager Specification | `docs/dte/modules/DTE-M07_QUESTION_TYPE_MANAGER_SPECIFICATION.md` | Existing — Draft |
 | M08 | Pedagogical Metadata Manager Specification | `docs/dte/modules/DTE-M08_PEDAGOGICAL_METADATA_MANAGER_SPECIFICATION.md` | Existing — Draft |
 | M09 | PYQ Provenance Manager Specification | `docs/dte/modules/DTE-M09_PYQ_PROVENANCE_MANAGER_SPECIFICATION.md` | Existing — Draft |
-| M10 | Review & Approval Specification | `docs/dte/modules/DTE-M10_REVIEW_APPROVAL_SPECIFICATION.md` | Existing — Draft |
+| M10 | Review & Approval Specification | `docs/dte/modules/DTE-M10_REVIEW_APPROVAL_SPECIFICATION.md` | Rewritten v0.2.0 — Draft; Phase 1 |
 | M11 | Version & History Manager Specification | `docs/dte/modules/DTE-M11_VERSION_HISTORY_MANAGER_SPECIFICATION.md` | Existing — Draft |
 | M12 | Bulk Tagging Manager Specification | `docs/dte/modules/DTE-M12_BULK_TAGGING_MANAGER_SPECIFICATION.md` | Existing — Draft |
 | M13 | Validation & Quality Engine Specification | `docs/dte/modules/DTE-M13_VALIDATION_QUALITY_ENGINE_SPECIFICATION.md` | Existing — Draft |
@@ -320,7 +320,7 @@ Decision papers additionally record options considered, selected direction, cons
 | Version | Date | Status | Change |
 |---|---|---|---|
 | 0.2.0 | 2026-11-06 | Draft | Audited and consolidated documentation architecture; established 50 core documents, mapped 18 existing module specifications and existing audit/decision records, added ownership, dependencies, gates and open-decision tracking |
-| 0.3.0 | 2026-11-06 | Draft | Rebased current scope to offline tagging framework definition/management; deferred question upload, digital inventory/tagging, question identity/version and Q-GENOME decisions to a separate later phase; added phase applicability and revised approval gates |\n| 0.4.0 | 2026-11-06 | Draft | Added full phase-aware audit, product roadmap, legacy module disposition and Phase 1 operating model, framework configuration, template/handoff and requirements baselines |\n| 0.4.1 | 2026-11-06 | Draft | Added future question upload and digital-tagging discovery brief to the controlled documentation register |\n| 0.4.2 | 2026-11-06 | Draft | Updated M04 register status after complete Phase 1 rewrite and GitHub verification |
+| 0.3.0 | 2026-11-06 | Draft | Rebased current scope to offline tagging framework definition/management; deferred question upload, digital inventory/tagging, question identity/version and Q-GENOME decisions to a separate later phase; added phase applicability and revised approval gates |\n| 0.4.0 | 2026-11-06 | Draft | Added full phase-aware audit, product roadmap, legacy module disposition and Phase 1 operating model, framework configuration, template/handoff and requirements baselines |\n| 0.4.1 | 2026-11-06 | Draft | Added future question upload and digital-tagging discovery brief to the controlled documentation register |\n| 0.4.2 | 2026-11-06 | Draft | Updated M04 register status after complete Phase 1 rewrite and GitHub verification |\n| 0.4.3 | 2026-11-06 | Draft | Updated M10 register status after complete Phase 1 review/approval rewrite; aligned header version with latest changelog |
 
 ## 13. Approval
 
