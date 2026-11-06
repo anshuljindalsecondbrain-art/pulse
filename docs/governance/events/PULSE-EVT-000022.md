@@ -10,18 +10,18 @@
 
 ## Context
 
-PULSE-DATA-CORE-010 identified the representation of teacher/reviewer resource scope as D-004. The user explicitly selected typed resource assignments.
+PULSE-DATA-CORE-010 identified the representation of teacher/reviewer resource scope as D-004. The user explicitly selected the hybrid resource-scope model: typed assignments for core academic resources, with a controlled extension mechanism for future resource types.
 
 ## Product decision recorded
 
-Adopt **typed, tenant-qualified resource assignments** for the initial PULSE architecture.
+Adopt the **hybrid resource-scope model** for the initial PULSE architecture.
 
-- Use explicit relationships for supported resource types, rather than one universal generic/polymorphic resource registry.
-- Initial resource scope must cover core resource types required by the product, including centres, batches, students, exercises, assignments and review queues where assignable.
-- Each relationship must retain tenant context and enforce referential integrity through typed, tenant-qualified foreign keys.
-- Adding a new assignable resource type requires an explicit schema/API extension and review; do not silently place arbitrary resource identifiers into a generic string/type pair.
-- Typed resource assignments supplement, and do not replace, D-003 hybrid authorization. Access still requires valid tenant membership, role context, explicit action permission and applicable resource scope.
-- Missing, invalid, cross-tenant or ambiguous scope denies access by default.
+- Use typed, tenant-qualified assignments for core academic resources: centres, batches, students, exercises, assignments and review queues, where assignable.
+- Each core assignment must use an explicit typed reference and enforce tenant-qualified referential integrity.
+- Provide a controlled extension mechanism for future resource types. Every new type requires explicit schema/API registration, ownership, tenant key, reference validation, authorization semantics, lifecycle/revocation behaviour and tests.
+- Generic extension metadata may support discovery/configuration, but must not become an unconstrained polymorphic authorization source for core resources.
+- Resource assignment establishes scope, not action permission. Access still requires valid tenant membership, applicable role context, explicit action permission and applicable resource scope under D-003 hybrid authorization.
+- Missing, invalid, revoked, cross-tenant or ambiguous scope denies access by default.
 
 ## Approval boundary
 
@@ -38,7 +38,7 @@ This records the user's product decision. D-004 requires Technical Owner, Securi
 
 ## Evidence
 
-- User instruction in project conversation, 2026-11-06: "D-004 decision: typed. Record this as my product decision and proceed."
+- User instruction in project conversation, 2026-11-06: "Go ahead option c" (hybrid model).
 - Decision register: `docs/00_PROJECT_GOVERNANCE/PULSE_PRODUCT_DECISION_CLOSURE_AND_SCHEMA_FREEZE_REGISTER.md`
 
 ## Non-authorization
