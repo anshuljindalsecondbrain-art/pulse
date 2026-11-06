@@ -85,3 +85,45 @@ describe("Student evidence and teacher verification", () => {
     expect(report.status).toBe("C");
   });
 });
+
+
+describe("Rebuildable evidence projection", () => {
+  const report = (id: string, status: "C" | "I", reportedAt: string) => createStudentReportEvent({
+    id, studentId: "student-001", obligationId: "obligation-001",
+    questionNumber: 2, status, reportedBy: "student-001", reportedAt,
+  });
+  const decision = (id: string, reportEventId: string, outcome: "VERIFIED" | "CORRECTION_REQUIRED", decidedAt: string) =>
+    createVerificationDecision({ id, reportEventId, decidedBy: "teacher-001", outcome, decidedAt });
+
+  it("rebuilds the latest report per student-obligation-question slot without deleting history", async () => {
+    const { projectEvidence } = await import("./domain");
+    const first = report("r1", "C", "2026-11-06T08:00:00.000Z");
+    const second = report("r2", "I", "2026-11-06T09:00:00.000Z");
+    const projection = projectEvidence([first, second], []);
+    expect(projection).toHaveLength(1);
+    expect(projection[0].latestReport.id).toBe("r2");
+    expect([first, second]).toHaveLength(2);
+  });
+
+  it("attaches verification only to the report event it reviewed", async () => {
+    const { projectEvidence } = await import("./domain");
+    const first = report("r1", "C", "2026-11-06T08:00:00.000Z");
+    const second = report("r2", "I", "2026-11-06T09:00:00.000Z");
+    const projection = projectEvidence([first, second], [
+      decision("v1", "r1", "VERIFIED", "2026-11-06T08:30:00.000Z"),
+    ]);
+    expect(projection[0].latestReport.id).toBe("r2");
+    expect(projection[0].latestVerification).toBeNull();
+  });
+
+  it("selects the latest decision for the current report and is input-order independent", async () => {
+    const { projectEvidence } = await import("./domain");
+    const current = report("r1", "C", "2026-11-06T08:00:00.000Z");
+    const oldDecision = decision("v1", "r1", "VERIFIED", "2026-11-06T08:30:00.000Z");
+    const newDecision = decision("v2", "r1", "CORRECTION_REQUIRED", "2026-11-06T09:00:00.000Z");
+    const a = projectEvidence([current], [oldDecision, newDecision]);
+    const b = projectEvidence([current], [newDecision, oldDecision]);
+    expect(a).toEqual(b);
+    expect(a[0].latestVerification?.id).toBe("v2");
+  });
+});
