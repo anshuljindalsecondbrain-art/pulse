@@ -28,4 +28,5 @@ Rules: Allocate the next unused global ID; never recycle IDs. Create an individu
 
 | PULSE-EVT-000018 | 2026-11-06 | Architecture decision / audit finding | Platform + System A | Reconcile canonical platform identity, System A operations, authorization and deployment boundary | RECORDED_DESIGN_ONLY | [Event](events/PULSE-EVT-000018.md) |
 
+| PULSE-EVT-000020 | 2026-11-06 | Product decision / academic data model | Shared Platform / System A | Record D-001 concurrent enrollment policy: allow within and across institutes | PRODUCT_DECISION_RECORDED_ACADEMIC_APPROVAL_PENDING | [Event](events/PULSE-EVT-000020.md) |
 | PULSE-EVT-000019 | 2026-11-06 | Data architecture / schema design | Platform + System A | Consolidate canonical physical ERD and data dictionary; record schema decisions and blockers | DESIGN_DRAFT_RECORDED | [Event](events/PULSE-EVT-000019.md) |
