@@ -66,12 +66,14 @@ No decision may be marked APPROVED solely because it appears in a design documen
 ### D-004 — Teacher/reviewer resource scope representation
 
 - **Question:** How are teachers, reviewers and administrators assigned access to centres, batches, students, exercises, assignments and review queues?
-- **Proposed default:** Use typed, tenant-qualified resource-scope grants for the initial domain. Avoid a generic polymorphic resource registry unless multiple modules demonstrate a concrete need and the security model can enforce referential integrity.
+- **Proposed default:** Use a hybrid model: typed, tenant-qualified assignments for core academic resources, plus a controlled extension mechanism for future resource types. Do not use an unconstrained generic polymorphic registry as the primary authorization source.
 - **Why it matters:** Determines query filtering, RLS predicates, referential integrity and future module extensibility.
 - **Required approver:** Technical Owner + Security Owner + Product Owner.
 - **Schema impact:** Resource-scope grant tables, composite FKs, indexes and authorization predicates.
-- **Product decision recorded (2026-11-06):** TYPED resource assignments. Use explicit, tenant-qualified relationships for supported resource types rather than a universal generic resource registry for the initial architecture.
-- **Operational implication:** Model core assignments to centres, batches, students, exercises, assignments and review queues with typed references and enforceable tenant-qualified foreign keys. Authorization still requires the D-003 hybrid checks: role, explicit action permission and applicable resource scope. Adding a new resource type requires an explicit schema/API extension and review.
+- **Product decision recorded (2026-11-06):** HYBRID resource-scope model. Use typed, tenant-qualified assignments for the core academic resource types, with a controlled extension mechanism for future resource types. Do not make arbitrary type/string-ID pairs the authoritative authorization model.
+- **Core typed resource assignments:** Centres, batches, students, exercises, assignments and review queues, where each resource is assignable. Each typed relationship must enforce tenant-qualified referential integrity.
+- **Extension mechanism:** New resource types must be registered through an explicit schema/API extension, with declared ownership, tenant key, reference validation, authorization semantics, lifecycle/revocation behaviour and tests. Generic extension metadata may support discovery/configuration, but must not bypass typed referential integrity for core resources.
+- **Operational implication:** Resource assignment determines the resources within which an actor may operate; it does not grant actions. Authorization continues to require the D-003 hybrid checks: active tenant membership, applicable role context, explicit permission for the requested action and valid resource scope. Missing, revoked, invalid, cross-tenant or ambiguous scope denies access by default.
 - **Approval status:** Product decision recorded at the user's direction; Technical Owner and Security Owner approval remain pending.
 - **Status:** BLOCKED — awaiting Technical Owner and Security Owner approval.
 
