@@ -2,10 +2,11 @@ import { useEffect, useMemo, useState } from "react";
 import type { FormEvent, KeyboardEvent, ReactNode } from "react";
 import { isAttemptedStatus, nextStatus, toSafeCsvCell, type Status } from "./domain";
 import { DEMO_BATCHES, DEMO_EXERCISES, DEMO_MARKS, DEMO_STUDENTS } from "./demo-data";
+import { OFFLINE_MODULES } from "./offline-catalog";
 import { Activity, ArrowRight, Bell, BookOpen, CalendarDays, Check, CheckCheck, ChevronDown, CircleHelp, ClipboardList, Command, Download, GraduationCap, LayoutDashboard, Plus, Search, Settings2, ShieldCheck, Sparkles, Users, X } from "lucide-react";
 
 type Student = { id: string; name: string; roll: string; batch: string };
-type Exercise = { id: string; name: string; chapter: string; subject: string; count: number; batch: string; due: string; created: string };
+type Exercise = { id: string; name: string; chapter: string; subject: string; count: number; batch: string; due: string; created: string; sourceModuleId?: string; questionRefs?: string[] };
 type Marks = Record<string, Status>;
 const statusMeta: Record<Status, { label: string; tone: string; next: Status }> = {
   U: { label: "Unattempted", tone: "neutral", next: "C" },
@@ -31,12 +32,10 @@ function App() {
   const [showCreator, setShowCreator] = useState(false);
   const [showStudents, setShowStudents] = useState(false);
   const [tab, setTab] = useState<"matrix" | "overview">("matrix");
-  const [chapter, setChapter] = useState("Rotational Motion");
-  const [exerciseName, setExerciseName] = useState("");
-  const [questionCount, setQuestionCount] = useState(20);
+  const [selectedModuleId, setSelectedModuleId] = useState("offline-phy-rot-xii");
+  const [selectedQuestionIds, setSelectedQuestionIds] = useState<string[]>(() => OFFLINE_MODULES[0].questions.slice(0, 12).map(question => question.id));
   const [batch, setBatch] = useState("JEE XII · Alpha");
   const [selectedBatch, setSelectedBatch] = useState("JEE XII · Alpha");
-  const [subject, setSubject] = useState("Physics");
   const [due, setDue] = useState("2026-11-08");
   const [toast, setToast] = useState("");
   const [filter, setFilter] = useState("All students");
@@ -48,6 +47,7 @@ function App() {
   useEffect(() => { if (!toast) return; const t = window.setTimeout(() => setToast(""), 2500); return () => window.clearTimeout(t); }, [toast]);
 
   const exercise = exercises.find(e => e.id === activeExercise) ?? exercises[0];
+  const selectedModule = OFFLINE_MODULES.find(module => module.id === selectedModuleId) ?? OFFLINE_MODULES[0];
   const roster = students.filter(s => s.batch === selectedBatch);
   const visibleStudents = roster.filter(s => s.name.toLowerCase().includes(query.toLowerCase()) || s.roll.toLowerCase().includes(query.toLowerCase())).filter(s => filter === "All students" || (filter === "Needs attention" && Array.from({length: exercise?.count ?? 0}, (_,i) => marks[`${s.id}-${exercise?.id}-${i+1}`] ?? "U").some(v => v === "D" || v === "I")));
   const questionStats = useMemo(() => Array.from({length: exercise?.count ?? 0}, (_,i) => {
@@ -65,12 +65,32 @@ function App() {
     const key = `${studentId}-${exercise.id}-${q}`;
     setMarks(prev => ({...prev, [key]: next ?? nextStatus(prev[key] ?? "U")}));
   }
-  function createExercise(e: FormEvent) {
+  function assignFromOfflineModule(e: FormEvent) {
     e.preventDefault();
-    if (!exerciseName.trim() || questionCount < 1 || questionCount > 100) return;
-    const item: Exercise = { id: `e${Date.now()}`, name: exerciseName.trim(), chapter, subject, count: questionCount, batch, due, created: "Just now" };
-    setExercises(prev => [item, ...prev]); setActiveExercise(item.id); setSelectedBatch(item.batch); setShowCreator(false); setExerciseName(""); setSubject("Physics"); setTab("matrix");
-    setToast(`Created ${item.name} with ${questionCount} numbered slots.`);
+    if (!selectedModule || selectedQuestionIds.length === 0) return;
+    const item: Exercise = {
+      id: `assignment-${Date.now()}`,
+      name: selectedModule.title,
+      chapter: selectedModule.chapter,
+      subject: selectedModule.subject,
+      count: selectedQuestionIds.length,
+      batch,
+      due,
+      created: "Just now",
+      sourceModuleId: selectedModule.id,
+      questionRefs: [...selectedQuestionIds],
+    };
+    setExercises(prev => [item, ...prev]);
+    setActiveExercise(item.id);
+    setSelectedBatch(item.batch);
+    setShowCreator(false);
+    setTab("matrix");
+    setToast(`Assigned ${selectedQuestionIds.length} existing questions from ${selectedModule.chapter}.`);
+  }
+  function toggleQuestion(questionId: string) {
+    setSelectedQuestionIds(current => current.includes(questionId)
+      ? current.filter(id => id !== questionId)
+      : [...current, questionId]);
   }
   function exportCsv() {
     const rows = [["Student","Roll",...Array.from({length:exercise.count},(_,i)=>`Q${i+1}`)]];
@@ -131,8 +151,8 @@ function App() {
     <main className="main">
       <header className="topbar"><div className="breadcrumbs">PULSE <span>/</span> WORKSPACE <span>/</span> <b>ABHYAS MATRIX</b></div><div className="top-actions"><span className="date-chip"><CalendarDays size={14}/> {new Date().toLocaleDateString(undefined, { weekday: "long", day: "2-digit", month: "short", year: "numeric" })}</span><button className="icon-btn" aria-label="Notifications"><Bell size={17}/><i/></button><div className="top-avatar">DF</div></div></header>
       <div className="content">
-        <div className="page-heading"><div><div className="eyebrow"><span className="eyebrow-line"/> SYSTEM A · STUDENT WORK TRACKING</div><h1>Abhyas Matrix</h1><p>One view of every student's practice. Capture work in class, identify roadblocks, and keep every learning signal traceable.</p></div><div className="heading-actions"><button className="btn secondary" onClick={exportCsv}><Download size={15}/> Export matrix</button><button className="btn primary" onClick={()=>setShowCreator(true)}><Plus size={16}/> Quick DPP</button></div></div>
-        <div className="notice"><div className="notice-icon"><ShieldCheck size={17}/></div><div><b>Operational tracking is independent of deep tagging.</b><span>Exercises can be created and tracked with chapter scope and numbered slots. Topic, concept and archetype enrichment can be connected later without changing original student evidence.</span></div><span className="notice-tag">FICTIONAL DEMO DATA</span></div>
+        <div className="page-heading"><div><div className="eyebrow"><span className="eyebrow-line"/> SYSTEM A · STUDENT WORK TRACKING</div><h1>Abhyas Matrix</h1><p>One view of every student's practice. Capture work in class, identify roadblocks, and keep every learning signal traceable.</p></div><div className="heading-actions"><button className="btn secondary" onClick={exportCsv}><Download size={15}/> Export matrix</button><button className="btn primary" onClick={()=>{setSelectedModuleId(OFFLINE_MODULES[0].id);setSelectedQuestionIds(OFFLINE_MODULES[0].questions.slice(0,12).map(q=>q.id));setShowCreator(true);}}><Plus size={16}/> Assign module</button></div></div>
+        <div className="notice"><div className="notice-icon"><ShieldCheck size={17}/></div><div><b>Operational tracking is independent of deep tagging.</b><span>Teachers select existing questions from offline academic modules. System A tracks the assignment; it does not create or duplicate question-bank content.</span></div><span className="notice-tag">FICTIONAL DEMO DATA</span></div>
         <div className="metric-grid">
           <Metric icon={<ClipboardList size={17}/>} label="Active exercises" value={String(exercises.length).padStart(2,"0")} detail="Across selected batch" />
           <Metric icon={<CheckCheck size={17}/>} label="Attempted" value={completion+"%"} detail={`${doneCells.toLocaleString()} of ${totalCells.toLocaleString()} cells`} accent="green"/>
@@ -149,13 +169,13 @@ function App() {
             <tr className="aggregate-row"><td><b>COHORT SIGNAL</b><span> Wrong + doubt concentration</span></td>{questionStats.map(q=><td key={q.q}><div className={"signal "+((q.wrong+q.doubt)/Math.max(1,q.total)>=.4?"hot":"")}><b>{q.wrong+q.doubt}</b><span>/{q.total}</span></div></td>)}<td><span className="aggregate-total">{incorrect+doubts}</span></td></tr>
           </tbody></table></div>
           <div className="panel-foot"><span>Showing <b>{visibleStudents.length}</b> of <b>{roster.length}</b> students · Changes persist in this browser preview</span><span className="keyboard-hint"><Command size={12}/> Shortcuts: <kbd>1</kbd>–<kbd>5</kbd> status · <kbd>←</kbd><kbd>→</kbd> navigate</span></div>
-        </section> : <section className="panel overview-panel"><div className="panel-head"><div><div className="panel-kicker">EXERCISE LIBRARY</div><h2>Assigned practice</h2><p>Quickly reopen a DPP or inspect its cohort signals.</p></div><button className="btn primary" onClick={()=>setShowCreator(true)}><Plus size={15}/> New exercise</button></div><div className="exercise-list">{exercises.map(x=><button className="exercise-row" key={x.id} onClick={()=>{setActiveExercise(x.id);setTab("matrix");}}><div className="exercise-symbol"><BookOpen size={18}/></div><div><b>{x.name}</b><span>{x.chapter} · {x.count} questions · {x.batch}</span></div><span className="exercise-due">Due {x.due}</span><ArrowRight size={16}/></button>)}</div></section>}
+        </section> : <section className="panel overview-panel"><div className="panel-head"><div><div className="panel-kicker">EXERCISE LIBRARY</div><h2>Assigned practice</h2><p>Quickly reopen a DPP or inspect its cohort signals.</p></div><button className="btn primary" onClick={()=>{setSelectedModuleId(OFFLINE_MODULES[0].id);setSelectedQuestionIds(OFFLINE_MODULES[0].questions.slice(0,12).map(q=>q.id));setShowCreator(true);}}><Plus size={15}/> Assign module</button></div><div className="exercise-list">{exercises.map(x=><button className="exercise-row" key={x.id} onClick={()=>{setActiveExercise(x.id);setTab("matrix");}}><div className="exercise-symbol"><BookOpen size={18}/></div><div><b>{x.name}</b><span>{x.chapter} · {x.count} questions · {x.batch}</span></div><span className="exercise-due">Due {x.due}</span><ArrowRight size={16}/></button>)}</div></section>}
         <div className="bottom-grid"><section className="panel radar-panel"><div className="subpanel-head"><div><div className="panel-kicker">COHORT DIAGNOSTICS</div><h3>Doubt Radar</h3></div><span className="panel-icon amber"><CircleHelp size={17}/></span></div><p className="subcopy">Questions where the cohort needs intervention.</p>{questionStats.filter(q=>q.doubt>0||q.wrong>0).sort((a,b)=>(b.doubt+b.wrong)-(a.doubt+a.wrong)).slice(0,3).map(q=><div className="radar-row" key={q.q}><div className="q-bubble">Q{q.q}</div><div className="radar-detail"><b>{q.doubt} doubts · {q.wrong} incorrect</b><span>{q.total?Math.round((q.doubt+q.wrong)/q.total*100):0}% of cohort flagged</span></div><div className="radar-track"><i style={{width:`${Math.min(100,(q.doubt+q.wrong)/Math.max(1,q.total)*100)}%`}}/></div></div>)}{!questionStats.some(q=>q.doubt||q.wrong)&&<div className="empty-state">No cohort roadblocks detected.</div>}<button className="inline-link" onClick={()=>setFilter("Needs attention")}>Filter students needing attention <ArrowRight size={14}/></button></section>
         <section className="panel experiment-panel"><div className="subpanel-head"><div><div className="panel-kicker">PRODUCT EXPERIMENT</div><h3>Faculty logging workflow</h3></div><span className="experiment-pill"><Sparkles size={12}/> A/B TEST</span></div><p className="subcopy">Compare the traditional matrix against the tactile fast-log interaction.</p><div className="experiment-switch"><button className={experiment==="A"?"on":""} onClick={()=>setExperiment("A")}>Variant A · Classic</button><button className={experiment==="B"?"on":""} onClick={()=>setExperiment("B")}>Variant B · Fast-log</button></div><div className="variant-card"><div className="variant-icon">{experiment==="A"?<ClipboardList size={17}/>:<Command size={17}/>}</div><div><b>{experiment==="A"?"Classic batch table":"Keyboard + tap workflow"}</b><span>{experiment==="A"?"Select a state from each cell, then review the batch.":"Tap to cycle status; focus a cell and use 1–5 for direct status entry; 0 resets."}</span></div></div><div className="metric-target"><span>PRIMARY METRIC</span><b>{experiment==="A"?"Baseline completion time":"Median roll-call time"}</b><strong>{experiment==="A"?"Measure baseline":"Target < 45 sec"}</strong></div><div className="experiment-note">Experiment assignment is a visual prototype only. Deterministic cohort allocation and telemetry require backend integration.</div></section></div>
         <footer className="footer"><span>© 2026 PULSE Academic OS</span><span>ABHYAS MATRIX <i>·</i> SYSTEM A</span><span>Built for focused academic operations</span></footer>
       </div>
     </main>
-    {showCreator&&<div className="modal-backdrop" onMouseDown={e=>{if(e.target===e.currentTarget)setShowCreator(false);}}><form className="modal" onSubmit={createExercise}><div className="modal-head"><div><div className="panel-kicker">15-SECOND EXERCISE SCAFFOLDER</div><h2>Create a quick DPP</h2><p>Start tracking now. Question identities and deep tags can be linked later.</p></div><button type="button" className="icon-btn" onClick={()=>setShowCreator(false)}><X size={18}/></button></div><label>Exercise name<input autoFocus required placeholder="DPP-09 · Centre of Mass" value={exerciseName} onChange={e=>setExerciseName(e.target.value)}/></label><div className="form-grid"><label>Subject<select value={subject} onChange={e=>setSubject(e.target.value)}><option>Physics</option><option>Chemistry</option><option>Mathematics</option><option>Biology</option></select></label><label>Chapter<select value={chapter} onChange={e=>setChapter(e.target.value)}><option>Rotational Motion</option><option>Work, Energy & Power</option><option>Electrostatics</option><option>Current Electricity</option><option>Kinematics</option><option>Thermodynamics</option><option>Chemical Bonding</option><option>Periodic Table</option><option>Quadratic Equations</option><option>Sequence & Series</option><option>Sets & Relations</option><option>Full Syllabus</option></select></label></div><div className="form-grid"><label>Question count<input type="number" min="1" max="100" value={questionCount} onChange={e=>setQuestionCount(Number(e.target.value))}/></label><label>Assign to batch<select value={batch} onChange={e=>setBatch(e.target.value)}>{DEMO_BATCHES.map(item => <option key={item}>{item}</option>)}</select></label></div><label>Due date<input type="date" value={due} onChange={e=>setDue(e.target.value)}/></label><div className="slot-preview"><div><b>Auto-generated slots</b><span>Numbered Q1–Q{questionCount||0} · no QBMS dependency</span></div><div className="slot-samples"><span>Q1</span><span>Q2</span><span>Q3</span><i>···</i><span>Q{questionCount||0}</span></div></div><div className="modal-actions"><button type="button" className="btn secondary" onClick={()=>setShowCreator(false)}>Cancel</button><button type="submit" className="btn primary"><Plus size={15}/> Create & open matrix</button></div></form></div>}
+    {showCreator&&<div className="modal-backdrop" onMouseDown={e=>{if(e.target===e.currentTarget)setShowCreator(false);}}><form className="modal" onSubmit={assignFromOfflineModule}><div className="modal-head"><div><div className="panel-kicker">OFFLINE MODULE CATALOGUE</div><h2>Assign existing questions</h2><p>Select a module and its existing question references. No new questions are created.</p></div><button type="button" className="icon-btn" onClick={()=>setShowCreator(false)}><X size={18}/></button></div><label>Academic module<select value={selectedModuleId} onChange={e=>{const module=OFFLINE_MODULES.find(item=>item.id===e.target.value);if(module){setSelectedModuleId(module.id);setSelectedQuestionIds(module.questions.slice(0,Math.min(12,module.questions.length)).map(q=>q.id));}}}>{OFFLINE_MODULES.map(module=><option key={module.id} value={module.id}>{module.title} · {module.subject} · Class {module.classLevel}</option>)}</select></label><div className="form-grid"><label>Subject<input value={selectedModule.subject} readOnly/></label><label>Chapter<input value={selectedModule.chapter} readOnly/></label></div><div className="form-grid"><label>Exam / Class<input value={selectedModule.examTrack+" · Class "+selectedModule.classLevel} readOnly/></label><label>Assign to batch<select value={batch} onChange={e=>setBatch(e.target.value)}>{DEMO_BATCHES.map(item=><option key={item}>{item}</option>)}</select></label></div><div className="question-picker-head"><b>Select questions</b><span>{selectedQuestionIds.length} of {selectedModule.questions.length} selected</span><button type="button" className="text-btn" onClick={()=>setSelectedQuestionIds(selectedModule.questions.map(q=>q.id))}>Select all</button><button type="button" className="text-btn" onClick={()=>setSelectedQuestionIds([])}>Clear</button></div><div className="question-picker">{selectedModule.questions.map(question=><label className="question-option" key={question.id}><input type="checkbox" checked={selectedQuestionIds.includes(question.id)} onChange={()=>toggleQuestion(question.id)}/><span>{question.label}</span><small>{question.difficulty}</small></label>)}</div><label>Due date<input type="date" value={due} onChange={e=>setDue(e.target.value)}/></label><div className="slot-preview"><div><b>Assignment preview</b><span>Selected source question IDs are retained with the assignment.</span></div><div className="slot-samples"><span>{selectedQuestionIds.length} questions</span><span>{selectedModule.subject}</span></div></div><div className="modal-actions"><button type="button" className="btn secondary" onClick={()=>setShowCreator(false)}>Cancel</button><button type="submit" className="btn primary" disabled={selectedQuestionIds.length===0}><Plus size={15}/> Assign selected questions</button></div></form></div>
     {showStudents&&<div className="modal-backdrop" onMouseDown={e=>{if(e.target===e.currentTarget)setShowStudents(false);}}><form className="modal compact-modal" onSubmit={addStudent}><div className="modal-head"><div><div className="panel-kicker">ROSTER MANAGEMENT</div><h2>Add a student</h2><p>Add a learner to the currently selected batch.</p></div><button type="button" className="icon-btn" onClick={()=>setShowStudents(false)}><X size={18}/></button></div><label>Student name<input name="name" autoFocus required placeholder="Full name"/></label><label>Roll number<input name="roll" placeholder="e.g. P-064"/></label><label>Batch<select value={batch} onChange={e=>setBatch(e.target.value)}><option>JEE XII · Alpha</option><option>JEE XII · Beta</option><option>JEE XI · Alpha</option></select></label><div className="modal-actions"><button type="button" className="btn secondary" onClick={()=>setShowStudents(false)}>Cancel</button><button type="submit" className="btn primary"><Plus size={15}/> Add student</button></div></form></div>}
     {toast&&<div className="toast"><Check size={16}/>{toast}</div>}
   </div>;
