@@ -1,8 +1,8 @@
 # DTE Master Documentation Register
 
 - Document ID: PULSE-DTE-REG-002
-- Version: 0.3.0
-- Status: Draft — revised phase-scoped documentation baseline
+- Version: 0.4.0
+- Status: Draft — full phase-aware documentation baseline
 - Product: PULSE — Deep Tagging Engine (DTE)
 - Scope: DTE only. Other PULSE systems appear only as external owners/consumers in DTE contracts.
 - Repository: anshuljindalsecondbrain-art/pulse
@@ -120,7 +120,7 @@ All existing M01–M18 specifications are repository artifacts in Draft status, 
 
 ### D. Functional module specifications
 
-The following 18 module specifications already exist in the repository as draft documents. Their existence does not mean they are approved or implementation-ready.
+The following 18 legacy module specifications exist as draft documents. Their applicability is governed by DTE_MODULE_PHASE_DISPOSITION.md; they are not all current-phase scope and their existence does not mean they are approved or implementation-ready.
 
 | Module | Document | Repository path | Status |
 |---|---|---|---|
@@ -200,6 +200,18 @@ The following 18 module specifications already exist in the repository as draft 
 | DTE-DOC-048 | Development, GitHub & Codex Workflow | Engineering Lead | Planned | Branching, reviews, coding rules and AI-assisted change control |
 | DTE-DOC-049 | CI/CD, Environment & Deployment Specification | DevOps | Planned | Environments, secrets, migrations, release and rollback |
 | DTE-DOC-050 | Monitoring, Backup, Incident & Operations Runbook | Operations | Planned | Observability, restore tests, incident response and support |
+
+### K. Phase-aware current and future specifications
+
+| ID | Document | Repository path | Status |
+|---|---|---|---|
+| P1-OPS | Offline Tagging Operating Model | `docs/dte/current-phase/DTE-P1_OFFLINE_TAGGING_OPERATING_MODEL.md` | New — Draft |
+| P1-FRAME | Framework Configuration Specification | `docs/dte/current-phase/DTE-P1_FRAMEWORK_CONFIGURATION_SPECIFICATION.md` | New — Draft |
+| P1-TEMPLATE | Offline Template & Handoff Specification | `docs/dte/current-phase/DTE-P1_TEMPLATE_AND_HANDOFF_SPECIFICATION.md` | New — Draft |
+| P1-REQ | Phase 1 Requirements & Acceptance Baseline | `docs/dte/current-phase/DTE-P1_REQUIREMENTS_AND_ACCEPTANCE_BASELINE.md` | New — Draft |
+| PHASE-ROADMAP | Product Scope & Phase Roadmap | `docs/dte/DTE_PRODUCT_SCOPE_AND_PHASE_ROADMAP.md` | New — Draft |
+| MODULE-DISPOSITION | Module Phase Disposition | `docs/dte/DTE_MODULE_PHASE_DISPOSITION.md` | New — Draft |
+| FULL-AUDIT-002 | Full Documentation Audit | `docs/dte/audits/DTE_FULL_DOCUMENTATION_AUDIT_002.md` | New — Draft |
 
 ## 7. Existing audit and decision records
 
@@ -308,7 +320,7 @@ Decision papers additionally record options considered, selected direction, cons
 | Version | Date | Status | Change |
 |---|---|---|---|
 | 0.2.0 | 2026-11-06 | Draft | Audited and consolidated documentation architecture; established 50 core documents, mapped 18 existing module specifications and existing audit/decision records, added ownership, dependencies, gates and open-decision tracking |
-| 0.3.0 | 2026-11-06 | Draft | Rebased current scope to offline tagging framework definition/management; deferred question upload, digital inventory/tagging, question identity/version and Q-GENOME decisions to a separate later phase; added phase applicability and revised approval gates |
+| 0.3.0 | 2026-11-06 | Draft | Rebased current scope to offline tagging framework definition/management; deferred question upload, digital inventory/tagging, question identity/version and Q-GENOME decisions to a separate later phase; added phase applicability and revised approval gates |\n| 0.4.0 | 2026-11-06 | Draft | Added full phase-aware audit, product roadmap, legacy module disposition and Phase 1 operating model, framework configuration, template/handoff and requirements baselines |
 
 ## 13. Approval
 
