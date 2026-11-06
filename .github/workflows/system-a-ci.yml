@@ -1,0 +1,57 @@
+name: System A CI
+
+on:
+  pull_request:
+    paths:
+      - "apps/student-tracking/**"
+      - "supabase/**"
+      - "docs/student-tracking/**"
+      - "docs/database/**"
+      - ".github/workflows/system-a-ci.yml"
+  push:
+    branches: ["main", "feat/system-a-abhyas-foundation"]
+    paths:
+      - "apps/student-tracking/**"
+      - "supabase/**"
+      - ".github/workflows/system-a-ci.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: system-a-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  app:
+    name: Typecheck, tests and production build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/student-tracking
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: apps/student-tracking/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+
+  migration-static:
+    name: Migration static checks (no database mutation)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check proposed migration guardrails
+        shell: bash
+        run: |
+          test -f supabase/migrations/20261106000100_system_a_initial_schema.sql
+          grep -q "enable row level security" supabase/migrations/20261106000100_system_a_initial_schema.sql
+          grep -q "force row level security" supabase/migrations/20261106000100_system_a_initial_schema.sql
+          grep -q "reject_sa_event_mutation" supabase/migrations/20261106000100_system_a_initial_schema.sql
+          ! grep -Eiq "to authenticated using *\(true\)|to anon using *\(true\)" supabase/migrations/20261106000100_system_a_initial_schema.sql
+          echo "Static checks passed. SQL was not applied to any database."
