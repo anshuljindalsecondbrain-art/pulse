@@ -32,7 +32,9 @@ npm run build
 ## Current implementation boundary
 
 - This is a **frontend prototype**, not a production-connected application.
-- Data is seeded for demonstration and persisted in browser localStorage.
+- Fictional demo data is provided by `src/demo-data.ts`: 24 sample students across three batches, five sample exercises across Physics/Chemistry/Mathematics, and deterministic sample question states.
+- Demo records use `DEMO-###` roll numbers and are stored under versioned `pulse.demo.v2.*` localStorage keys.
+- Demo data is persisted only in the current browser. It is not inserted into Supabase and must never be treated as a real student roster.
 - No authentication, tenant isolation, server API, database persistence, or real-time synchronization is implemented.
 - The A/B switch is a UI concept only. Deterministic allocation and telemetry collection are not implemented.
 - Parent token links, mentor WhatsApp dispatch, and AI clustering are not implemented.
@@ -48,6 +50,8 @@ npm run build
 - Use keyboard shortcuts on a focused matrix cell: 1 Correct, 2 Incorrect, 3 Doubt, 4 Skipped, 5 Partially Correct, 0/Backspace Unattempted; arrow keys move between cells.
 - Filter students, inspect per-question cohort signals and export the matrix as CSV.
 - Add students to the selected demo batch.
+- Switch between three demo batches; exercise selection automatically selects its matching batch.
+- Demonstrate Physics, Chemistry and Mathematics exercises with fictional chapter and question data.
 - Display the two independent product tracks: operational System A and later progressive DTE enrichment.
 
 ## Next engineering gates
