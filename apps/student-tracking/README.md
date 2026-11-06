@@ -14,6 +14,7 @@ Build and type-check:
 
 ```bash
 npm run typecheck
+npm test
 npm run build
 ```
 
@@ -31,7 +32,8 @@ npm run build
 
 - Create an exercise using chapter, label, question count, batch and due date.
 - Generate local numbered slots without QBMS or DTE dependency.
-- Cycle cells through Unattempted → Correct → Incorrect → Doubt → Skipped → Partially Correct.\n- Use keyboard shortcuts on a focused matrix cell: 1 Correct, 2 Incorrect, 3 Doubt, 4 Skipped, 5 Partially Correct, 0/Backspace Unattempted; arrow keys move between cells.
+- Cycle cells through Unattempted → Correct → Incorrect → Doubt → Skipped → Partially Correct.
+- Use keyboard shortcuts on a focused matrix cell: 1 Correct, 2 Incorrect, 3 Doubt, 4 Skipped, 5 Partially Correct, 0/Backspace Unattempted; arrow keys move between cells.
 - Filter students, inspect per-question cohort signals and export the matrix as CSV.
 - Add students to the selected demo batch.
 - Display the two independent product tracks: operational System A and later progressive DTE enrichment.
@@ -42,4 +44,4 @@ npm run build
 2. Implement immutable assignment/exercise versions, publication snapshots and append-only student report events.
 3. Implement verification decisions, correction cycles, attempt cycles and doubt cases.
 4. Add RLS, cross-tenant denial tests, idempotency and audit history.
-5. Add CI, browser tests and accessibility checks before production deployment.
+5. Add browser tests and accessibility checks before production deployment.
