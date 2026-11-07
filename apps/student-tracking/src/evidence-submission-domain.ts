@@ -125,15 +125,16 @@ export function prepareStudentEvidenceSubmission(input: {
   }
   const visited = new Set<string>();
   let cursor = roots[0];
+  let currentHead = cursor;
   while (cursor && !visited.has(cursor.id)) {
     visited.add(cursor.id);
+    currentHead = cursor;
     const childId = childByParent.get(cursor.id);
     cursor = childId ? cycleById.get(childId) : undefined;
   }
   if (visited.size !== cycleEvidence.length) {
     throw new Error("Evidence lineage contains a cycle or disconnected event.");
   }
-  const currentHead = cursor;
   if (submission.supersedesEventId) {
     if (!currentHead || currentHead.id !== submission.supersedesEventId) {
       throw new Error("A resubmission must supersede the current evidence lineage head, not a stale ancestor.");
