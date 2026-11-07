@@ -18,7 +18,7 @@ export type DashboardAssignment = {
 type Props = {
   assignments: DashboardAssignment[];
   onBackToMatrix: () => void;
-  onCreateAssignment: () => void;
+  onCreateAssignment: (draft: DashboardAssignment & { classLevel: string; stream: string; sourceType: string; instructions: string; owner: string }) => void;
   onOpenAssignment: (id: string) => void;
 };
 
@@ -68,7 +68,7 @@ export function WorkAssignmentDashboard({ assignments, onBackToMatrix, onCreateA
 
   const subjects = Array.from(new Set(assignments.map(x => x.subject))).sort();
 
-  if (showList) return <AssignmentList assignments={assignments} onBack={() => setShowList(false)} onOpen={onOpenAssignment} onCreate={(draft) => { onCreateAssignment(); }} />;
+  if (showList) return <AssignmentList assignments={assignments} onBack={() => setShowList(false)} onOpen={onOpenAssignment} onCreate={onCreateAssignment} />;
 
   return <div className="assignment-dashboard">
     <header className="assignment-topline">
