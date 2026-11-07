@@ -36,13 +36,13 @@ Do not add tenant_role_grants, teaching_assignments, guardian relationships, cat
 
 ### CR-001 — person_auth_identities has duplicate subject representations
 
-**Current proposal:** both `auth_user_id` and `provider + provider_subject` identify the same initial Supabase Auth principal, with independent uniqueness rules.
+**Original proposal:** both `auth_user_id` and `provider + provider_subject` represented the same initial Supabase Auth principal. DEC-013 has now resolved this duplication.
 
 **Risk:** two competing identity keys can disagree; lifecycle and provider semantics are unclear. The initial release scope is Supabase Auth only.
 
-**Recommendation (not owner-approved):** use one canonical `auth_user_id uuid NOT NULL UNIQUE` as the Auth subject key for M0001. Defer generic external-provider identity support until an actual second provider is in scope. If forward compatibility is required now, define a single provider-subject representation and remove the duplicate field rather than keeping both.
+**DEC-013 — selected:** use `auth_user_id uuid NOT NULL UNIQUE` as the sole Auth subject key for the Supabase-only initial release. Omit provider and provider_subject. Keep revoked mappings; do not delete or reassign an Auth UUID. A second provider requires a reviewed schema migration.
 
-**Additional open fields:** mapping creation provenance, revocation actor/reason, Auth account deletion/disable behavior, recovery and audited link/unlink semantics. Do not equate Auth email verification with person identity verification without a defined source of truth.
+**Lifecycle contract:** `created_at` records mapping creation; nullable `revoked_at` records revocation. Account recovery for the same Auth UUID preserves the mapping. Account replacement uses a new Auth UUID and a separately audited trusted link operation. Link/unlink and audit-event writes are deferred to the later security workflow; M0001 has no client write path. Email verification is not a substitute for person identity verification.
 
 ### CR-002 — tenant_memberships lifecycle is incomplete
 
@@ -143,7 +143,7 @@ Do not add tenant_role_grants, teaching_assignments, guardian relationships, cat
 
 | Review ID | Decision / evidence required | Proposed owner |
 |---|---|---|
-| CR-001 | Choose one Auth subject representation and define link/revoke/delete lifecycle | Platform + Security |
+| CR-001 | Choose one Auth subject representation and define link/revoke/delete lifecycle | **CLOSED by DEC-013** |
 | CR-002 | Membership lifecycle, rejoin semantics and uniqueness | Platform |
 | CR-004 | Enrollment status vocabulary and exact provenance columns | Academic + Platform |
 | CR-005 | Enrollment versus context-epoch field ownership and temporal containment | Academic |
@@ -175,3 +175,8 @@ SQL authoring may begin only after:
 5. Local PostgreSQL 17 replay and pgTAP tests are available.
 
 Remote DDL remains a separate approval gate.
+
+
+## 9. DEC-013 disposition
+
+CR-001 is closed by DEC-013. The M0001 Auth mapping is `id`, `person_id`, `auth_user_id`, `created_at`, nullable `revoked_at`. The Auth UUID remains unique across active and revoked mappings; there is no reassignment. Provider-neutral identity support is deferred until a second provider is approved. This does not close CR-002 or the remaining SQL-authoring gates.
