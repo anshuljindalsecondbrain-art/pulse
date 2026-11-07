@@ -1,18 +1,42 @@
-# PULSE Student Tracking — Abhyas Matrix
+# PULSE Student Tracking — Interactive Demo
 
-A fresh, isolated frontend application for System A. It implements a student-by-question matrix, cohort signals, a basic roster workflow, CSV export and assignment from a fictional offline academic module catalogue.
+This branch intentionally delivers the demo-first product experience. It uses fictional sample records and a browser-persisted mock repository. It does not require Supabase credentials and does not write to a live database.
 
 ## Run locally
 
 ```bash
 cd apps/student-tracking
 npm install
-cp .env.example .env.local
-# Fill in the Supabase project URL and publishable key in .env.local
 npm run dev
 ```
 
-Build and type-check:
+## Demo modules
+
+- Dashboard: institute-level metrics, quick navigation and recent assignments.
+- Students: search and batch-filter the roster; add fictional learner records.
+- Batches: inspect cohort sizes and batch summaries.
+- Assignments: create a draft from the offline module catalogue, select question references, choose a target batch and due date, then publish the draft.
+- Abhyas Matrix: select an assignment, update question-level statuses and export CSV.
+- Doubt Radar: create doubt cases and change their status.
+- Academic Review: verify or return individual student reports without rewriting the reported status.
+- Attendance: record daily presence by learner and date.
+- Reports: view sample report counts and operational indicators.
+- Settings: reset the demo data.
+
+## Demo data and persistence
+
+- Seed roster: 24 fictional students across three JEE batches.
+- Seed assignments: five fictional practice assignments.
+- Question references come from the offline catalogue and are placeholders, not QBMS question identities or question text.
+- Mutations are stored in browser localStorage under the `pulse.demo.v4.*` namespace.
+- Use Reset demo data to restore the seed records.
+- Do not enter real student personal data into this preview.
+
+## Backend boundary
+
+The current demo repository is implemented in the browser using localStorage. It simulates create, read and update workflows for product demonstrations. It is not a real API, server, Supabase database, or security boundary. The next backend increment should move these same domain contracts behind a replaceable repository/API adapter while keeping demo fixtures available for repeatable testing.
+
+## Validation
 
 ```bash
 npm run typecheck
@@ -20,47 +44,4 @@ npm test
 npm run build
 ```
 
-## Supabase client foundation
-
-- The browser-safe client is initialized in `src/lib/supabase.ts`.
-- Configure `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` in `.env.local`.
-- `.env.local` is ignored by Git. The committed `.env.example` contains placeholders only.
-- Only a Supabase publishable key belongs in browser code. Never expose a secret or service-role key.
-- The client foundation does not yet replace the demo adapter or write student data to Supabase.
-- No tables or migrations have been applied. Authentication, tenant authorization, RLS policies and database persistence remain unimplemented.
-
-## Current implementation boundary
-
-- This is a **frontend prototype**, not a production-connected application.
-- Fictional demo data is provided by `src/demo-data.ts`: 24 sample students across three batches, five sample exercises across Physics/Chemistry/Mathematics, and deterministic sample question states.
-- Demo records use `DEMO-###` roll numbers and are stored under versioned `pulse.demo.v2.*` localStorage keys.
-- Demo data is persisted only in the current browser. It is not inserted into Supabase and must never be treated as a real student roster.
-- No authentication, tenant isolation, server API, database persistence, or real-time synchronization is implemented.
-- The A/B switch is a UI concept only. Deterministic allocation and telemetry collection are not implemented.
-- Parent token links, mentor WhatsApp dispatch, and AI clustering are not implemented.
-- Do not enter real student personal data into this preview.
-
-## Product behaviors represented
-
-- Select an existing offline academic module, choose its question references, select a batch and due date, and create an assignment.
-- Retain source module and selected question identifiers on the local assignment record.
-- System A does not create, rewrite or duplicate question-bank content; QBMS integration can replace the fictional catalogue later.
-- Cycle cells through Unattempted → Correct → Incorrect → Doubt → Skipped → Partially Correct.
-- Domain contracts distinguish immutable student report events from separate teacher verification decisions; a report alone does not imply verification.
-- A pure projection function rebuilds the current slot view from report and verification histories, retaining the underlying event arrays and scoping decisions to the exact report event reviewed.
-- Use keyboard shortcuts on a focused matrix cell: 1 Correct, 2 Incorrect, 3 Doubt, 4 Skipped, 5 Partially Correct, 0/Backspace Unattempted; arrow keys move between cells.
-- Filter students, inspect per-question cohort signals and export the matrix as CSV.
-- Add students to the selected demo batch.
-- Switch between three demo batches; exercise selection automatically selects its matching batch.
-- Demonstrate Physics, Chemistry, Mathematics and Biology modules with fictional chapter and question-reference data.
-- The catalogue question labels and IDs are synthetic placeholders, not actual offline module content.
-- Display the two independent product tracks: operational System A and later progressive DTE enrichment.
-
-## Next engineering gates
-
-1. Inspect and finalize the System A database schema against the live Supabase project.
-2. Design institute membership, roles and tenant-scoped RLS policies; test cross-tenant denial.
-3. Implement authenticated, server-backed repositories and replace localStorage without losing demo/test workflows.
-4. Extend report/verification contracts into append-only server-side event storage and immutable assignment/exercise versions.
-5. Implement correction cycles, attempt cycles and doubt cases as separate linked records.
-6. Add idempotency, audit history, browser tests and accessibility checks before production deployment.
+No database migration is applied by this demo branch. No production deployment or merge is performed.
