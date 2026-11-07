@@ -95,9 +95,52 @@ describe("student evidence submission command contract", () => {
     }), [prior])).toThrow(/preserve the original attemptCycleId/i);
   });
 
+
+  it("rejects a resubmission that targets a stale ancestor instead of the current head", () => {
+    const root = existing({ id: "ev-root", idempotencyKey: "key-root" });
+    const head = existing({
+      id: "ev-head", idempotencyKey: "key-head", supersedesEventId: "ev-root",
+      recordedAt: "2026-11-06T12:00:00.000Z",
+    });
+    expect(() => prepare(
+      submission({ idempotencyKey: "key-next", supersedesEventId: "ev-root" }),
+      [root, head],
+    )).toThrow(/current evidence lineage head/i);
+  });
+
+  it("rejects a second child that would branch an existing evidence chain", () => {
+    const root = existing({ id: "ev-root", idempotencyKey: "key-root" });
+    const firstChild = existing({
+      id: "ev-child-1", idempotencyKey: "key-child-1", supersedesEventId: "ev-root",
+    });
+    const secondChild = existing({
+      id: "ev-child-2", idempotencyKey: "key-child-2", supersedesEventId: "ev-root",
+    });
+    expect(() => prepare(
+      submission({ idempotencyKey: "key-next", supersedesEventId: "ev-child-1" }),
+      [root, firstChild, secondChild],
+    )).toThrow(/branched/i);
+  });
+
+  it("rejects a second root report in the same attempt cycle", () => {
+    const root = existing({ id: "ev-root", idempotencyKey: "key-root" });
+    expect(() => prepare(submission({ idempotencyKey: "key-second-root" }), [root]))
+      .toThrow(/explicitly supersede/i);
+  });
+
+  it("rejects malformed history with a missing supersession parent", () => {
+    const child = existing({
+      id: "ev-child", idempotencyKey: "key-child", supersedesEventId: "ev-missing",
+    });
+    expect(() => prepare(
+      submission({ idempotencyKey: "key-next", supersedesEventId: "ev-child" }),
+      [child],
+    )).toThrow(/missing or cross-cycle/i);
+  });
+
   it("does not mutate or replace historical evidence", () => {
     const prior = existing();
-    prepare(submission({ idempotencyKey: "key-2" }), [prior]);
+    prepare(submission({ idempotencyKey: "key-2", supersedesEventId: prior.id }), [prior]);
     expect(prior.workProgress).toBe("SUBMITTED");
     expect(prior.id).toBe("ev-1");
   });
