@@ -45,17 +45,19 @@ The following Mermaid ERD distinguishes existing shared-core tables from require
 
 ```mermaid
 erDiagram
-  TENANTS ||--o{ PEOPLE_TENANT : associates
-  PEOPLE ||--o{ PEOPLE_TENANT : joins
+  TENANTS ||--o{ TENANT_MEMBERSHIPS : has
+  PEOPLE ||--o{ TENANT_MEMBERSHIPS : associates
   PEOPLE ||--o{ PERSON_AUTH_IDENTITIES : authenticates_as
-  PEOPLE_TENANT ||--o| STUDENTS : may_be
+  TENANTS ||--o{ STUDENTS : owns
+  PEOPLE o|--o{ STUDENTS : optionally_links
   TENANTS ||--o{ TENANT_ROLE_GRANTS : grants
   PEOPLE ||--o{ TENANT_ROLE_GRANTS : receives
   TENANTS ||--o{ CENTRES : owns
   CENTRES ||--o{ BATCHES : groups
   TENANTS ||--o{ BATCHES : owns
-  STUDENTS ||--o{ ACADEMIC_CONTEXT_EPOCHS : has
-  BATCHES ||--o{ ACADEMIC_CONTEXT_EPOCHS : contextualizes
+  STUDENTS ||--o{ ENROLLMENTS : enrolls
+  BATCHES ||--o{ ENROLLMENTS : receives
+  ENROLLMENTS ||--o{ ACADEMIC_CONTEXT_EPOCHS : contextualizes
   PEOPLE ||--o{ TEACHING_ASSIGNMENTS : assigned
   BATCHES ||--o{ TEACHING_ASSIGNMENTS : scoped_to
 
@@ -94,24 +96,24 @@ ERD note: the diagram is a logical relationship map, not executable DDL. Every S
 |---|---|---|---|
 | Tenant | `public.tenants` | PULSE | Reuse; add status/timezone/config only through shared-core governance |
 | Person | `public.people` | PULSE | Reuse; avoid duplicating name/contact fields in System A |
-| Tenant-person | `public.tenant_people` | PULSE | Reuse as canonical tenant association; add lifecycle/effective dates if platform policy requires |
+| Tenant membership | `public.tenant_memberships` | PULSE | Canonical association under DEC-012; legacy `tenant_people` is source migration input only |
 | Auth identity | Not present in inspected migration | PULSE | Add `person_auth_identities` with provider + auth subject uniqueness, person FK, verified/effective state |
 | Tenant role grant | Not present | PULSE | Add `tenant_role_grants`; separate role/action/resource scope from tenant-person membership |
-| Student | `public.students` | PULSE academic core | Reuse; preserve `tenant_person_id`; add tenant-qualified unique key/FK support |
+| Student | `public.students` | PULSE academic core | Tenant-owned; mandatory `tenant_id`, optional `person_id`; no membership FK |
 | Centre | Not present | PULSE academic core | Add canonical `centres` with tenant-scoped code and status |
 | Batch | Referenced by nullable `academic_context_epochs.batch_id`, but no table/FK exists | PULSE academic core | Add canonical `batches`; add FK and tenant-qualified relationship |
-| Enrolment/context | `public.academic_context_epochs` | PULSE academic core | Reuse as effective-dated context history; align teacher assignment representation and prevent overlapping invalid epochs |
+| Enrollment/context | `public.enrollments`, `public.academic_context_epochs` | PULSE academic core | Add explicit student-to-batch enrollment; context epochs reference enrollment; concurrency policy remains OPEN-010 |
 | Teaching assignment | Not present | PULSE authorization/academic core | Add explicit person-to-centre/batch/subject responsibility with validity and grantor |
 | Parent/guardian link | Not present in inspected core | PULSE identity/relationship service | Add verified, temporal person-to-student relationship; do not create System A-local guardian identity |
 
 ### 4.1 Critical shared-core corrections
 
-- `tenant_people` is a tenant association, not an authorization grant. Never infer `ADMIN` or `TEACHER` from membership alone.
+- `tenant_memberships` is a tenant association, not an authorization grant. Never infer `ADMIN` or `TEACHER` from membership alone.
 - `src/domain/identity.ts` defines a TypeScript `Role` union and role check. This does not replace persisted role grants, resource scope, expiry, revocation or database authorization.
-- `academic_context_epochs.batch_id` is currently an unconstrained UUID. It must reference the shared `batches` table and be tenant-consistent.
+- The historical source `academic_context_epochs.batch_id` is an unconstrained UUID. Under DEC-012, batch is reached through `enrollments`; do not retain a direct batch pointer on context epochs.
 - The SQL epoch has no `teacher_ids`, although the TypeScript interface includes it. Teaching responsibilities should be represented by a normalized teaching-assignment relation, not a mutable array embedded in an epoch.
-- `academic_context_epochs` should reference a student belonging to the same tenant. Add a unique key on `students(tenant_id, id)` only after tenant_id is made authoritative on students or derived safely through tenant_people; then add the composite FK. Do not duplicate tenant ownership inconsistently.
-- The current `students` table references `tenant_people` but has no direct tenant key. For efficient tenant-safe joins, choose one canonical pattern: tenant_id stored on students with a composite FK to tenant_people(tenant_id,id), or consistently derive tenant_id through tenant_people and enforce composite references through that parent. Do not mix both patterns without constraints.
+- `students` must carry authoritative `tenant_id` and nullable `person_id`; add UNIQUE `(tenant_id,id)`. Enrollments and context epochs use tenant-qualified composite FKs.
+- The historical `students.tenant_person_id` relationship is superseded. Students do not reference `tenant_memberships`; membership and student identity are independent.
 - Auth UUIDs must not be used as business actor FKs in System A. Actor columns reference `people.id`; request authentication resolves Auth UID to person ID in trusted code.
 - Existing shared-core migration has no production RLS or role grants. Do not expose it to application traffic as a production authorization model.
 
@@ -155,7 +157,7 @@ The System A physical table set is intentionally more normalized than the 26-tab
 
 For each tenant-owned parent, establish a candidate unique key `(tenant_id, id)`. Child records carry `tenant_id` and reference parents with composite foreign keys, for example:
 
-- `sa_exercises(tenant_id, created_by_person_id)` actor relationship must ensure person is an active tenant member through trusted authorization; a composite FK directly to `tenant_people(tenant_id, person_id)` may be used where the schema supports the chosen actor FK pattern.
+- System A actor relationships resolve to canonical `people.id`; authorization independently verifies tenant membership and scoped role grants. Do not treat student/person links as membership.
 - `sa_exercise_versions(tenant_id, exercise_id)` → `sa_exercises(tenant_id, id)`.
 - `sa_exercise_slots(tenant_id, exercise_version_id)` → `sa_exercise_versions(tenant_id, id)`.
 - `sa_assignment_items(tenant_id, assignment_version_id)` → `sa_assignment_versions(tenant_id, id)`.
@@ -169,9 +171,9 @@ Additional checks/constraints must prove that the obligation slot belongs to the
 
 ## 7. Relationship cardinalities and uniqueness candidates
 
-- Tenant ↔ Person: many-to-many through `tenant_people`; one active association per tenant/person.
+- Tenant ↔ Person: many-to-many through `tenant_memberships`; membership is independent of student identity.
 - Person ↔ Auth identity: one-to-many to support multiple auth providers/identities; unique provider + subject.
-- Tenant-person ↔ Student: zero-or-one student identity per tenant-person by default; confirm whether staff/student dual-role people require this to become one-to-many.
+- Tenant ↔ Student: one-to-many tenant-owned student identities; optional person link. No membership-to-student cardinality.
 - Tenant ↔ Role grant: one-to-many; person can hold multiple roles/scopes.
 - Tenant ↔ Centre ↔ Batch: one-to-many.
 - Student ↔ Academic context epoch: one-to-many temporal records; non-overlap policy must be defined.
