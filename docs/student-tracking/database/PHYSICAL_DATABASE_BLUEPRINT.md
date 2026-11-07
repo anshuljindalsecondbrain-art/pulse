@@ -606,3 +606,8 @@ The inspected historical shared-core migration's `tenant_people`, `students.tena
 - `tenant_role_grants` remains separate and sequenced according to the approved authorization decisions.
 - M0001 remains internal-only: no `anon` or `authenticated` grants, no Data API exposure, and no application-facing policies until the later reviewed security migration.
 - Concurrent active enrollment semantics remain blocked pending Academic Owner approval.
+
+
+## 15. DEC-013 — Supabase Auth subject representation
+
+For the initial Supabase-only release, `person_auth_identities` uses `auth_user_id uuid NOT NULL UNIQUE` as its sole subject key. The mapping also contains `id uuid PK`, `person_id uuid NOT NULL REFERENCES people(id) ON DELETE RESTRICT`, `created_at timestamptz NOT NULL DEFAULT now()` and nullable `revoked_at timestamptz`. Do not include provider/provider_subject or an FK to managed `auth.users`. Retain revoked mappings and prohibit reassignment of an Auth UUID. Multiple Auth UUIDs per person require a trusted, audited server-side link operation; the operation and audit trail are deferred to the later security workflow. A second provider requires a reviewed schema migration.
