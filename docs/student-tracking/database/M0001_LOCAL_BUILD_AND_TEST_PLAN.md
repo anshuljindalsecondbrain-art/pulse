@@ -2,7 +2,7 @@
 
 **Document ID:** PULSE-DB-M0001-TEST-001  
 **Version:** 1.0.0  
-**Status:** Revised for DEC-012 Option B; ready for CLI-backed implementation; not executed  
+**Status:** Revised for DEC-012 and DEC-013; pre-SQL review still open; not executed  
 **Date:** 2026-11-07  
 **Parent:** MIGRATION_0001_SHARED_IDENTITY_IMPLEMENTATION_SPEC.md
 
