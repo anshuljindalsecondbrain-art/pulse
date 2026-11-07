@@ -1,0 +1,32 @@
+name: System A Domain
+
+on:
+  pull_request:
+    paths:
+      - "packages/system-a-domain/**"
+      - ".github/workflows/system-a-domain.yml"
+  push:
+    branches:
+      - main
+      - "feat/system-a-*"
+    paths:
+      - "packages/system-a-domain/**"
+      - ".github/workflows/system-a-domain.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  domain:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/system-a-domain
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --no-package-lock
+      - run: npm run typecheck
+      - run: npm test

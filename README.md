@@ -2,7 +2,7 @@
 
 PULSE is a multi-institute academic technology platform. Its long-term direction is to connect academic content, question-bank operations, student work tracking, assessment, and AI-supported learning workflows through a governed, versioned platform.
 
-> **Repository status (2026-11-06):** documentation foundation in progress. The initial repository audit found only this README on the `main` branch. This repository is the source of truth for project code, specifications, architecture decisions, migrations, tests, and delivery history.
+> **Repository status (2026-11-07):** `main` contains the project governance, architecture and specification baseline. The Vite-based System A implementation is being reconciled incrementally on task-specific branches. Historical implementation branches are preserved as source references; they are not assumed to be merge-ready. This repository is the source of truth for project code, specifications, architecture decisions, migrations, tests, and delivery history.
 
 ## Principles
 
@@ -24,10 +24,13 @@ PULSE is a multi-institute academic technology platform. Its long-term direction
 - [Student Tracking specification](docs/modules/STUDENT_TRACKING_SPECIFICATION.md)
 - [Database governance](docs/DATABASE_GOVERNANCE.md)
 - [AI coding-agent instructions](AGENTS.md)
+- [System A Vite topology decision](docs/architecture/decisions/ADR-001-system-a-vite-topology.md)
 
 ## Development status
 
-The first delivery stage is an audit of the live codebase, Supabase project, schema, migrations, RLS policies, integrations, and deployed workflows. Do not apply production schema changes until the audit and proposed change plan have been reviewed.
+The first System A increment is a persistence-independent evidence domain package under `packages/system-a-domain`. It does not establish production persistence or authorization. The application UI, trusted backend boundary, canonical shared schema, migration lineage and operational integration remain staged work.
+
+Do not apply production schema changes or deploy without separate review and explicit approval.
 
 ## Working with this repository
 
