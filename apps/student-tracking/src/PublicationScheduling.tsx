@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { ArrowLeft, CalendarClock, CheckCircle2, Clock3, LockKeyhole, ShieldAlert, Users } from "lucide-react";
+import { ArrowLeft, CalendarClock, Clock3, LockKeyhole, ShieldAlert, Users } from "lucide-react";
 import type { DashboardAssignment } from "./WorkAssignmentDashboard";
 import "./publication-scheduling.css";
 
