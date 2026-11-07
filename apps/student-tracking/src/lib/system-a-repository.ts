@@ -1,4 +1,4 @@
-import type { User } from "@supabase/supabase-js";
+import type { SupabaseClient, User } from "@supabase/supabase-js";
 import { supabase } from "./supabase";
 
 export type InstituteMembership = {
@@ -64,8 +64,14 @@ export class SystemARepositoryError extends Error {
   }
 }
 
+function requireClient(): SupabaseClient {
+  if (!supabase) throw new SystemARepositoryError("Supabase is not configured for this deployment.");
+  return supabase;
+}
+
 async function requireUser(): Promise<User> {
-  const { data, error } = await supabase.auth.getUser();
+  const client = requireClient();
+  const { data, error } = await client.auth.getUser();
   if (error || !data.user) {
     throw new SystemARepositoryError("A valid authenticated session is required.", error);
   }
@@ -79,7 +85,8 @@ async function requireUser(): Promise<User> {
  */
 export async function listMyInstituteMemberships(): Promise<InstituteMembership[]> {
   const user = await requireUser();
-  const { data, error } = await supabase
+  const client = requireClient();
+  const { data, error } = await client
     .from("sa_institute_memberships")
     .select("id,institute_id,user_id,role_key,centre_id,is_active")
     .eq("user_id", user.id)
@@ -95,7 +102,8 @@ export async function listMyInstituteMemberships(): Promise<InstituteMembership[
  */
 export async function getMyStudentIdentity(instituteId: string): Promise<StudentIdentity | null> {
   const user = await requireUser();
-  const { data, error } = await supabase
+  const client = requireClient();
+  const { data, error } = await client
     .from("sa_students")
     .select("id,institute_id,auth_user_id,institute_student_code,full_name,is_active")
     .eq("institute_id", instituteId)
@@ -112,7 +120,7 @@ export async function listMyObligations(instituteId: string): Promise<StudentObl
   const student = await getMyStudentIdentity(instituteId);
   if (!student) return [];
 
-  const { data, error } = await supabase
+  const { data, error } = await client
     .from("sa_student_obligations")
     .select("id,institute_id,assignment_version_id,assignment_item_id,exercise_slot_id,student_id,source_batch_id,eligibility_status,created_at")
     .eq("institute_id", instituteId)
@@ -134,7 +142,8 @@ export async function appendMyStudentReport(input: StudentReportInput): Promise<
   const student = await getMyStudentIdentity(input.instituteId);
   if (!student) throw new SystemARepositoryError("No active learner identity exists in this institute.");
 
-  const { data: obligation, error: obligationError } = await supabase
+  const client = requireClient();
+  const { data: obligation, error: obligationError } = await client
     .from("sa_student_obligations")
     .select("id,student_id,eligibility_status")
     .eq("id", input.obligationId)
