@@ -146,9 +146,11 @@ The extension catalogue reports pgcrypto and uuid-ossp installed; vector is list
 The inspected source branches contain:
 - V10 migration 0001: five shared-core tables.
 - V10 migration 0002: five additional academic/event tables, eight RLS-enabled tables, broad tenant-member read policies and two SECURITY DEFINER helper functions.
-- System A initial proposal: 26 sa_* tables, forced RLS, revoked client table grants and no RLS policies.
+- System A initial proposal: 25 explicit sa_* CREATE TABLE statements in the inspected migration, forced RLS, revoked client table grants and no RLS policies. CORE-008 describes 26 tables, while its table mapping and the migration source both enumerate 25; this count discrepancy is recorded for correction.
 
 These are source proposals on divergent branches, not applied live migrations. The System A proposal is fail-closed for direct client access until a reviewed authorization path exists. Neither source migration is approved for direct application unchanged.
+
+**Source-count audit finding:** direct parsing of the System A migration at blob 7a3c46b7e8b5f9b0d19506d1bf9696107e0b6e3f found 25 CREATE TABLE statements, and CORE-008's physical table matrix contains 25 sa_* rows. CORE-008's prose says 26. The prose count should be corrected or the missing table identified before the source audit is closed.
 
 ## 4. PEIGS scope boundary
 
@@ -515,6 +517,66 @@ Rules:
 - Source outages do not delete the last verified state.
 - Conflicting sources create a conflict record; newest timestamp does not automatically win.
 - Imported content is untrusted data, never executable instructions.
+
+### 7.12 Remaining table contracts
+
+**assessment_status_catalog**
+- Primary key: (dimension_key, status_key).
+- Fields: dimension_key, status_key, label, is_terminal, sort_order, active_from, active_to.
+- Enforce status/dimension validity with a composite FK from status_assessments.
+- Status transitions must be validated against a controlled transition catalogue or approved transition function; arbitrary strings are prohibited.
+
+**verification_runs**
+- Fields: id, run_key, run_type, source_system, external_run_id, source_commit_sha, environment, tool_name, runner_ref, scope_ref, result, started_at, completed_at, limitation_summary, created_at.
+- Unique source identity: (source_system, external_run_id) where external_run_id exists.
+- A run must record exact commit/version and environment whenever those facts apply.
+
+**verification_results**
+- Fields: id, verification_run_id, object_id, object_version_id, criterion_object_id, result, evidence_ref_id, detail, executed_at.
+- Foreign keys to verification_runs, registry_objects, object_versions and evidence_refs.
+- A criterion_object_id must identify an acceptance-criterion registry object when supplied.
+- Unique (verification_run_id, object_id, object_version_id, criterion_object_id) where the run contract requires one result per criterion.
+
+**evidence_refs**
+- Fields: id, evidence_type, source_ref_id, locator, content_hash, media_type, sensitivity_class, retention_class, expires_at, created_at, created_by_person_id.
+- Store pointers and hashes, not evidence binaries or copied source content.
+- Retention and access class are required for evidence that may contain sensitive engineering/security metadata.
+
+**approval_refs**
+- Fields: id, object_id, object_version_id, approval_type, authority_source_ref_id, authority_record_key, outcome, approver_person_id, approved_at, scope_summary, supersedes_approval_ref_id.
+- Append-only; an approval is tied to an exact object version and scope.
+- An approval reference must identify its canonical source record. PEIGS does not independently decide or manufacture approval.
+
+**audit_findings**
+- Fields: id, finding_key, object_id, category, severity, title, description, source_ref_id, canonical_issue_ref, detected_at, opened_at, opened_by_person_id.
+- Finding identity is stable. If an equivalent canonical issue already exists, populate canonical_issue_ref and do not create a second PEIGS finding lifecycle.
+
+**finding_events**
+- Fields: id, finding_id, event_type, actor_person_id, occurred_at, rationale, evidence_ref_id, source_ref_id, metadata.
+- Append-only. Event type is a controlled vocabulary.
+- A current finding state is a derived projection over its events.
+
+**remediation_actions**
+- Fields: id, finding_id, action_key, title, description, owner_person_id, target_date, acceptance_object_id, created_at, created_by_person_id.
+- One finding may have multiple remediation actions.
+- Completion is not accepted without evidence and a linked retest result.
+
+**sync_runs**
+- Fields: id, connector_key, source_system, source_scope, cursor_before, cursor_after, run_status, started_at, completed_at, discovered_count, created_count, updated_count, conflict_count, error_count, error_summary.
+- A sync run is append-only after completion except for operational heartbeat/lease fields explicitly separated from the immutable result.
+- Store no connector secrets or access tokens.
+
+**source_observations**
+- Fields: id, sync_run_id, source_ref_id, observed_revision, observed_at, fact_type, payload_hash, bounded_metadata, observation_result.
+- Bounded metadata must not contain credentials, production student PII or unrestricted raw document contents.
+- Repeated observations of the same source revision should be idempotent.
+
+**source_conflicts**
+- Fields: id, object_id, conflict_key, conflict_type, source_ref_a_id, source_ref_b_id, detected_at, resolution_state, resolution_source_ref_id, resolved_by_person_id, resolved_at, resolution_rationale.
+- Competing claims remain visible until an authorized source owner resolves them.
+- A conflict resolution is a new record/event; do not overwrite the original competing observations.
+
+**Cross-table actor rule:** owner_person_id, created_by_person_id, approver_person_id and resolved_by_person_id references are nullable only while the shared identity integration is unavailable in design. They must become FK-constrained to canonical public.people(id) before operational PEIGS use. No free-text display name is an actor identity.
 
 ## 8. Relationships and cardinality
 
