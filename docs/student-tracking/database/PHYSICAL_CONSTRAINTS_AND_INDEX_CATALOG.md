@@ -228,3 +228,44 @@ Retention durations, legal holds and privacy deletion/anonymization rules requir
 - [ ] All constraints have positive and negative tests.
 - [ ] Indexes are justified by query plans.
 - [ ] RLS and grants are tested for every exposed table.
+
+
+---
+
+## 12. DEC-012 — approved membership/student/enrollment constraints (2026-11-07)
+
+**This section is authoritative and supersedes any earlier catalog row that references `tenant_people`, `tenant_person_id`, student-to-membership FK, or direct context-to-batch FK.**
+
+| Object | Required key / constraint | Purpose |
+|---|---|---|
+| tenant_memberships | PK `id`; UNIQUE `(tenant_id,person_id)`; UNIQUE `(tenant_id,id)` | Tenant association; supports tenant-qualified references |
+| students | PK `id`; NOT NULL `tenant_id`; nullable FK `person_id → people(id)`; UNIQUE `(tenant_id,id)` | Tenant-owned student identity independent of membership |
+| enrollments | PK `id`; UNIQUE `(tenant_id,id)`; FK `(tenant_id,student_id)` → students; FK `(tenant_id,batch_id)` → batches; CHECK `valid_to IS NULL OR valid_to > valid_from` | Explicit tenant-safe student-to-batch relation |
+| academic_context_epochs | FK `(tenant_id,enrollment_id)` → enrollments; CHECK positive valid interval | Context attaches to enrollment, not directly to batch |
+
+### Index requirements
+
+- Unique index on `tenant_memberships(tenant_id,person_id)`.
+- Unique composite key/index on `tenant_memberships(tenant_id,id)`.
+- Unique composite key/index on `students(tenant_id,id)`.
+- B-tree index on `enrollments(tenant_id,student_id,valid_from DESC)` for student enrollment history.
+- B-tree index on `enrollments(tenant_id,batch_id,valid_from DESC)` for batch roster/history.
+- B-tree index on `academic_context_epochs(tenant_id,enrollment_id,valid_from DESC)` for context history.
+- Indexes above are design candidates; validate actual query plans and avoid redundant indexes where a unique constraint already provides the required leading key.
+
+### Explicitly prohibited until OPEN-010 / RECON-004 closes
+
+- Unique partial index enforcing one active enrollment per student.
+- Exclusion constraint preventing overlapping enrollment periods.
+- Any assumption that only one active batch/programme can exist for a student.
+- Any direct `academic_context_epochs.batch_id` column/FK as an independent source of batch truth.
+
+### Tenant-safety tests
+
+- Reject enrollment whose student belongs to another tenant.
+- Reject enrollment whose batch belongs to another tenant.
+- Reject context epoch whose enrollment belongs to another tenant.
+- Permit student with no person link.
+- Permit student with person link but no tenant_memberships row.
+- Permit multiple historical enrollments for one student.
+- Do not assert whether concurrent active enrollments succeed/fail until Academic Owner closes OPEN-010.
