@@ -126,3 +126,8 @@ DEC-013 selects a single unique `auth_user_id` UUID for the initial Supabase Aut
 ## 14. Pilot P0/P1 implementation specification — 2026-11-07
 
 [Pilot P0 Student Master and P1 Academic Catalogue Specification](PILOT_P0_P1_STUDENT_MASTER_AND_ACADEMIC_CATALOGUE_SPEC.md) defines student fields, identity/enrollment invariants, Subject → Module → Chapter → Exercise → optional Subsection, inventory-first and itemised question entry, question-type/marks rules, UI layout and acceptance criteria. OPEN-011 catalogue ownership remains unresolved; the pilot boundary does not settle the permanent catalogue ownership decision. No DDL or UI implementation is authorized by the specification.
+
+
+## 15. PULSE engineering maturity and improvement governance — 2026-11-07
+
+[PULSE Engineering Maturity & Improvement Master Plan](../../governance/PULSE_ENGINEERING_MATURITY_AND_IMPROVEMENT_MASTER_PLAN.md) establishes the preliminary evidence-based engineering maturity assessment, benchmark adaptations, gap register, target engineering operating model, six-stage improvement roadmap and approval gates. Its scores are advisory and require evidence-based review. The document is proposed and pending Product Owner and Technical Owner approval. It does not authorize source replacement, production DDL, data movement, grants/RLS changes, PR merge or deployment.
