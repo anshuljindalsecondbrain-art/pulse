@@ -76,7 +76,7 @@ The branch head inspected was 54b756c707b7119740be4dae0478794997c2f7eb. It is no
 
 ### 2.3 Branch and authority risk
 
-The inspected GitHub comparisons showed substantial divergence from main:
+The inspected GitHub comparisons showed substantial divergence from main. The PEIGS branch count below is the pre-data-schema audit snapshot, before PULSE-PEIGS-DATA-001 and its index/architecture updates were committed:
 
 | Branch | Ahead of main | Behind main | Disposition |
 |---|---:|---:|---|
