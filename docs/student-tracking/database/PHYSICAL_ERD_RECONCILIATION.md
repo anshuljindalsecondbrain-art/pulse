@@ -237,3 +237,48 @@ Accordingly, the column-level physical design in [PHYSICAL_DATABASE_BLUEPRINT.md
 Exercise versions/slots may be retained only as a packaging or UI abstraction where required by an existing workflow. They are not the canonical source of question content and must not be required to select/assign a question. The stable assignment item and source-question reference are the operational unit for the first release.
 
 This correction does not change the frozen shared identity ownership decision. It corrects the System A source/assignment domain to match the uploaded product requirements.
+
+
+---
+
+## 12. Owner-approved physical identity correction — DEC-012 (2026-11-07)
+
+**Authority:** This section supersedes every conflicting membership/student/enrollment statement and diagram in earlier sections of this document. It does not change System A ownership boundaries or any other approved decision.
+
+### 12.1 Canonical shared-core relationship model
+
+```mermaid
+erDiagram
+  TENANTS ||--o{ TENANT_MEMBERSHIPS : has
+  PEOPLE ||--o{ TENANT_MEMBERSHIPS : associates
+  TENANTS ||--o{ STUDENTS : owns
+  PEOPLE o|--o{ STUDENTS : optionally_links
+  TENANTS ||--o{ CENTRES : owns
+  CENTRES o|--o{ BATCHES : groups
+  TENANTS ||--o{ BATCHES : owns
+  STUDENTS ||--o{ ENROLLMENTS : participates
+  BATCHES ||--o{ ENROLLMENTS : receives
+  ENROLLMENTS ||--o{ ACADEMIC_CONTEXT_EPOCHS : contextualizes
+  PEOPLE ||--o{ PERSON_AUTH_IDENTITIES : authenticates_as
+  TENANTS ||--o{ TENANT_ROLE_GRANTS : grants
+  PEOPLE ||--o{ TENANT_ROLE_GRANTS : receives
+```
+
+### 12.2 Binding physical rules
+
+1. `tenant_memberships` replaces `tenant_people` as the canonical table name for the person-to-tenant association. Legacy `tenant_people` is migration-source history only; do not create parallel live authorities.
+2. `tenant_role_grants` remains separate. Membership does not imply role, permission or resource access.
+3. `students` is tenant-owned: mandatory `tenant_id`, nullable `person_id` referencing `people.id`. No FK from students to tenant_memberships; student creation does not require a tenant membership.
+4. Enforce a tenant-qualified student key, e.g. UNIQUE `(tenant_id,id)`.
+5. Add `enrollments` as the explicit effective-dated relationship from a tenant-owned student to a same-tenant batch. It is the authoritative student-to-batch relationship.
+6. `academic_context_epochs` references `(tenant_id,enrollment_id)`. Remove the direct batch relationship from the context epoch model; batch is reached through enrollment.
+7. Use composite tenant-qualified FKs for student, batch, enrollment and context relationships. A nullable `person_id` is not an authorization grant and must not be used to infer membership.
+8. Preserve enrollment/context history; do not cascade-delete academic history.
+9. Concurrent active-enrollment/overlap policy remains blocked under OPEN-010/RECON-004 pending Academic Owner approval. Do not add one-active-enrollment uniqueness or temporal exclusion constraints yet.
+
+### 12.3 Reconciliation disposition
+
+- RECON-001, RECON-002 and RECON-003: closed by DEC-012.
+- RECON-004: blocked pending Academic Owner approval.
+- Earlier references to `tenant_people`, `students.tenant_person_id`, student-to-membership cardinality, direct `academic_context_epochs.batch_id`, or one context per student are superseded.
+- All other approvals remain unchanged, including Auth mapping, centres/batches, canonical branch direction and internal-only M0001 security boundary.
