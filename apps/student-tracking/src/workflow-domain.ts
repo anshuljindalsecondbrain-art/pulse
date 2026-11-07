@@ -198,6 +198,14 @@ export function createSystemAVerificationDecision(
   return Object.freeze({ ...input });
 }
 
+function requireUniqueIds<T extends { id: string }>(items: readonly T[], label: string): void {
+  const seen = new Set<string>();
+  for (const item of items) {
+    if (seen.has(item.id)) throw new Error(`Duplicate ${label} ID: ${item.id}`);
+    seen.add(item.id);
+  }
+}
+
 function compareEvents<T extends { recordedAt?: string; decidedAt?: string; id: string }>(a: T, b: T): number {
   const at = Date.parse(a.recordedAt ?? a.decidedAt ?? "");
   const bt = Date.parse(b.recordedAt ?? b.decidedAt ?? "");
@@ -221,6 +229,10 @@ export function deriveSystemAMetrics(input: {
   recognitions?: readonly RecognitionSnapshot[];
   disputes?: readonly DisputeSnapshot[];
 }) {
+  requireUniqueIds(input.obligations, "obligation");
+  requireUniqueIds(input.evidence, "evidence");
+  requireUniqueIds(input.decisions, "decision");
+
   const eligible = input.obligations.filter((item) => item.eligibility === "ELIGIBLE");
   const eligibleIds = new Set(eligible.map((item) => item.id));
   const evidenceById = new Map(input.evidence.map((item) => [item.id, item]));
