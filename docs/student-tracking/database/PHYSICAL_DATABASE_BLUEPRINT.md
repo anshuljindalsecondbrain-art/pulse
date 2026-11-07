@@ -517,10 +517,10 @@ The shared identity ownership decision is closed. The following are not silently
 
 | ID | Decision | Proposed default |
 |---|---|---|
-| PDB-01 | `tenant_people` semantics | Retain as tenant association; role grants separate |
-| PDB-02 | Student tenant key | Add `tenant_id` to students with composite FK to `tenant_people(tenant_id,id)`, or derive consistently; choose one |
-| PDB-03 | Student/programme multiplicity | One canonical student identity per tenant-person; multiple academic context/enrolment epochs |
-| PDB-04 | Concurrent active batch membership | Permit only if academic policy explicitly supports; otherwise prevent overlapping active epochs |
+| PDB-01 | Membership semantics | Superseded by DEC-012: use tenant_memberships; role grants remain separate |
+| PDB-02 | Student tenant key | Closed by DEC-012: mandatory tenant_id, optional person_id, no membership FK |
+| PDB-03 | Student/programme multiplicity | Student identity independent of membership; enrollment multiplicity/overlap remains subject to OPEN-010 |
+| PDB-04 | Concurrent active enrollment | OPEN-010 / RECON-004 blocked pending Academic Owner approval; no overlap/one-active constraint yet |
 | PDB-05 | Subject/chapter catalogue ownership | Shared PULSE catalogue with tenant overlays |
 | PDB-06 | Teacher authorization | Role grant = capability; teaching assignment = resource scope |
 | PDB-07 | Parent relationship | Verified, effective-dated, read-only relationship; approve consent and evidence fields |
