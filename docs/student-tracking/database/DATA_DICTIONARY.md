@@ -97,3 +97,19 @@ Every reported/verified/accuracy metric must identify:
 - calculation timestamp.
 
 Do not treat absence of a report as proof of non-completion without an explicit policy.
+
+
+## 6. Source-workflow correction — offline module question selection
+
+The uploaded System A source specifies that teachers select already-existing, tagged questions from offline academic modules. They do not normally author questions or create new question content in System A. Therefore the initial physical workflow uses these logical entities:
+
+- `sa_source_catalogs`: module/book/source catalogue reference.
+- `sa_source_editions`: edition or source revision.
+- `sa_source_questions`: stable local reference to a question locator in that source; not canonical question content.
+- `sa_assignment_items`: selected question references within an immutable assignment version.
+- `sa_target_snapshots`: publication-time eligible student roster.
+- `sa_student_obligations`: one student × one selected question item.
+
+QBMS question identity/version and DTE classification mappings are optional, version-aware integration references. System A must remain operational when they are absent. The physical column-level proposal is in [PHYSICAL_DATABASE_BLUEPRINT.md](PHYSICAL_DATABASE_BLUEPRINT.md).
+
+Exercise/worksheet grouping may remain as a UI or assignment packaging abstraction if the existing app requires it, but it must not force System A to own question content or create a second question bank.
