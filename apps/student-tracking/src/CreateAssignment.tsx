@@ -3,12 +3,13 @@ import { ArrowLeft, ArrowRight, Check, Save } from "lucide-react";
 import type { DashboardAssignment, AssignmentConfigurationValue } from "./WorkAssignmentDashboard";
 import { ContentSelector, type SelectedContentSlot } from "./ContentSelector";
 import { AssignmentConfiguration } from "./AssignmentConfiguration";
+import { AssignmentReview } from "./AssignmentReview";
 
 type Props = {
   onCancel: () => void;
   onSaveDraft: (draft: DashboardAssignment & { classLevel: string; stream: string; sourceType: string; instructions: string; owner: string; configuration: AssignmentConfigurationValue }) => void;
 };
-const steps = ["Academic scope", "Source / material", "Content selection", "Configuration", "Review"];
+const steps = ["Academic scope", "Source / material", "Content selection", "Configuration", "Review & validation"];
 
 export function CreateAssignment({ onCancel, onSaveDraft }: Props) {
   const [step,setStep]=useState(0);
@@ -48,6 +49,7 @@ export function CreateAssignment({ onCancel, onSaveDraft }: Props) {
   }
   if(step===2)return <ContentSelector subject={subject} classLevel={classLevel} stream={stream} initialSelection={selectedContent} onBack={()=>setStep(1)} onContinue={slots=>{setSelectedContent(slots);setStep(3);}}/>;
   if(step===3)return <div className="ca-page"><header className="ca-header"><button onClick={()=>setStep(2)}><ArrowLeft size={15}/> Back to content</button><span>LOCAL PREVIEW · DEMO DATA</span></header><main className="ca-main"><AssignmentConfiguration initialBatch="JEE XII · Alpha" initialDue="2026-11-14" onBack={()=>setStep(2)} onContinue={value=>{setConfiguration(value);setError("");setStep(4);}}/></main></div>;
+  if(step===4&&configuration&&!saved)return <div className="ca-page"><header className="ca-header"><button onClick={()=>setStep(3)}><ArrowLeft size={15}/> Back to configuration</button><span>LOCAL PREVIEW · DEMO DATA</span></header><main className="ca-main"><AssignmentReview snapshot={{title,subject,classLevel,stream,chapter,sourceType,sourceLabel,owner,instructions,selectedCount:selectedContent.length,sourceGroups:[...new Set(selectedContent.map(slot=>slot.sourceLabel))],questionRefs:selectedContent.map(slot=>slot.sourceRef),configuration}} onBack={()=>setStep(3)} onSaveDraft={saveDraft}/></main></div>;
   if(saved)return <div className="ca-page"><div className="ca-success"><div className="ca-success-icon"><Check size={25}/></div><h1>Draft saved locally</h1><p>Configuration and selected physical slot references are stored in this browser preview. No obligations were created, no approval was requested and nothing was published.</p><button onClick={onCancel}>Return to assignments</button></div></div>;
   return <div className="ca-page">
     <header className="ca-header"><button onClick={onCancel}><ArrowLeft size={15}/> Back to assignments</button><span>LOCAL PREVIEW · DEMO DATA</span></header>
