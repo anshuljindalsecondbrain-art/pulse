@@ -121,3 +121,8 @@ DEC-013 selects a single unique `auth_user_id` UUID for the initial Supabase Aut
 ## 13. PULSE internal pilot operating model — 2026-11-07
 
 [PULSE Pilot Operating Model and Implementation Plan](PULSE_PILOT_OPERATING_MODEL_AND_IMPLEMENTATION_PLAN.md) records the owner-selected operating mode: one Super Admin login, manually managed student records, no student login in the initial pilot, full internal use of PULSE modules, and both exercise-level and question-level activity tracking. It defines the student/content workflows, actor provenance, reconciliation rules, pilot phases and acceptance scenarios. This is a product operating plan; it does not authorize DDL, grants, RLS changes, Data API exposure or deployment.
+
+
+## 14. Pilot P0/P1 implementation specification — 2026-11-07
+
+[Pilot P0 Student Master and P1 Academic Catalogue Specification](PILOT_P0_P1_STUDENT_MASTER_AND_ACADEMIC_CATALOGUE_SPEC.md) defines student fields, identity/enrollment invariants, Subject → Module → Chapter → Exercise → optional Subsection, inventory-first and itemised question entry, question-type/marks rules, UI layout and acceptance criteria. OPEN-011 catalogue ownership remains unresolved; the pilot boundary does not settle the permanent catalogue ownership decision. No DDL or UI implementation is authorized by the specification.
