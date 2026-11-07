@@ -204,3 +204,8 @@ The following documents are the project-wide management entry point. They are dr
 - [Control Plane README](README.md) — navigation entry.
 
 **Current integration warning:** main remains the intended integration baseline. Open PRs and divergent branches are proposals until reviewed and merged. Do not apply SQL from any feature branch. Current live Supabase application schema and migration history are empty; see the hub for audit scope and limits.
+
+
+## System A and shared database consolidation (2026-11-07)
+
+- [System A and Shared Database Source Consolidation Register](PULSE_SYSTEM_A_AND_SHARED_DATABASE_SOURCE_CONSOLIDATION_REGISTER.md) — proposed canonical document map, branch divergence evidence, M0001 decision preservation, 25-table migration audit and integration gates.
