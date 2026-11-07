@@ -155,3 +155,28 @@ RECON-001/002/003 have been closed by owner approval DEC-012. RECON-004 and OPEN
 - RECON-002: **CLOSED — DEC-012**
 - RECON-003: **CLOSED — DEC-012**
 - RECON-004: **BLOCKED — Academic Owner approval pending**
+
+
+## 11. Owner-directed technical decision — DEC-013 — 2026-11-07
+
+**Decision:** Use a single Supabase Auth subject key in `person_auth_identities` for the initial release.
+
+**Approval evidence:** The owner delegated the choice with the instruction, "You decide best." The selected design is recorded as the recommended technical decision for the initial Supabase-only release.
+
+### Canonical contract
+
+- `auth_user_id uuid NOT NULL UNIQUE` is the sole authentication-subject identifier.
+- `person_id uuid NOT NULL` references `public.people(id)` with RESTRICT/NO ACTION deletion semantics.
+- Do not add `provider` or `provider_subject` columns in M0001. Supabase Auth is the only supported authentication provider in the initial release scope.
+- A person may have multiple Auth UUID mappings only through a trusted, audited server-side account-linking workflow.
+- One Auth UUID maps to at most one person for its entire retained history.
+- Revocation is represented by nullable `revoked_at timestamptz`; retain revoked mappings. Do not delete or reassign a previously linked Auth UUID to another person.
+- `created_at timestamptz NOT NULL DEFAULT now()` records mapping creation. Do not add an Auth-managed FK to `auth.users`; the mapping is validated by trusted server-side identity resolution.
+- Email, display name, phone and user-editable Auth metadata are not identity keys or authorization inputs.
+- M0001 exposes no client write path. Linking, unlinking/revocation and audit-event recording require a later trusted server-side security migration/workflow. Account recovery for the same Auth UUID preserves the mapping; account replacement uses a new Auth UUID and a separately audited link operation.
+
+### Consequences and limits
+
+This deliberately optimizes the first release for the selected Supabase Auth provider. A future second provider requires a reviewed schema migration introducing a provider namespace and canonical subject representation; it must not be improvised by adding duplicate fields to M0001.
+
+DEC-013 resolves CR-001's subject representation and initial mapping lifecycle. It does not close the other column-level review findings or authorize SQL generation, migration deployment, PR merge or remote DDL.
