@@ -159,14 +159,14 @@ export function ContentSelector({ subject, classLevel, stream, initialSelection 
 
       <section className="cs-pane cs-preview">
         <div className="cs-pane-head"><div><small>CONTENT PREVIEW</small><b>{activeModule?.title ?? "No source selected"}</b></div><span className="cs-slot-count">{activeUnit?.questions.length ?? 0} slots</span></div>
-        {!activeUnit && <div className="cs-manual-source">
-          <h3>Unmapped physical source</h3>
+        <details className="cs-manual-source"><summary>Add unmapped physical source</summary><div>
+          <h3>Physical reference</h3>
           <p>This academic scope has no matching catalogue item. Create stable physical slot references without QBMS taxonomy.</p>
           <label>Book / module / exercise / DPP label<input value={manualSource} onChange={event => setManualSource(event.target.value)} placeholder="e.g. Physics Module 04 · Exercise 2"/></label>
           <label>Number of slots<input type="number" min="1" max="200" value={manualCount} onChange={event => setManualCount(event.target.value)}/></label>
           <button onClick={addManualSlots}><Plus size={14}/> Add physical slots</button>
           {rangeError && <span role="alert">{rangeError}</span>}
-        </div>}
+        </div></details>}
         {activeUnit && <>
           <div className="cs-unit-heading"><div><b>{activeUnit.label}</b><span>{activeUnit.kind === "DPP" ? "Daily practice paper" : "Exercise"} · Stable physical slot references</span></div><button onClick={selectAll}><Check size={14}/> Select all</button></div>
           <div className="cs-range">
