@@ -131,3 +131,8 @@ DEC-013 selects a single unique `auth_user_id` UUID for the initial Supabase Aut
 ## 15. PULSE engineering maturity and improvement governance — 2026-11-07
 
 [PULSE Engineering Maturity & Improvement Master Plan](../../governance/PULSE_ENGINEERING_MATURITY_AND_IMPROVEMENT_MASTER_PLAN.md) establishes the preliminary evidence-based engineering maturity assessment, benchmark adaptations, gap register, target engineering operating model, six-stage improvement roadmap and approval gates. Its scores are advisory and require evidence-based review. The document is proposed and pending Product Owner and Technical Owner approval. It does not authorize source replacement, production DDL, data movement, grants/RLS changes, PR merge or deployment.
+
+
+## 16. PULSE canonical source-of-truth register — 2026-11-07
+
+[PULSE Canonical Source-of-Truth Register](../../governance/PULSE_CANONICAL_SOURCE_OF_TRUTH_REGISTER.md) inventories the GitHub repository and branches, Student Tracking and QBMS Lovable projects, GitHub System A prototype, standalone PULSE Supabase project, and governance/design sources. It distinguishes canonical engineering intent, current candidates, proposed targets and unverified sources; records domain ownership boundaries and integration risks; and lists the approval gates for selecting a canonical application and operational database. The register is a proposed governance baseline. It does not designate either application or database as canonical and does not authorize source replacement, data migration, DDL, security changes, merge or deployment.
