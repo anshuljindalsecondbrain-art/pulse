@@ -338,3 +338,20 @@ The nine-object M0001 inventory and DEC-012 relationships remain approved. Howev
 - exact RLS/grant catalog assertions for the internal-only boundary.
 
 The recommendations in the review are not owner approvals. Do not generate executable SQL until the exit criteria in that review are satisfied or a safe deferral is explicitly accepted. No remote DDL is authorized.
+
+
+## 17. DEC-013 — canonical Supabase Auth mapping decision — 2026-11-07
+
+The initial release uses a single Auth subject representation:
+
+| Column | Type | Null | Default / constraint | Semantics |
+|---|---|---:|---|---|
+| id | uuid | No | gen_random_uuid(), PK | Mapping row identity |
+| person_id | uuid | No | FK people(id), ON DELETE RESTRICT | Canonical person |
+| auth_user_id | uuid | No | UNIQUE | Sole Supabase Auth subject key |
+| created_at | timestamptz | No | now() | Mapping creation |
+| revoked_at | timestamptz | Yes | NULL | Revocation timestamp; NULL means current mapping |
+
+Do not include provider, provider_subject, email, display name or user metadata as identity keys in M0001. Do not create an FK to managed auth.users. The unique auth_user_id applies to retained rows, including revoked rows, so a previously linked Auth UUID cannot be reassigned to another person. Multiple Auth UUIDs may map to one person only through a trusted, audited server-side linking workflow. M0001 itself provides no client write path; trusted linking/revocation and audit recording belong to a later security workflow. A second authentication provider requires a separately reviewed schema evolution.
+
+DEC-013 resolves CR-001. It does not resolve the other column-level blockers and does not authorize remote DDL.
