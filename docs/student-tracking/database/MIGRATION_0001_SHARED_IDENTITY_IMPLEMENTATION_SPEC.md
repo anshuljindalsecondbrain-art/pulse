@@ -21,7 +21,7 @@ M0001 is the first logical migration in the unified PULSE migration plan. It is 
 - Canonical person identity.
 - Mapping from Supabase Auth subject to canonical person.
 - Tenant-person association.
-- Student identity anchored to a canonical person and tenant association.
+- Tenant-owned student identity with an optional canonical person link; no tenant-membership prerequisite (DEC-012).
 - Centre and batch identity.
 - Effective-dated academic context/enrolment history.
 - Tenant-safe composite keys and foreign-key strategy.
@@ -50,10 +50,10 @@ M0001 is the first logical migration in the unified PULSE migration plan. It is 
 | students | Tenant-owned student domain identity | Mandatory tenant_id; nullable person_id referencing people.id when a person link is known; no membership requirement |
 | centres | Tenant-owned academic location | Centre identity belongs to tenant; no System A duplicate |
 | batches | Tenant-owned cohort | Batch belongs to tenant and optionally to a centre |
-| academic_context_epochs | Effective-dated student academic context | Historical epochs retained; valid interval and batch relationship tenant-safe |
+| academic_context_epochs | Effective-dated context history within an enrollment | Historical epochs retained; tenant-qualified enrollment FK; no independent batch relationship |
 | teaching_assignments | Teacher-to-resource scope | Resource assignment is distinct from role capability; defer to M0003 unless explicitly approved for M0001 |
 
-The exact columns, keys and cardinalities must follow the approved physical blueprint after OPEN-014 through OPEN-018 are closed. This table is an entity contract, not a complete DDL definition.
+The exact columns, keys and cardinalities follow DEC-012 and the reviewed physical blueprint. OPEN-018 concerns later teaching assignments and does not block the M0001 object inventory. This table is an entity contract, not a complete DDL definition.
 
 ## 4. Required invariants
 
@@ -320,3 +320,21 @@ The owner has closed RECON-001/002/003 through DEC-012. Only RECON-004 (concurre
 - D-001 concurrent-enrollment policy remains blocked pending Academic Owner approval.
 
 DEC-012 supersedes only the earlier physical student/membership relationship. All other approved decisions remain in force. No SQL or remote DDL was created/applied as part of this reconciliation.
+
+
+## 16. M0001 column-level review hold — 2026-11-07
+
+The column-level review is recorded in [M0001 Column-Level Schema Review](M0001_COLUMN_LEVEL_SCHEMA_REVIEW.md).
+
+The nine-object M0001 inventory and DEC-012 relationships remain approved. However, exact column-level decisions are not yet closed for:
+- Auth subject representation and mapping lifecycle;
+- tenant membership lifecycle and rejoin semantics;
+- enrollment lifecycle/provenance columns;
+- field ownership and temporal relationship between enrollments and academic_context_epochs;
+- centre/batch code normalization;
+- updated_at handling under the no-trigger M0001 boundary;
+- complete class/stream vocabularies;
+- canonical main migration-base verification;
+- exact RLS/grant catalog assertions for the internal-only boundary.
+
+The recommendations in the review are not owner approvals. Do not generate executable SQL until the exit criteria in that review are satisfied or a safe deferral is explicitly accepted. No remote DDL is authorized.
