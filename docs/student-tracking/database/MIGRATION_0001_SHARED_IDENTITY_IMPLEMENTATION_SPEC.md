@@ -88,11 +88,11 @@ It does not yet provide the complete contract above:
 |---|---|
 | No Auth UID-to-person mapping | Add a dedicated mapping entity with approved provider/subject uniqueness and lifecycle |
 | No persisted role grant model | Keep tenant_memberships separate from tenant_role_grants; grants are deferred according to authorization decisions |
-| No centres or batches tables | Add canonical tables or explicitly defer and remove unresolved batch references |
-| academic_context_epochs.batch_id has no FK | Add a tenant-safe FK to canonical batches |
-|| No tenant-safe composite FK strategy | Enforce tenant-qualified student, enrollment and context references |
+| No centres or batches tables | Add canonical tables |
+| Legacy academic_context_epochs.batch_id has no FK | Replace direct batch pointer with tenant-safe enrollment FK |
+| No tenant-safe composite FK strategy | Enforce tenant-qualified student, enrollment and context references |
 | TypeScript academic context has teacherIds, SQL has no teacher relation | Normalize into teaching_assignments; do not add a denormalized UUID array |
-|| No teaching assignment table | Defer to M0003 unless separately approved |
+| No teaching assignment table | Defer to M0003 unless separately approved |
 | No effective-dated role lifecycle | Resolve role-grant validity, revocation and scope rules before authorization implementation |
 
 The existing SQL must not be copied unchanged into the canonical migration stream.
