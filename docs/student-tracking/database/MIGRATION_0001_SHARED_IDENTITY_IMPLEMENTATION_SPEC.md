@@ -59,15 +59,15 @@ The exact columns, keys and cardinalities must follow the approved physical blue
 
 1. A person may have multiple Auth identity mappings only if provider/subject uniqueness and lifecycle rules explicitly permit them; one Auth subject must never resolve ambiguously to multiple people.
 2. Auth subject mapping is server-trusted. User-editable Auth metadata must not determine tenant, person, student or role authorization.
-3. tenant_people expresses tenant association only. It must not be overloaded as a role grant.
-4. A role grant must be independently revocable and scope-aware; it does not create a tenant association.
-5. A student identity must map to a canonical person and must not be duplicated by System A.
+3. tenant_memberships expresses person-to-tenant association only; it is independent of student identity and is not a role grant.
+4. A role grant must be independently revocable and scope-aware; it does not create a tenant membership.
+5. A student is tenant-owned through mandatory tenant_id; person_id is nullable and, when present, references people.id. A student need not have a tenant membership.
 6. Every tenant-owned academic record must have an enforceable tenant-safe relationship to its parent entities. Prefer composite foreign keys over relying only on application filters.
-7. academic_context_epochs must reference a real same-tenant student and, when a batch is present, a real same-tenant batch.
+7. enrollments reference same-tenant students and batches; academic_context_epochs reference a same-tenant enrollment.
 8. Effective date intervals must satisfy valid_to IS NULL OR valid_to > valid_from.
-9. Overlap/current-row uniqueness rules must match the owner-approved enrolment policy; do not assume a single active batch if concurrent enrolment has not been decided.
-10. Historical context rows must not be silently overwritten or deleted when a student changes class, stream, centre or batch.
-11. Canonical actor foreign keys in System A will reference people.id (and tenant association where needed), not auth.users.id.
+9. Do not assume a single active enrollment; overlap/current-row rules remain blocked by OPEN-010/D-001 pending Academic Owner approval.
+10. Historical enrollment and context rows must not be silently overwritten or deleted when academic placement changes.
+11. System A actor foreign keys reference people.id, not auth.users.id; student references use tenant-qualified student keys.
 12. System A has no authority to create, merge or delete shared identities through ordinary academic workflow commands.
 
 ## 5. Existing shared-core SQL assessment
@@ -87,12 +87,12 @@ It does not yet provide the complete contract above:
 | Gap | Required M0001 treatment |
 |---|---|
 | No Auth UID-to-person mapping | Add a dedicated mapping entity with approved provider/subject uniqueness and lifecycle |
-| No persisted role grant model | Decide whether tenant_role_grants is part of M0001 or M0002; do not treat tenant_people as authorization |
+|| No persisted role grant model | Keep tenant_memberships separate from tenant_role_grants; grants are deferred according to authorization decisions |
 | No centres or batches tables | Add canonical tables or explicitly defer and remove unresolved batch references |
 | academic_context_epochs.batch_id has no FK | Add a tenant-safe FK to canonical batches |
-| No tenant-safe composite FK strategy for student/context | Resolve OPEN-016 and enforce it physically |
+|| No tenant-safe composite FK strategy | Enforce tenant-qualified student, enrollment and context references |
 | TypeScript academic context has teacherIds, SQL has no teacher relation | Normalize into teaching_assignments; do not add a denormalized UUID array |
-| No teaching assignment table | Defer to M0003 unless OPEN-018 is closed for M0001 |
+|| No teaching assignment table | Defer to M0003 unless separately approved |
 | No effective-dated role lifecycle | Resolve role-grant validity, revocation and scope rules before authorization implementation |
 
 The existing SQL must not be copied unchanged into the canonical migration stream.
@@ -164,7 +164,7 @@ The final migration should contain only approved objects. Candidate inventory:
 | people | Retain canonical shared table | DEC-011 |
 | person_auth_identities | Add | OPEN-014 |
 | tenant_memberships | Canonical tenant association; independent of student identity | DEC-012 |
-| tenant_role_grants | Add in M0001 or M0002 | OPEN-015, OPEN-019–021 |
+|| tenant_role_grants | Add in M0002 after authorization decisions | OPEN-019–021 |
 | students | Retain and revise tenant-safe key strategy | OPEN-016 |
 | centres | Add canonical shared table | OPEN-017 |
 | batches | Add canonical shared table | OPEN-017 |
@@ -236,12 +236,12 @@ The six owner approvals have been recorded in the Database Decision Register. Th
 
 1. `public.tenants` — canonical tenant identity.
 2. `public.people` — canonical person identity.
-3. `public.tenant_people` — tenant association only; retain unique `(tenant_id, person_id)`.
+3. `public.tenant_memberships` — person-to-tenant association only; independent of student identity.
 4. `public.person_auth_identities` — dedicated mapping from Supabase Auth UUID to `people.id`.
-5. `public.students` — canonical student identity with explicit `tenant_id` and tenant-safe association FK.
+5. `public.students` — tenant-owned identity with mandatory tenant_id and nullable person_id; no membership FK.
 6. `public.centres` — tenant-owned centre identity.
 7. `public.batches` — tenant-owned batch identity with optional same-tenant centre.
-8. `public.academic_context_epochs` — effective-dated context with tenant-safe student and optional batch FKs.
+8. `public.enrollments` — tenant-safe effective-dated student-to-batch relationship.\n9. `public.academic_context_epochs` — references same-tenant enrollment.
 
 **Do not create in M0001:**
 
@@ -258,10 +258,10 @@ The six owner approvals have been recorded in the Database Decision Register. Th
 - `person_auth_identities.person_id` references `public.people(id)` with RESTRICT semantics.
 - A person may have more than one Auth identity only through a trusted, audited server-side linking workflow. A single Auth subject maps to at most one person.
 - Email, display name and `raw_user_meta_data` are not identity or authorization keys.
-- Add `UNIQUE(tenant_people.tenant_id, tenant_people.id)` to support composite association references.
-- Add `students.tenant_id`; enforce `FOREIGN KEY (tenant_id, tenant_person_id) REFERENCES tenant_people(tenant_id,id)`.
-- Enforce `UNIQUE(students.tenant_id, students.id)` and one student record per tenant association unless a later explicit product decision changes that cardinality.
-- Use `(tenant_id, student_id)` for academic-context student references.
+- Add tenant-qualified keys to tenant_memberships; do not reference memberships from students.
+- Add mandatory students.tenant_id and nullable students.person_id REFERENCES people(id); enforce UNIQUE(tenant_id,id).
+- Add enrollments with tenant-qualified FKs to students and batches and effective interval fields.
+- Add academic_context_epochs tenant-qualified FK to enrollments; remove direct batch linkage.
 
 ### 14.3 Centre, batch and context contract
 
@@ -269,8 +269,8 @@ The six owner approvals have been recorded in the Database Decision Register. Th
 - Batch codes are normalized and unique within `(tenant_id, academic_year)`; names must be non-empty.
 - A batch's optional `centre_id` must reference a centre in the same tenant.
 - Centre and batch status use an explicit lifecycle; referenced records are archived/deactivated, not deleted.
-- `academic_context_epochs.batch_id` is nullable but, when present, must reference `batches(tenant_id,id)`.
-- Preserve valid-time history. Do not add a partial unique index or exclusion constraint that assumes one active batch/context per student. OPEN-010 remains open.
+- academic_context_epochs references enrollment; it does not independently establish a batch relationship.
+- Preserve valid-time history. Do not add one-active-enrollment uniqueness or overlap constraints until OPEN-010/D-001 is approved.
 - Keep existing `stream` and `class_level` domain checks only after comparing all current source values and product requirements; do not silently narrow valid academic values.
 
 ### 14.4 Initial security boundary
@@ -316,11 +316,11 @@ These are implementation verification gates, not permission to broaden M0001 sco
 
 A later audit of `feat/system-a-abhyas-foundation` identified unresolved physical-contract differences. The current M0001 object contract is therefore a controlled proposal, not yet the final SQL-authoring baseline.
 
-Do not generate executable SQL until the owner/academic gates RECON-001 through RECON-004 in [Branch and Shared-Core Schema Reconciliation](BRANCH_AND_SCHEMA_RECONCILIATION_2026-11-07.md) are resolved. In particular:
+The owner has closed RECON-001/002/003 through DEC-012. Only RECON-004 (concurrent enrollment policy) remains blocked; M0001 must follow the approved Option B model.
 
-- the approved `tenant_people` name differs from the newer proposed `tenant_memberships` target;
-- the approved student-to-membership composite FK differs from the newer tenant-owned student profile with optional `person_id`;
-- the current direct student/batch academic context differs from the newer explicit `enrollments` relationship;
-- D-001 concurrent-enrollment product direction remains blocked pending Academic Owner approval.
+- DEC-012 now selects tenant_memberships as the canonical association table.
+- DEC-012 makes students tenant-owned with optional person_id and no membership FK.
+- DEC-012 requires explicit enrollments and context epochs reference enrollment.
+- D-001 concurrent-enrollment policy remains blocked pending Academic Owner approval.
 
-This hold does not reverse the six owner decisions. It prevents the migration author from silently choosing between conflicting physical models. No SQL or remote DDL was created/applied as part of this reconciliation.
+DEC-012 supersedes only the earlier physical student/membership relationship. All other approved decisions remain in force. No SQL or remote DDL was created/applied as part of this reconciliation.
