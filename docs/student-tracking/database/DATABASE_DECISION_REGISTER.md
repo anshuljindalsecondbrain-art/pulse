@@ -97,8 +97,8 @@ A recommendation package is available at [M0001 Owner Decision Package](M0001_OW
 |---|---|---|
 | OPEN-013 | `main` is the eventual canonical integration branch. The current documentation branch remains a proposal/work branch. Reconcile shared-core and System A designs into one reviewed migration history; do not merge preliminary migration files unchanged. | **CLOSED — approved** |
 | OPEN-014 | Use dedicated `person_auth_identities`; map trusted Supabase Auth UUID subject to canonical `people.id`; enforce unique Auth subject; email and user-editable metadata are not actor identity/authorization sources; multiple Auth identities per person only through audited trusted linking. | **CLOSED — approved** |
-| OPEN-015 | `tenant_people` is tenant association only. Store effective-dated, scoped role grants separately in `tenant_role_grants`. Membership does not imply a role and role grant does not create membership. | **CLOSED — approved** |
-| OPEN-016 | Select Option A: explicit `tenant_id` on `students`, composite FK to tenant association, unique `(tenant_id, student_id)`, and tenant-safe composite references from tenant-owned child records. | **CLOSED — approved** |
+| OPEN-015 | Separate tenant association from scoped role grants. | **CLOSED — approved; physical association table name superseded by DEC-012** |
+| OPEN-016 | Tenant-safe student identity and composite references. | **CLOSED — approved; student-to-membership FK superseded by DEC-012** |
 | OPEN-017 | Add canonical shared `centres` and `batches`, each tenant-owned. Batch may reference a same-tenant centre; nullable centre only where tenant-wide batches are allowed. Use tenant-scoped uniqueness and archive/deactivate referenced records. | **CLOSED — approved** |
 | OPEN-029 | Select Option A: internal-only identity foundation. No grants to `anon` or `authenticated`, and no Data API exposure before a later reviewed security migration. Later exposure requires complete grants, RLS, actor resolution and tests. | **CLOSED — approved** |
 
@@ -120,9 +120,38 @@ The newer `feat/system-a-abhyas-foundation` canonical core proposal was compared
 
 | ID | Decision required | Options / recommended direction | Status |
 |---|---|---|---|
-| RECON-001 | Canonical membership table name | Retain `tenant_people` exactly as approved in OPEN-015, or supersede it with lifecycle-explicit `tenant_memberships` and a documented source mapping. Recommendation: `tenant_memberships`, subject to owner approval. | OPEN |
-| RECON-002 | Student-to-membership cardinality | Require each student to reference a tenant membership, or make student a tenant-owned academic identity with nullable `person_id` and keep membership separate. Recommendation: tenant-owned student profile with optional person link. | OPEN |
-| RECON-003 | Academic context relationship | Direct student-to-batch context FK, or explicit effective-dated `enrollments` linking student and batch with context epochs referencing enrollment. Recommendation: explicit enrollment. | OPEN |
+| RECON-001 | Canonical membership table name | Adopt `tenant_memberships` as the canonical tenant association table; map/migrate legacy `tenant_people` as a source representation only. | **CLOSED — approved by DEC-012** |
+| RECON-002 | Student-to-membership cardinality | Students are tenant-owned records with explicit `tenant_id` and optional `person_id`; student identity does not require a tenant membership. Membership remains an independent association. | **CLOSED — approved by DEC-012** |
+| RECON-003 | Academic context relationship | Add explicit effective-dated `enrollments` linking tenant-owned students to batches; `academic_context_epochs` reference enrollment. | **CLOSED — approved by DEC-012** |
 | RECON-004 | Concurrent active enrollment policy | D-001 records product direction to allow concurrent enrollments but is marked BLOCKED pending Academic Owner approval. Confirm the Academic Owner approval before adding interval overlap constraints or active-context rules. | BLOCKED — Academic Owner approval pending |
 
 These questions must be resolved before M0001 executable SQL is authored. Existing approvals OPEN-013/014/015/016/017/029 remain recorded; RECON-001/002 propose material refinements and must not be treated as silently approved. OPEN-010 remains open until RECON-004 is formally closed.
+
+
+## 10. Owner-approved physical identity refinement — DEC-012 — 2026-11-07
+
+**Approval evidence:** The owner explicitly selected Option B: supersede the earlier physical student/membership relationship with `tenant_memberships`, tenant-owned students with optional `person_id`, and explicit `enrollments`.
+
+| ID | Decision | Approved canonical direction | Disposition |
+|---|---|---|---|
+| DEC-012 | Physical student, membership and enrollment model | `tenant_memberships` is the canonical tenant association. `students` is tenant-owned through `tenant_id`, with nullable `person_id`; it does not require a membership. `enrollments` explicitly connects a student to a batch over an effective interval. `academic_context_epochs` reference enrollment rather than carrying an independent direct batch relationship. | **APPROVED** |
+
+### Required interpretation and invariants
+
+1. DEC-012 supersedes only the physical relationship choices in the earlier OPEN-015/OPEN-016 implementation details and RECON-001/002/003. It does not reverse the approved separation of tenant association from role grants.
+2. `tenant_memberships` records the association of a person with a tenant. Membership does not imply a role; `tenant_role_grants` remains a separate, effective-dated, scoped authorization model.
+3. `students.tenant_id` is mandatory. `students.person_id` is optional and, when present, must reference a canonical person. A student may exist without a linked person or tenant membership.
+4. Enforce tenant-safe references with composite keys, including student-to-enrollment and enrollment-to-batch relationships.
+5. `enrollments` is the explicit student-to-batch academic relationship and carries the effective lifecycle needed for transfer/history. Context epochs reference an enrollment and preserve valid-time history.
+6. No System A-local identity authority is introduced. System A references canonical PULSE identities and owns only its workflow domain.
+7. All other approved decisions remain unchanged: DEC-011, OPEN-013, OPEN-014, OPEN-017 and OPEN-029, including internal-only M0001 and the prohibition on application grants/Data API exposure in M0001.
+8. The prior OPEN-015 and OPEN-016 approval records remain as historical approval evidence, but their physical table/key implementation is superseded by DEC-012. Their surviving policy intent (separate membership and role grants; tenant-safe student keys) remains binding.
+9. RECON-004 and OPEN-010 remain unresolved: DEC-012 does not decide whether multiple concurrent active enrollments are permitted, nor does it authorize overlap/one-active-enrollment constraints. D-001 remains blocked pending Academic Owner approval.
+10. DEC-012 authorizes updating design documentation and preparing a revised local migration candidate. It does not authorize remote DDL, migration deployment, PR merge or production release.
+
+### Reconciliation status
+
+- RECON-001: **CLOSED — DEC-012**
+- RECON-002: **CLOSED — DEC-012**
+- RECON-003: **CLOSED — DEC-012**
+- RECON-004: **BLOCKED — Academic Owner approval pending**
