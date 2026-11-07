@@ -38,7 +38,8 @@ The `tenant_people` and `students.tenant_person_id` rows below describe only the
 | batches | FK(tenant_id,centre_id) → centres(tenant_id,id) | Proposed | Centre tenant consistency |
 | batches | UNIQUE(tenant_id,academic_year,normalized_code) | Proposed | Batch code uniqueness |
 | enrollments | FK(tenant_id,student_id) → students(tenant_id,id) | Required target | Student/tenant consistency |
-| enrollments | FK(tenant_id,batch_id) → batches(tenant_id,id) | Required target | Batch/tenant consistency |\n| academic_context_epochs | FK(tenant_id,enrollment_id) → enrollments(tenant_id,id) | Required target | Context belongs to same-tenant enrollment |
+| enrollments | FK(tenant_id,batch_id) → batches(tenant_id,id) | Required target | Batch/tenant consistency |
+| academic_context_epochs | FK(tenant_id,enrollment_id) → enrollments(tenant_id,id) | Required target | Context belongs to same-tenant enrollment |
 | teaching_assignments | FK(tenant_id,person_id) → tenant_memberships(tenant_id,person_id) | Proposed | Staff is tenant member |
 | teaching_assignments | FK(tenant_id,batch_id) → batches(tenant_id,id) | Proposed | Scoped batch is same tenant |
 
