@@ -78,3 +78,8 @@ Every database event updates the relevant register and change history. The index
 - [M0001 Owner Decision Package](M0001_OWNER_DECISION_PACKAGE.md) — six owner decisions approved; remote DDL not authorized.
 - [M0001 Local Build and Verification Plan](M0001_LOCAL_BUILD_AND_TEST_PLAN.md) — CLI-generated migration workflow, 24 schema/security assertions, two-tenant fixtures and local replay gates.
 - [M0001 Shared Identity Implementation Specification](MIGRATION_0001_SHARED_IDENTITY_IMPLEMENTATION_SPEC.md) — approved object boundary and physical implementation contract.
+
+
+## 9. Branch and schema reconciliation
+
+- [Branch and Shared-Core Schema Reconciliation — 2026-11-07](BRANCH_AND_SCHEMA_RECONCILIATION_2026-11-07.md) — branch divergence, canonical-core conflicts, System A adapter impact and four owner/academic decision gates before M0001 SQL.
