@@ -156,7 +156,7 @@ function App() {
     }
   }
 
-  if (showAssignmentDashboard) return <WorkAssignmentDashboard assignments={exercises} onBackToMatrix={() => setShowAssignmentDashboard(false)} onCreateAssignment={() => { setShowAssignmentDashboard(false); setSelectedModuleId(OFFLINE_MODULES[0].id); setSelectedQuestionIds(OFFLINE_MODULES[0].questions.slice(0, 12).map(q => q.id)); setShowCreator(true); }} onOpenAssignment={(id) => { setActiveExercise(id); const selected = exercises.find(item => item.id === id); if (selected) setSelectedBatch(selected.batch); setShowAssignmentDashboard(false); setTab("matrix"); }} />;
+  if (showAssignmentDashboard) return <WorkAssignmentDashboard assignments={exercises} onBackToMatrix={() => setShowAssignmentDashboard(false)} onCreateAssignment={(draft) => { const exerciseDraft: Exercise = { id: draft.id, name: draft.name, chapter: draft.chapter, subject: draft.subject, count: draft.count, batch: draft.batch, due: draft.due, created: draft.created ?? "Just now", lifecycleStatus: "DRAFT" }; setExercises(prev => [exerciseDraft, ...prev]); setToast("Assignment draft saved locally. No student obligations were created."); }} onOpenAssignment={(id) => { setActiveExercise(id); const selected = exercises.find(item => item.id === id); if (selected) setSelectedBatch(selected.batch); setShowAssignmentDashboard(false); setTab("matrix"); }} />;
 
   return <div className="app-shell">
     <aside className="sidebar">
