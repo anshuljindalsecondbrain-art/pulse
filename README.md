@@ -4,6 +4,17 @@ PULSE is a multi-institute academic technology platform. Its long-term direction
 
 > **Repository status (2026-11-06):** System A (Student Tracking / Abhyas Matrix) has a substantial frontend prototype and pure TypeScript domain workflows. The primary UI still uses browser-local demo persistence. Supabase client/repository foundations exist but are not integrated into the primary UI. The live PULSE Supabase project has no application tables or applied migration history. No production-connected Student Tracking workflow is available yet.
 
+
+## Current Student Tracking baseline (2026-11-07)
+
+The active Student Tracking implementation scope is governed by:
+
+- [Current Product Baseline](docs/student-tracking/STUDENT_TRACKING_CURRENT_BASELINE.md)
+- [Execution Plan](docs/student-tracking/STUDENT_TRACKING_EXECUTION_PLAN.md)
+- [Audit and Work History](docs/student-tracking/STUDENT_TRACKING_AUDIT_AND_WORK_HISTORY.md)
+
+These documents define the approved 11-module Student Tracking scope and Super Admin-only initial pilot. Historical System A specifications and broader PULSE domain documents must not be treated as authorization to implement excluded modules or deferred roles.
+
 ## Principles
 
 - Build on inspected, verified assets; do not assume an implementation exists because it appears in an old specification.
