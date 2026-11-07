@@ -20,7 +20,7 @@ export type DashboardAssignment = {
   batch: string;
   due: string;
   created?: string;
-  lifecycleStatus?: "DRAFT" | "PUBLISHED";
+  lifecycleStatus?: "DRAFT" | "APPROVED" | "SCHEDULED" | "PUBLISHED";
   questionRefs?: string[];
   sourceGroups?: string[];
   configuration?: AssignmentConfigurationValue;
