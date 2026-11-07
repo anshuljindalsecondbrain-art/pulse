@@ -1,15 +1,15 @@
 # PULSE Engineering Intelligence & Governance System (PEIGS)
-## Architecture Specification v1.1 — Audited Review Draft
+## Architecture Specification v1.2 — Audited Review Draft
 
 - **Document ID:** PULSE-GOV-PEIGS-001
-- **Version:** 1.1.0
+- **Version:** 1.2.0
 - **Status:** Draft — audited and revised; owner review and approval required
 - **Repository baseline:** `main`
 - **Working branch:** `docs/peigs-architecture-v1`
 - **Scope:** Project-wide engineering registry and development-control methodology
 - **Implementation authorization:** Not granted
 - **Database authorization:** Not granted
-- **Supersedes:** v1.0.0 on this branch only; v1.0.0 remains in Git history
+- **Supersedes:** v1.1.0 on this branch only; prior versions remain in Git history
 
 ## 1. Executive decision
 
@@ -145,55 +145,46 @@ A relevant change marks affected evidence as **stale / reverification required**
 
 ## 8. Logical registry data model
 
-The following are proposed logical entities, not existing database tables. This is a conceptual model, not yet an implementation-ready schema. A separate data specification must define columns, primary/foreign keys, uniqueness, check constraints, indexes, RLS, retention and migration sequencing.
+The conceptual model is refined by [PULSE-PEIGS-DATA-001 — Data Architecture and Registry Schema](PULSE_PEIGS_DATA_ARCHITECTURE_AND_REGISTRY_SCHEMA.md). That document defines the PEIGS-only physical registry proposal and the source-authority audit.
 
-### 8.1 Required logical entities
+Important modeling decision: systems, modules, requirements, acceptance criteria, screens, workflows, components, APIs, data entities, tests, decisions and releases are **registry object types**, not separate competing PEIGS master tables. Their canonical definitions remain in the relevant PULSE domain register or source platform.
 
-| Entity | Responsibility |
+### 8.1 Proposed physical registry tables
+
+| Table | Responsibility |
 |---|---|
-| `systems` | System and domain catalogue |
-| `modules` | Module identity, ownership and boundaries |
-| `requirements` | Stable requirement identity, source authority, owner, scope, phase and lifecycle |
-| `acceptance_criteria` | Atomic, testable criteria linked to one or more requirements |
-| `work_items` | Delivery tasks, defects, remediation and improvements; must not be the only storage for normative requirements |
-| `artifacts` | Typed identity for modules, screens, workflows, components, APIs, data objects, files, tests and assets |
-| `artifact_relationships` | Typed many-to-many traceability links |
-| `dependencies` | Directional technical and operational dependencies |
-| `specifications` | Requirement and design document metadata |
-| `artifact_versions` | Immutable source/version identity, including commit, design version, schema version or release |
-| `status_assessments` | Dimension-specific status, confidence, assessor, rationale, effective time and supersession |
-| `source_observations` | Raw discovery/synchronization facts with connector, source ID, observed time and payload hash |
-| `sync_runs` | Connector execution, cursor, result counts, errors and last-successful sync |
-| `evidence_records` | Evidence metadata and immutable references |
-| `verification_runs` | Test, build, audit and release verification executions |
-| `audit_findings` | Findings, severity, scope and closure criteria |
-| `remediation_actions` | Corrective action, owner, due date and retest |
-| `decisions` | Architecture, product, academic and engineering decisions |
-| `approvals` | Explicit approval authority, scope, version and timestamp |
-| `source_references` | GitHub, Figma, Supabase, CI and deployment locators |
-| `change_events` | Append-only history of registry changes |
-| `releases` | Release identity, environment, commit and deployment |
-| `role_grants` | References to the approved shared identity and authorization model; no new user/person/institute tables |
-| `conflicts` | Competing claims, sources, scope, resolution owner and final decision |
+| registry_objects | Stable identity for tracked objects of all supported types |
+| object_versions | Immutable object/source version references |
+| source_refs | Exact source-system locators and authority metadata |
+| object_links | Typed requirement/implementation/verification traceability |
+| dependency_edges | Directional technical and operational dependencies |
+| assessment_status_catalog | Controlled status vocabulary by dimension |
+| status_assessments | Append-only, version-specific status and confidence |
+| verification_runs | Immutable build, test, audit and release check executions |
+| verification_results | Per-object/per-criterion results for a run |
+| evidence_refs | Immutable evidence locators, hashes and retention metadata |
+| approval_refs | References to authoritative version-specific approvals |
+| audit_findings | PEIGS-originated findings not already owned by another issue register |
+| finding_events | Append-only finding lifecycle |
+| remediation_actions | Corrective action, owner, target and retest linkage |
+| sync_runs | Connector execution, checkpoint, result and health |
+| source_observations | Immutable source-discovery facts |
+| source_conflicts | Competing source claims and resolution references |
+
+These are proposed tables, not existing database objects. PEIGS must not create separate identity, tenant, student, issue, decision, test-run, release or domain-module authorities.
 
 ### 8.2 Identity and integrity rules
 
 - Every registry entity has an immutable stable ID independent of its name or path.
-- Every artifact has a controlled `artifact_type`; do not use unvalidated polymorphic IDs without integrity enforcement.
-- Requirements and acceptance criteria are first-class records, not free-text fields embedded only in work items.
+- Every registry object has a controlled object type; do not use unvalidated polymorphic IDs without integrity enforcement.
+- Requirements and acceptance criteria are first-class registry objects linked to their canonical source records; normative source content remains authoritative outside PEIGS.
 - Every relationship has a type, source/target IDs, provenance, validity period and optional confidence; enforce allowed source/target types.
 - Every assessment is append-only or supersedes a prior assessment. Do not overwrite historical state.
-- Every approval binds to the exact artifact/requirement version and scope approved. A later version does not inherit approval automatically.
+- Every approval reference binds to the exact artifact/requirement version and scope approved. A later version does not inherit approval automatically.
 - Every evidence record points to an immutable external reference or content hash, with access controls and retention metadata.
-- Tenant scope is explicit. Shared/global artifacts and institute-owned extensions must be distinguishable. Cross-tenant integrity must be enforced, not inferred from UI context.
+- PEIGS is platform-level in v1; it does not duplicate institute tenancy or student operational data.
 - Use controlled vocabularies per status dimension and validate allowed transitions. Do not let arbitrary strings become workflow states.
 - Deactivation/retirement is preferred to hard deletion for referenced records. Corrections are new events or versions.
-
-Use typed relationship kinds, for example: `satisfies`, `implements`, `appears_on`, `uses_component`, `calls_api`, `reads_entity`, `writes_entity`, `tested_by`, `verified_by`, `depends_on`, `supersedes`, `derived_from` and `documents`.
-
-Traceability relationships and dependency relationships are distinct. A requirement may be implemented by a feature without being a runtime dependency of it.
-
-Do not implement this logical model as a single wide table or a JSON-only document store. Normalize identities and relationships; use JSON only for bounded, versioned evidence payloads where justified.
 
 ## 9. Audit and finding lifecycle
 
@@ -426,3 +417,24 @@ This audit is a design/document review, not a live Figma verification, complete 
 |---|---|---|
 | 1.0.0 | Superseded draft | Initial PEIGS architecture proposal |
 | 1.1.0 | Audited review draft | Authority hierarchy, source precedence, branch coverage, data-model integrity, phase boundaries and pilot sequence corrections |
+
+
+## 23. Data architecture alignment — v1.2.0
+
+The detailed PEIGS data architecture and registry schema was created as PULSE-PEIGS-DATA-001. This revision:
+1. Replaces the earlier flat logical entity list with a controlled registry-object model and a bounded set of normalized PEIGS tables.
+2. Explicitly excludes duplicate PULSE identity, tenancy, student, issue, decision, test, release and domain-register tables.
+3. Adds the audit of existing CORE-001 through CORE-010 work, the duplicate CORE-009 identifier collision, divergent database branches and existing governance registers.
+4. Makes the private non-exposed peigs schema and Super Admin-only initial access the proposed boundary.
+5. Requires the shared identity/access foundation to be integrated and verified before PEIGS database implementation.
+6. Records the live Supabase read-only baseline and preserves the no-DDL/no-production-authorization rule.
+
+This revision is still a draft. It does not approve the PEIGS schema, shared-core migration, security model or production access.
+
+## 24. Change history
+
+| Version | Status | Change |
+|---|---|---|
+| 1.0.0 | Superseded draft | Initial PEIGS architecture proposal |
+| 1.1.0 | Superseded audited draft | Authority hierarchy, source precedence, branch coverage, phase boundaries and pilot sequence corrections |
+| 1.2.0 | Audited review draft | Aligns logical model with PEIGS-DATA-001 and prevents duplicate PULSE identity/domain/governance tables |
