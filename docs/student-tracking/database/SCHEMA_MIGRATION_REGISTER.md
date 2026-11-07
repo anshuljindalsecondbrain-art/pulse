@@ -100,3 +100,17 @@ Current disposition:
 - Existing shared-core and System A migration files remain historical proposals and must not be applied unchanged.
 - Canonical integration branch and migration ownership remain subject to OPEN-013.
 - No PR or merge was created.
+
+
+## 8. M0001 owner approval and local build plan — 2026-11-07
+
+- OPEN-013, OPEN-014, OPEN-015, OPEN-016, OPEN-017 and OPEN-029 are approved and closed in the Database Decision Register.
+- M0001 implementation boundary is documented in [Migration 0001 Shared Identity Implementation Specification](MIGRATION_0001_SHARED_IDENTITY_IMPLEMENTATION_SPEC.md).
+- Local generation and verification gates are documented in [M0001 Local Build and Verification Plan](M0001_LOCAL_BUILD_AND_TEST_PLAN.md).
+- M0001 is to be reconciled into the single canonical migration stream on the approved `main` integration base; this documentation branch is not itself the canonical migration base.
+- M0001 SQL must be generated with `supabase migration new` after the canonical base and existing migration directory are inspected. Do not fabricate a timestamp or create a hand-named executable migration through the GitHub contents API.
+- The role-grant table is sequenced to M0002; teaching assignments to M0003. Curriculum catalogue and System A workflow tables remain out of M0001.
+- M0001 executable migration: not created.
+- pgTAP test files: specified, not created or run.
+- Local migration replay and lint: not run.
+- Remote Supabase DDL: not authorized and not applied.
