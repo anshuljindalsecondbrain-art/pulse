@@ -14,33 +14,35 @@ This catalogue is not executable SQL. Every FK target and uniqueness assumption 
 
 ## 2. Shared PULSE core constraints
 
-### 2.1 Existing and required keys
+### 2.1 Historical source keys versus approved target
+
+The `tenant_people` and `students.tenant_person_id` rows below describe only the inspected legacy source migration. They are not the DEC-012 target schema. The authoritative target constraints are in Section 12.
 
 | Table | Key / constraint | Status | Purpose |
 |---|---|---|---|
 | tenants | PK(id) | Existing | Canonical tenant |
 | people | PK(id) | Existing | Canonical person |
-| tenant_people | PK(id) | Existing | Tenant association identity |
-| tenant_people | UNIQUE(tenant_id, person_id) | Existing | One tenant-person association |
-| tenant_people | FK tenant_id → tenants(id) | Existing | Tenant integrity |
-| tenant_people | FK person_id → people(id) | Existing | Person integrity |
+| tenant_people | PK(id) | Legacy source only | Superseded by tenant_memberships under DEC-012 |
+| tenant_people | UNIQUE(tenant_id, person_id) | Legacy source only | Replaced by tenant_memberships unique key |
+| tenant_people | FK tenant_id → tenants(id) | Legacy source only | Recreated on tenant_memberships |
+| tenant_people | FK person_id → people(id) | Legacy source only | Recreated on tenant_memberships |
 | students | PK(id) | Existing | Student identity |
-| students | FK tenant_person_id → tenant_people(id) | Existing | Student belongs to tenant-person |
-| students | UNIQUE(tenant_id,id) | Required after tenant_id decision | Tenant-qualified student FK |
+| students | FK tenant_person_id → tenant_people(id) | Legacy source only | Removed; students are tenant-owned and person_id is optional |
+| students | UNIQUE(tenant_id,id) | Required target | Tenant-qualified student FK under DEC-012 |
 | person_auth_identities | UNIQUE(auth_user_id) | Proposed | One local Auth principal mapping |
 | person_auth_identities | UNIQUE(provider,provider_subject) | Proposed | Provider identity uniqueness |
-| tenant_role_grants | FK(tenant_id,person_id) → tenant_people(tenant_id,person_id) | Proposed | Grant only to tenant member |
+| tenant_role_grants | FK(tenant_id,person_id) → tenant_memberships(tenant_id,person_id) | Proposed | Grant only to tenant member; separate from membership |
 | centres | UNIQUE(tenant_id,id) | Proposed | Composite tenant parent key |
 | centres | UNIQUE(tenant_id,normalized_code) | Proposed | No duplicate centre code per tenant |
 | batches | UNIQUE(tenant_id,id) | Proposed | Composite tenant parent key |
 | batches | FK(tenant_id,centre_id) → centres(tenant_id,id) | Proposed | Centre tenant consistency |
 | batches | UNIQUE(tenant_id,academic_year,normalized_code) | Proposed | Batch code uniqueness |
-| academic_context_epochs | FK(tenant_id,student_id) → students(tenant_id,id) | Required | Student/tenant consistency |
-| academic_context_epochs | FK(tenant_id,batch_id) → batches(tenant_id,id) | Required | Batch/tenant consistency |
-| teaching_assignments | FK(tenant_id,person_id) → tenant_people(tenant_id,person_id) | Proposed | Staff is tenant member |
+| enrollments | FK(tenant_id,student_id) → students(tenant_id,id) | Required target | Student/tenant consistency |
+| enrollments | FK(tenant_id,batch_id) → batches(tenant_id,id) | Required target | Batch/tenant consistency |\n| academic_context_epochs | FK(tenant_id,enrollment_id) → enrollments(tenant_id,id) | Required target | Context belongs to same-tenant enrollment |
+| teaching_assignments | FK(tenant_id,person_id) → tenant_memberships(tenant_id,person_id) | Proposed | Staff is tenant member |
 | teaching_assignments | FK(tenant_id,batch_id) → batches(tenant_id,id) | Proposed | Scoped batch is same tenant |
 
-**Student tenant-key decision:** current `students` has no direct `tenant_id`. The preferred implementation is to add `tenant_id NOT NULL` and enforce `FOREIGN KEY (tenant_id, tenant_person_id) REFERENCES tenant_people(tenant_id,id)`, after adding `UNIQUE(tenant_id,id)` to `tenant_people`. This makes tenant-safe student FKs direct and efficient. The alternate is to derive tenant through tenant_people everywhere; do not mix the two approaches.
+**DEC-012 target:** students has mandatory tenant_id and nullable person_id; no FK to tenant_memberships. Add UNIQUE (tenant_id,id). Enrollments reference same-tenant students and batches; academic_context_epochs reference same-tenant enrollments. Do not retain tenant_person_id.
 
 ## 3. System A tenant-qualified FK rule
 
