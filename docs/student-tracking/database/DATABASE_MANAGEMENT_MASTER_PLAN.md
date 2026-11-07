@@ -266,3 +266,12 @@ System A database is complete only when:
 - application read/write paths use persistent data;
 - staging deployment and independent verification evidence exist;
 - operations and rollback procedures are documented.
+
+
+## 15. Internal pilot operating mode — 2026-11-07
+
+The initial PULSE deployment is an internally operated pilot, not a commercial multi-customer SaaS launch. One Super Admin login operates the complete enabled PULSE ecosystem. Student records are created and maintained by the operator; students do not receive login credentials in the initial pilot. Student Auth identity is not a prerequisite for a student record, enrollment, assignment or activity evidence.
+
+The pilot supports both exercise-level aggregate entry and question-level evidence. Exercise aggregates are explicitly marked aggregate-only unless individual question evidence exists. When both are present, the system reconciles the counts and surfaces discrepancies; it does not silently overwrite evidence or fabricate question-level attempts. The authenticated Super Admin remains the entry actor, while the student remains the academic subject. Teacher attribution requires source evidence and must not be fabricated.
+
+See [PULSE Pilot Operating Model and Implementation Plan](PULSE_PILOT_OPERATING_MODEL_AND_IMPLEMENTATION_PLAN.md) for the complete workflow, data rules, module scope, delivery phases and acceptance scenarios. This operating mode does not relax tenant boundaries, canonical ownership, auditability, RLS or trusted command requirements, and does not authorize remote DDL or production release.
