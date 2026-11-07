@@ -67,3 +67,7 @@ Every database event updates the relevant register and change history. The index
 
 - [Unified Migration Architecture](UNIFIED_MIGRATION_ARCHITECTURE.md) — canonical migration ownership, branch policy, dependency graph, environment rollout and recovery.
 - [Migration 0001 Shared Identity Specification](MIGRATION_0001_SHARED_IDENTITY_IMPLEMENTATION_SPEC.md) — scope, invariants, object inventory and acceptance gates for the shared identity foundation.
+
+## 7. M0001 owner decision package
+
+- [M0001 Owner Decision Package](M0001_OWNER_DECISION_PACKAGE.md) — recommended selections for OPEN-013–017 and OPEN-029, plus dependent OPEN-010/011; owner approval pending.
