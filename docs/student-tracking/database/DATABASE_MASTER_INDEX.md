@@ -71,3 +71,10 @@ Every database event updates the relevant register and change history. The index
 ## 7. M0001 owner decision package
 
 - [M0001 Owner Decision Package](M0001_OWNER_DECISION_PACKAGE.md) — recommended selections for OPEN-013–017 and OPEN-029, plus dependent OPEN-010/011; owner approval pending.
+
+
+## 8. M0001 implementation package
+
+- [M0001 Owner Decision Package](M0001_OWNER_DECISION_PACKAGE.md) — six owner decisions approved; remote DDL not authorized.
+- [M0001 Local Build and Verification Plan](M0001_LOCAL_BUILD_AND_TEST_PLAN.md) — CLI-generated migration workflow, 24 schema/security assertions, two-tenant fixtures and local replay gates.
+- [M0001 Shared Identity Implementation Specification](MIGRATION_0001_SHARED_IDENTITY_IMPLEMENTATION_SPEC.md) — approved object boundary and physical implementation contract.
