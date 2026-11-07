@@ -222,3 +222,18 @@ Shared identity direction is frozen, but these physical details remain open and 
 - Publication snapshots exact target students and creates obligations atomically/idempotently.
 - Historical academic evidence is append-only and immutable.
 - All table access has a documented actor/scope and server command boundary.
+
+
+---
+
+## 11. Source-driven correction to the initial physical proposal
+
+The uploaded System A functional specification and subsequent explicit clarification establish that teachers primarily select existing questions from offline modules whose tagging is already available. They are not normally building exercises or authoring questions in System A.
+
+Accordingly, the column-level physical design in [PHYSICAL_DATABASE_BLUEPRINT.md](PHYSICAL_DATABASE_BLUEPRINT.md) supersedes the exercise-first operational path proposed in Sections 5–7 above:
+
+`sa_source_catalogs → sa_source_editions → sa_source_questions → sa_assignment_items → sa_target_snapshots → sa_student_obligations`.
+
+Exercise versions/slots may be retained only as a packaging or UI abstraction where required by an existing workflow. They are not the canonical source of question content and must not be required to select/assign a question. The stable assignment item and source-question reference are the operational unit for the first release.
+
+This correction does not change the frozen shared identity ownership decision. It corrects the System A source/assignment domain to match the uploaded product requirements.
