@@ -2,7 +2,7 @@
 
 **Document ID:** PULSE-DB-DECISION-PACK-001  
 **Version:** 1.0.0  
-**Status:** Recommendations only — no owner choices approved  
+**Status:** Six owner decisions approved — implementation preparation may proceed  
 **Date:** 2026-11-07
 
 ## Purpose
@@ -117,9 +117,9 @@ These remain open and must be closed before the migration(s) that depend on them
 - OPEN-027 export governance.
 - OPEN-028 outbox delivery policy.
 
-## Owner response required
+## Owner approval recorded — 2026-11-07
 
-To authorize the next implementation step, confirm or change the six recommended selections in the summary table. A short response such as "approve all six recommendations" is sufficient to record those six decisions, but it does not authorize applying DDL to Supabase. Any exception can be stated by decision ID.
+The owner explicitly approved all six recommendations in the summary table. OPEN-013, OPEN-014, OPEN-015, OPEN-016, OPEN-017 and OPEN-029 are now recorded as closed in the Database Decision Register. This authorizes preparation of the executable M0001 migration and local tests only. It does not authorize applying DDL to any remote Supabase project, changing grants/RLS remotely, merging a PR or releasing to production. OPEN-010, OPEN-011 and OPEN-018 remain open as documented.
 
 ## Safety status
 
