@@ -136,3 +136,8 @@ DEC-013 selects a single unique `auth_user_id` UUID for the initial Supabase Aut
 ## 16. PULSE canonical source-of-truth register — 2026-11-07
 
 [PULSE Canonical Source-of-Truth Register](../../governance/PULSE_CANONICAL_SOURCE_OF_TRUTH_REGISTER.md) inventories the GitHub repository and branches, Student Tracking and QBMS Lovable projects, GitHub System A prototype, standalone PULSE Supabase project, and governance/design sources. It distinguishes canonical engineering intent, current candidates, proposed targets and unverified sources; records domain ownership boundaries and integration risks; and lists the approval gates for selecting a canonical application and operational database. The register is a proposed governance baseline. It does not designate either application or database as canonical and does not authorize source replacement, data migration, DDL, security changes, merge or deployment.
+
+
+## 17. PULSE application and database reconciliation — 2026-11-07
+
+[PULSE Application and Database Reconciliation Matrix](../../governance/PULSE_APPLICATION_DATABASE_RECONCILIATION_MATRIX.md) records a read-only comparison of the Student Tracking and QBMS Lovable source/database models, the GitHub System A prototype and the approved PULSE target design. It includes live table/RLS inventory, schema and identity mismatches, domain ownership, reuse/redesign dispositions, security and evidence gaps, and a prioritised action register. The audit used source reads and SELECT-only database catalog queries; it did not modify source, database or deployment state. Owner, technical and security reviews remain pending; no canonical application/database selection or migration/DDL authorization is granted.
