@@ -3,7 +3,7 @@
 **Document ID:** PULSE-DB-M0001-COLUMN-REVIEW-001  
 **Version:** 1.0.0  
 **Date:** 2026-11-07  
-**Status:** Review completed; implementation blockers recorded; no executable SQL  
+**Status:** Review updated by DEC-013; CR-001 closed; remaining implementation blockers recorded; no executable SQL  
 **Scope:** DEC-012 M0001 shared identity and academic foundation only
 
 ## 1. Review objective
