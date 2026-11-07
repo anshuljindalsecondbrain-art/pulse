@@ -20,7 +20,7 @@
 | DEC-009 | Service-role/secret credentials must never enter browser code | Confirmed security constraint | Supabase security guidance and repository rules |
 | DEC-010 | Database DDL is represented by ordered reviewed migrations | Confirmed governance constraint | Repository AGENTS and Supabase runbook |
 
-## 2. Recommended defaults — not yet product-approved
+## 2. Owner decision — confirmed 2026-11-07\n\n| ID | Decision | Confirmed direction | Scope / qualification |\n|---|---|---|---|\n| DEC-011 | Shared PULSE identity for System A | **APPROVED — freeze shared PULSE identity as the permanent source of truth.** | PULSE owns tenant, person, Auth mapping, tenant association, role grants, student identity, centre, batch and effective-dated academic context. System A references these records and owns its academic work lifecycle. This approves the architecture direction, not the current preliminary SQL as production-ready. |\n\n## 3. Recommended defaults — not yet product-approved
 
 | ID | Area | Recommended default | Why |
 |---|---|---|---|
@@ -33,7 +33,7 @@
 | PROP-007 | Catalogue | Confirm global versus tenant-owned subject/chapter catalogue before physical FKs | Prevent cross-tenant reference errors |
 | PROP-008 | Evaluation | Consider separate answer-evaluation records from completion-verification decisions | Avoid conflating distinct academic judgments |
 
-## 3. Open owner decisions
+## 4. Open owner decisions
 
 These decisions are not resolved by the uploaded documents or current live infrastructure audit. Do not infer them in SQL.
 
@@ -51,9 +51,9 @@ These decisions are not resolved by the uploaded documents or current live infra
 | OPEN-010 | Enrolments | Can a student hold concurrent active programme/batch memberships? | Blocks membership uniqueness |
 | OPEN-011 | Catalogue ownership | Global reference data, tenant catalogue, or versioned overlay | Blocks subject/chapter FK design |
 | OPEN-012 | Evaluation storage | Separate answer_evaluations or purpose-specific verification decisions | Blocks final physical schema |
-| OPEN-013 | Shared-core branch | Confirm canonical source branch and migration ownership before integration | Blocks merge and unified migration sequence |
+| OPEN-013 | Shared-core branch | Confirm canonical source branch and migration ownership before integration | Blocks merge and unified migration sequence |\n| OPEN-014 | Auth mapping physical schema | Approve provider/subject uniqueness, verified state and lifecycle for person_auth_identities | Blocks trusted actor resolution |\n| OPEN-015 | Tenant-person role model | Confirm tenant_people remains association and tenant_role_grants is separate | Blocks persisted role authorization |\n| OPEN-016 | Student tenant key | Choose direct tenant_id with composite FK or derive through tenant_people consistently | Blocks composite tenant-safe FKs |\n| OPEN-017 | Batch/centre tables | Approve canonical columns, uniqueness and status lifecycle | Blocks academic context FK |\n| OPEN-018 | Teaching assignment | Approve resource scope, effective dates and relationship to role grants | Blocks teacher authorization |
 
-## 4. Decision closure protocol
+## 5. Decision closure protocol
 
 A decision is closed only when:
 1. The question and affected entities are documented.
