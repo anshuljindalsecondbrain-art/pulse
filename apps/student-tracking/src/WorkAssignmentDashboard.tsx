@@ -3,6 +3,14 @@ import "./assignment-dashboard.css";
 import { AssignmentList } from "./AssignmentList";
 import { useMemo, useState } from "react";
 
+export type AssignmentConfigurationValue = {
+  recipientBatches: string[]; includedIndividuals: string[]; excludedIndividuals: string[];
+  releaseMode: "IMMEDIATE" | "SCHEDULED"; releaseAt: string; dueAt: string; instituteTimezone: string;
+  lateSubmissionRule: "ACCEPT_AND_FLAG" | "BLOCK_AFTER_DEADLINE" | "UNCONFIGURED";
+  resubmissionPolicy: "CORRECTION_ALLOWED" | "NO_CORRECTION" | "UNCONFIGURED";
+  defaultDeadline: string; individualExceptions: { learner: string; deadline: string; reason: string; authoriser: string }[];
+};
+
 export type DashboardAssignment = {
   id: string;
   name: string;
@@ -15,12 +23,13 @@ export type DashboardAssignment = {
   lifecycleStatus?: "DRAFT" | "PUBLISHED";
   questionRefs?: string[];
   sourceGroups?: string[];
+  configuration?: AssignmentConfigurationValue;
 };
 
 type Props = {
   assignments: DashboardAssignment[];
   onBackToMatrix: () => void;
-  onCreateAssignment: (draft: DashboardAssignment & { classLevel: string; stream: string; sourceType: string; instructions: string; owner: string }) => void;
+  onCreateAssignment: (draft: DashboardAssignment & { classLevel: string; stream: string; sourceType: string; instructions: string; owner: string; configuration: AssignmentConfigurationValue }) => void;
   onOpenAssignment: (id: string) => void;
 };
 
