@@ -145,8 +145,8 @@ Self-references such as supersedes_event_id and supersedes_decision_id must use 
 
 ## 6. Uniqueness catalogue
 
-- `person_auth_identities(auth_user_id)`.
-- `person_auth_identities(provider,provider_subject)`.
+- `person_auth_identities(auth_user_id)` — unique across active and revoked mappings; Auth UUID cannot be reassigned.
+
 - `tenant_role_grants(tenant_id,person_id,role_code,scope_type,scope_id,valid_from)` subject to re-grant/revocation policy.
 - `centres(tenant_id,normalized_code)`.
 - `batches(tenant_id,academic_year,normalized_code)`.
@@ -272,3 +272,12 @@ Retention durations, legal holds and privacy deletion/anonymization rules requir
 - Permit student with person link but no tenant_memberships row.
 - Permit multiple historical enrollments for one student.
 - Do not assert whether concurrent active enrollments succeed/fail until Academic Owner closes OPEN-010.
+
+
+## 13. DEC-013 Auth identity constraints
+
+- Unique `person_auth_identities(auth_user_id)` applies to all retained rows, including revoked rows.
+- FK `person_auth_identities.person_id → people.id` uses RESTRICT/NO ACTION.
+- No provider/provider_subject uniqueness key and no FK to managed `auth.users` in the Supabase-only initial release.
+- Multiple Auth UUIDs may map to one person; one Auth UUID cannot map to multiple people or be reassigned after revocation.
+- Retain revoked mappings; do not hard-delete identity history.
