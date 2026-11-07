@@ -1,12 +1,12 @@
 # PULSE — Master Documentation Index
 
 - Document ID: PULSE-GOV-REPO-003
-- Version: 0.1.1
+- Version: 0.1.2
 - Status: Draft — navigation baseline; pending owner review
 - Repository: `anshuljindalsecondbrain-art/pulse`
 - Branch baseline: `main`
 - Created: 2026-11-06
-- Related governance: [Repository Architecture and Documentation Governance Blueprint](PULSE_REPOSITORY_ARCHITECTURE_AND_DOCUMENTATION_GOVERNANCE_BLUEPRINT.md); [PEIGS Architecture Specification](PULSE_ENGINEERING_INTELLIGENCE_REGISTRY_ARCHITECTURE_SPECIFICATION.md)
+- Related governance: [Repository Architecture and Documentation Governance Blueprint](PULSE_REPOSITORY_ARCHITECTURE_AND_DOCUMENTATION_GOVERNANCE_BLUEPRINT.md); [PEIGS Architecture Specification](PULSE_ENGINEERING_INTELLIGENCE_REGISTRY_ARCHITECTURE_SPECIFICATION.md); [PEIGS Data Architecture and Registry Schema](PULSE_PEIGS_DATA_ARCHITECTURE_AND_REGISTRY_SCHEMA.md)
 - Related inventory: [Repository File Inventory and Disposition Matrix](PULSE_REPOSITORY_FILE_INVENTORY_AND_DISPOSITION_MATRIX.md)
 - Implementation authorization: Not granted
 
@@ -34,6 +34,7 @@ This index is a navigation and governance aid. It does not approve requirements,
 | PULSE-GOV-REPO-002 | [Repository File Inventory and Disposition Matrix](PULSE_REPOSITORY_FILE_INVENTORY_AND_DISPOSITION_MATRIX.md) | Tracked-file inventory, proposed dispositions and repository gaps | Draft; inventory baseline, owner review pending |
 | PULSE-GOV-REPO-003 | [Master Documentation Index](PULSE_MASTER_DOCUMENTATION_INDEX.md) | Project-wide documentation navigation and authority map | Draft; this document |
 | PULSE-GOV-PEIGS-001 | [PULSE Engineering Intelligence & Governance System Architecture Specification](PULSE_ENGINEERING_INTELLIGENCE_REGISTRY_ARCHITECTURE_SPECIFICATION.md) | Cross-domain engineering inventory, traceability, implementation assessments, evidence, audit and dependency intelligence; does not replace domain registers | Draft; audited review draft v1.1.0; implementation and database authorization not granted |
+| PULSE-PEIGS-DATA-001 | [PEIGS Data Architecture and Registry Schema](PULSE_PEIGS_DATA_ARCHITECTURE_AND_REGISTRY_SCHEMA.md) | PEIGS-only registry data model, source references, assessments, verification, evidence, findings and private-schema security boundary; reuses shared PULSE identity and external domain registers | Draft v1.0.0; SQL and migration authorization not granted |
 
 ## 4. Project-wide product and engineering documentation
 
@@ -133,7 +134,7 @@ The dedicated DTE documentation area is `docs/dte/`. The detailed module and art
 
 ## 6. Documentation gaps — planned registers
 
-PEIGS v1.1.0 proposes that several cross-domain registers below be delivered as structured PEIGS views/records rather than as separately maintained Markdown registers. This is a target proposal only; no PEIGS database or dashboard exists yet. Domain-specific detailed registers remain in their existing domain locations.
+PEIGS v1.1.0 and PULSE-PEIGS-DATA-001 propose that several cross-domain registers below be delivered as structured PEIGS views/records rather than as separately maintained Markdown registers. This is a target proposal only; no PEIGS database or dashboard exists yet. Domain-specific detailed registers remain in their existing domain locations.
 
 The following are not present in the inspected repository tree. They are planned governance artifacts, not existing documents. Their need as standalone documents must be reassessed against PEIGS before creating them.
 
@@ -195,3 +196,4 @@ Lifecycle statuses should be used consistently: Proposed, Draft, In Review, Appr
 |---|---|---|---|
 | 0.1.0 | 2026-11-06 | Draft | Initial project-wide index based on the inspected main-branch inventory; proposed authority assignments remain pending review |
 | 0.1.1 | 2026-11-07 | Draft | Added PEIGS as a cross-domain engineering/assurance proposal and clarified that planned project-wide registers should be reconciled against PEIGS before separate duplication |
+| 0.1.2 | 2026-11-07 | Draft | Added PEIGS data architecture/schema authority and linked it from the project-wide documentation index |
