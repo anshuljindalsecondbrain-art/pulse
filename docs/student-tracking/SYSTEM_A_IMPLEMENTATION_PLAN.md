@@ -1,3 +1,5 @@
+> **Superseded execution plan (2026-11-07):** This file is retained as historical planning evidence. The current staged execution order and acceptance gates are maintained in [Student Tracking Execution Plan](STUDENT_TRACKING_EXECUTION_PLAN.md), governed by [Current Product Baseline](STUDENT_TRACKING_CURRENT_BASELINE.md). Do not execute the older role model, scope, phase order or database assumptions without reconciliation against those current documents.
+
 # System A — Implementation Plan and Delivery Backlog
 
 **Status:** Approved working plan; implementation readiness is conditional on locating the live application and Supabase environment.  
