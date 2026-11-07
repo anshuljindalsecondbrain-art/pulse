@@ -17,9 +17,9 @@ npm run dev
 - Batches: inspect cohort sizes and batch summaries.
 - Assignments: create a draft from the offline module catalogue, select question references, choose a target batch and due date, then publish the draft.
 - Abhyas Matrix: select an assignment, update question-level statuses and export CSV.
-- Doubt Radar: create doubt cases and change their status.
-- Academic Review: verify or return individual student reports without rewriting the reported status.
-- Attendance: record daily presence by learner and date.
+- Doubt Radar: create doubt cases and enforce open → assigned → resolved transitions.
+- Academic Review: verify or return each immutable report event; decisions are stored separately and do not rewrite student reports.
+- Attendance: record daily presence by learner and date, with one record per student per day.
 - Reports: view sample report counts and operational indicators.
 - Settings: reset the demo data.
 
@@ -30,7 +30,7 @@ npm run dev
 - Question references come from the offline catalogue and are placeholders, not QBMS question identities or question text.
 - Mutations are stored in browser localStorage under the `pulse.demo.v4.*` namespace.
 - Assignment publishing runs through a typed lifecycle service and locks a question-reference snapshot.
-- The demo workflow service includes append-only report events, separate verification decisions, guarded doubt transitions and one-attendance-record-per-student-per-day validation. These domain services are unit tested; only assignment publishing is currently wired into the screen.
+- The demo workflow service includes append-only report events, separate verification decisions, guarded doubt transitions and one-attendance-record-per-student-per-day validation. Assignment publishing, report capture, teacher verification, doubt transitions and attendance now use these domain services in the screens.
 - Use Reset demo data to restore the seed records.
 - Do not enter real student personal data into this preview.
 
