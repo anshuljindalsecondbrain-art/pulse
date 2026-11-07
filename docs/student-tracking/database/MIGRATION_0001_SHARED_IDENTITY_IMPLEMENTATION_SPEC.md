@@ -125,7 +125,7 @@ Do not store email as the canonical Auth key. Email can change and is not a stab
 
 ## 8. Role grant contract — OPEN-015 and OPEN-019–021
 
-- tenant_people is membership/association only.
+- tenant_memberships is membership/association only.
 - Role/capability grants are separate records.
 - A grant must include a tenant, person, role/permission reference, effective interval, grantor/provenance and revocation semantics.
 - Resource scope must be explicit: tenant, centre, batch, student or another approved resource.
