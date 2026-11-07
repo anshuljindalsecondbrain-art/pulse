@@ -224,3 +224,89 @@ M0001 is ready for implementation only when:
 - Do not apply any DDL to the connected Supabase project as part of this specification.
 
 **Implementation status:** Six owner decisions approved. Executable M0001 preparation is authorized, with OPEN-010 handled by avoiding active-context uniqueness assumptions and OPEN-011 handled by excluding catalogue references. No remote SQL has been applied.
+
+
+## 14. Approved implementation baseline — 2026-11-07
+
+The six owner approvals have been recorded in the Database Decision Register. The following implementation choices now govern preparation of the M0001 SQL candidate.
+
+### 14.1 Exact M0001 object boundary
+
+**Create or retain in the unified migration stream:**
+
+1. `public.tenants` — canonical tenant identity.
+2. `public.people` — canonical person identity.
+3. `public.tenant_people` — tenant association only; retain unique `(tenant_id, person_id)`.
+4. `public.person_auth_identities` — dedicated mapping from Supabase Auth UUID to `people.id`.
+5. `public.students` — canonical student identity with explicit `tenant_id` and tenant-safe association FK.
+6. `public.centres` — tenant-owned centre identity.
+7. `public.batches` — tenant-owned batch identity with optional same-tenant centre.
+8. `public.academic_context_epochs` — effective-dated context with tenant-safe student and optional batch FKs.
+
+**Do not create in M0001:**
+
+- `tenant_role_grants`: create in M0002 after OPEN-019/020/021 decisions. M0001 must not imply a role or permission from membership.
+- `teaching_assignments`: defer to M0003; OPEN-018 remains open.
+- Parent/guardian relationships: defer until relationship verification and field-purpose decisions close.
+- Subject/chapter catalogues and curriculum FKs: exclude under OPEN-011.
+- System A workflow tables, QBMS content, DTE taxonomy or difficulty records.
+
+### 14.2 Identity and tenant-key contract
+
+- Supabase Auth is the only authentication provider in the initial release scope.
+- `person_auth_identities.auth_user_id` is unique and references the Auth subject UUID by value; do not add an FK to managed `auth.users` unless platform ownership and deletion lifecycle are explicitly reviewed.
+- `person_auth_identities.person_id` references `public.people(id)` with RESTRICT semantics.
+- A person may have more than one Auth identity only through a trusted, audited server-side linking workflow. A single Auth subject maps to at most one person.
+- Email, display name and `raw_user_meta_data` are not identity or authorization keys.
+- Add `UNIQUE(tenant_people.tenant_id, tenant_people.id)` to support composite association references.
+- Add `students.tenant_id`; enforce `FOREIGN KEY (tenant_id, tenant_person_id) REFERENCES tenant_people(tenant_id,id)`.
+- Enforce `UNIQUE(students.tenant_id, students.id)` and one student record per tenant association unless a later explicit product decision changes that cardinality.
+- Use `(tenant_id, student_id)` for academic-context student references.
+
+### 14.3 Centre, batch and context contract
+
+- Centre codes are normalized for uniqueness within a tenant; names must be non-empty after trimming.
+- Batch codes are normalized and unique within `(tenant_id, academic_year)`; names must be non-empty.
+- A batch's optional `centre_id` must reference a centre in the same tenant.
+- Centre and batch status use an explicit lifecycle; referenced records are archived/deactivated, not deleted.
+- `academic_context_epochs.batch_id` is nullable but, when present, must reference `batches(tenant_id,id)`.
+- Preserve valid-time history. Do not add a partial unique index or exclusion constraint that assumes one active batch/context per student. OPEN-010 remains open.
+- Keep existing `stream` and `class_level` domain checks only after comparing all current source values and product requirements; do not silently narrow valid academic values.
+
+### 14.4 Initial security boundary
+
+- M0001 is internal-only. Explicitly revoke table privileges from `anon` and `authenticated`; do not grant either role access to the identity objects.
+- Enable RLS on each created/retained application table in the exposed schema, but do not create permissive policies in M0001.
+- Do not create SECURITY DEFINER functions, views, triggers or application RPCs in this migration.
+- Verify Data API exposed-schema configuration during implementation preflight. No table is to be exposed for application use until the later reviewed security migration.
+- Do not infer that service-role use is safe in a browser; it remains server-only.
+- The remote project remains untouched. Local replay and tests are the only permitted execution target for this phase.
+
+### 14.5 Extension and schema drift handling
+
+- Do not add `CREATE EXTENSION pgcrypto` solely to obtain `gen_random_uuid()`; PostgreSQL 17 provides the UUID generator. Include an extension only if a concrete object in this migration requires it and local preflight proves it is needed.
+- The migration must fail clearly if it encounters incompatible pre-existing application objects. Do not use broad `IF NOT EXISTS` clauses to hide drift.
+- Reconcile the historical five-table source migration into a new canonical migration; do not copy its old filename or apply it unchanged.
+
+### 14.6 Remaining pre-SQL review gates
+
+Before the timestamped migration is created, review:
+- exact existing column types, names, defaults, ownership and constraints from the shared-core source;
+- whether `public` remains the intended schema for internal-only objects or a non-exposed schema is preferred;
+- exact normalized-code expression/index implementation and collation behavior;
+- whether a unique one-student-per-tenant-association constraint matches all onboarding/transfer cases;
+- Auth mapping lifecycle when an Auth account is deleted, disabled, recovered or linked/unlinked;
+- current permitted stream/class values and whether they should remain extensible text codes.
+
+These are implementation verification gates, not permission to broaden M0001 scope. Any change that alters an approved owner decision must return to the owner.
+
+### 14.7 Implementation status
+
+- Owner decisions OPEN-013/014/015/016/017/029: approved and closed.
+- OPEN-010: remains open; no one-active-context constraint.
+- OPEN-011: remains open; catalogue excluded.
+- OPEN-018: remains open; teaching assignments deferred to M0003.
+- OPEN-019/020/021: remain open; role grants deferred to M0002.
+- Executable SQL: not yet created.
+- Local PostgreSQL replay/tests: not yet run.
+- Remote Supabase DDL: not authorized and not applied.
