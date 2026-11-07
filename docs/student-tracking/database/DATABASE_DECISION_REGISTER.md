@@ -112,3 +112,17 @@ A recommendation package is available at [M0001 Owner Decision Package](M0001_OW
 6. OPEN-019 through OPEN-028 remain open. No application role grants or application-facing RLS policy set is authorized by this approval; this is consistent with the approved internal-only M0001 boundary.
 
 The approved decisions supersede the earlier "open" status rows and the prior statement that none of the package recommendations had been approved.
+
+
+## 9. Branch/schema reconciliation decisions — 2026-11-07
+
+The newer `feat/system-a-abhyas-foundation` canonical core proposal was compared with the owner-approved M0001 decisions on `docs/system-a-database-governance`. The complete evidence and recommendations are recorded in [Branch and Shared-Core Schema Reconciliation](BRANCH_AND_SCHEMA_RECONCILIATION_2026-11-07.md).
+
+| ID | Decision required | Options / recommended direction | Status |
+|---|---|---|---|
+| RECON-001 | Canonical membership table name | Retain `tenant_people` exactly as approved in OPEN-015, or supersede it with lifecycle-explicit `tenant_memberships` and a documented source mapping. Recommendation: `tenant_memberships`, subject to owner approval. | OPEN |
+| RECON-002 | Student-to-membership cardinality | Require each student to reference a tenant membership, or make student a tenant-owned academic identity with nullable `person_id` and keep membership separate. Recommendation: tenant-owned student profile with optional person link. | OPEN |
+| RECON-003 | Academic context relationship | Direct student-to-batch context FK, or explicit effective-dated `enrollments` linking student and batch with context epochs referencing enrollment. Recommendation: explicit enrollment. | OPEN |
+| RECON-004 | Concurrent active enrollment policy | D-001 records product direction to allow concurrent enrollments but is marked BLOCKED pending Academic Owner approval. Confirm the Academic Owner approval before adding interval overlap constraints or active-context rules. | BLOCKED — Academic Owner approval pending |
+
+These questions must be resolved before M0001 executable SQL is authored. Existing approvals OPEN-013/014/015/016/017/029 remain recorded; RECON-001/002 propose material refinements and must not be treated as silently approved. OPEN-010 remains open until RECON-004 is formally closed.
