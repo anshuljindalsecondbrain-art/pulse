@@ -19,7 +19,7 @@
 | students | Student business identity | Tenant, person link optional, admission identifier, profile/status |
 | centres | Institute centre | Tenant-qualified identity and status |
 | batches | Academic cohort | Tenant/centre/session/class/stream and status |
-| student_enrolments | Student ↔ batch/programme | Effective dates, enrolment kind/status, transfer reason |
+| enrollments | Student ↔ batch/programme | Effective dates, lifecycle/status, transfer provenance; tenant-safe student and batch references |
 | subjects | Academic subject catalogue | Global or tenant ownership must be explicit |
 | chapters | Subject chapter reference | Ownership/version and subject relationship must be tenant-safe |
 
