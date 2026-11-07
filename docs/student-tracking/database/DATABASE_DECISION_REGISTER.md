@@ -87,3 +87,28 @@ OPEN-013 remains open: the canonical source branch and migration ownership must 
 ## 7. M0001 owner decision package — 2026-11-07
 
 A recommendation package is available at [M0001 Owner Decision Package](M0001_OWNER_DECISION_PACKAGE.md). It proposes defaults for OPEN-013, OPEN-014, OPEN-015, OPEN-016, OPEN-017 and OPEN-029, and provides discussion recommendations for OPEN-010 and OPEN-011. **None of these recommendations is recorded as approved.** The package creates no SQL and authorizes no remote DDL.
+
+
+## 8. Owner-approved M0001 decisions — 2026-11-07
+
+**Approval evidence:** User explicitly approved all six recommendations in the M0001 Owner Decision Package with the instruction "Approve all six." This approval closes the six decisions below. It does not authorize remote DDL, deployment, PR merge or production release.
+
+| ID | Approved decision | Recorded disposition |
+|---|---|---|
+| OPEN-013 | `main` is the eventual canonical integration branch. The current documentation branch remains a proposal/work branch. Reconcile shared-core and System A designs into one reviewed migration history; do not merge preliminary migration files unchanged. | **CLOSED — approved** |
+| OPEN-014 | Use dedicated `person_auth_identities`; map trusted Supabase Auth UUID subject to canonical `people.id`; enforce unique Auth subject; email and user-editable metadata are not actor identity/authorization sources; multiple Auth identities per person only through audited trusted linking. | **CLOSED — approved** |
+| OPEN-015 | `tenant_people` is tenant association only. Store effective-dated, scoped role grants separately in `tenant_role_grants`. Membership does not imply a role and role grant does not create membership. | **CLOSED — approved** |
+| OPEN-016 | Select Option A: explicit `tenant_id` on `students`, composite FK to tenant association, unique `(tenant_id, student_id)`, and tenant-safe composite references from tenant-owned child records. | **CLOSED — approved** |
+| OPEN-017 | Add canonical shared `centres` and `batches`, each tenant-owned. Batch may reference a same-tenant centre; nullable centre only where tenant-wide batches are allowed. Use tenant-scoped uniqueness and archive/deactivate referenced records. | **CLOSED — approved** |
+| OPEN-029 | Select Option A: internal-only identity foundation. No grants to `anon` or `authenticated`, and no Data API exposure before a later reviewed security migration. Later exposure requires complete grants, RLS, actor resolution and tests. | **CLOSED — approved** |
+
+### Implementation qualifications
+
+1. Supabase Auth is the selected initial identity subject source. The schema may retain a provider namespace for forward compatibility, but only the Supabase Auth UUID integration is in the initial implementation scope.
+2. Account linking/unlinking is a trusted server-side operation; no self-service metadata claim can reassign a person identity.
+3. OPEN-010 remains open. M0001 must not introduce a uniqueness/exclusion rule that assumes one active batch/programme per student. Preserve context history and defer overlap/primary-context policy until the owner decides.
+4. OPEN-011 remains open. M0001 must not create a subject/chapter catalogue or add foreign keys to an unapproved catalogue. Catalogue references are deferred.
+5. OPEN-018 remains open and teaching assignments are deferred to M0003.
+6. OPEN-019 through OPEN-028 remain open. No application role grants or application-facing RLS policy set is authorized by this approval; this is consistent with the approved internal-only M0001 boundary.
+
+The approved decisions supersede the earlier "open" status rows and the prior statement that none of the package recommendations had been approved.
