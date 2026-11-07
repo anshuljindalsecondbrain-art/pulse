@@ -38,6 +38,7 @@ const statusClass: Record<Workflow, string> = {
   Scheduled: "scheduled",
   Published: "published",
   Overdue: "overdue",
+  "Legacy record": "legacy",
 };
 
 export function WorkAssignmentDashboard({ assignments, onBackToMatrix, onCreateAssignment, onOpenAssignment }: Props) {
@@ -52,7 +53,7 @@ export function WorkAssignmentDashboard({ assignments, onBackToMatrix, onCreateA
     .sort((a, b) => a.workflow === "Overdue" ? -1 : b.workflow === "Overdue" ? 1 : a.due.localeCompare(b.due)), [assignments, search, status, subject]);
 
   const counts = useMemo(() => {
-    const all = assignments.map((item, index) => workflowFor(item, index));
+    const all = assignments.map(item => workflowFor(item));
     return {
       draft: all.filter(x => x === "Draft").length,
       review: all.filter(x => x === "Awaiting review").length,
