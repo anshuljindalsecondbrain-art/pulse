@@ -2,12 +2,13 @@ import { useMemo, useState } from "react";
 import { ArrowLeft, ArrowUpDown, MoreHorizontal, Search, SlidersHorizontal, X } from "lucide-react";
 import type { DashboardAssignment } from "./WorkAssignmentDashboard";
 import "./assignment-list.css";
+import { CreateAssignment } from "./CreateAssignment";
 
 type Props = {
   assignments: DashboardAssignment[];
   onBack: () => void;
   onOpen: (id: string) => void;
-  onCreate: () => void;
+  onCreate: (draft: DashboardAssignment & { classLevel: string; stream: string; sourceType: string; instructions: string; owner: string }) => void;
 };
 
 type Tab = "All assignments" | "My assignments" | "Approval queue" | "Scheduled" | "Published" | "Archived";
@@ -27,6 +28,8 @@ export function AssignmentList({ assignments, onBack, onOpen, onCreate }: Props)
   const [status, setStatus] = useState("All statuses");
   const [menuFor, setMenuFor] = useState<string | null>(null);
   const [notice, setNotice] = useState("");
+  const [creating, setCreating] = useState(false);
+  if (creating) return <CreateAssignment onCancel={() => setCreating(false)} onSaveDraft={(draft) => { onCreate(draft); setCreating(false); setNotice("Draft saved in local preview. No student obligations were created."); }} />;
 
   const subjects = Array.from(new Set(assignments.map(x => x.subject))).sort();
   const batches = Array.from(new Set(assignments.map(x => x.batch))).sort();
@@ -61,7 +64,7 @@ export function AssignmentList({ assignments, onBack, onOpen, onCreate }: Props)
       <div className="al-breadcrumb">SYSTEM A <i>/</i> ASSIGNMENT MANAGEMENT <i>/</i> ASSIGNMENT LIST</div>
       <section className="al-heading">
         <div><div className="al-eyebrow">ACADEMIC OPERATIONS</div><h1>Assignment List</h1><p>Search, compare and manage assignments without opening each record.</p></div>
-        <button className="al-primary" onClick={onCreate}>＋ Create assignment</button>
+        <button className="al-primary" onClick={() => setCreating(true)}>＋ Create assignment</button>
       </section>
       <div className="al-scope">◈ <b>Demo Learning Institute</b><span>All demo batches</span><span>Academic year 2026–27</span></div>
       <nav className="al-tabs" aria-label="Assignment views">
