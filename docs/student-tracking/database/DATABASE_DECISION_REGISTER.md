@@ -180,3 +180,18 @@ RECON-001/002/003 have been closed by owner approval DEC-012. RECON-004 and OPEN
 This deliberately optimizes the first release for the selected Supabase Auth provider. A future second provider requires a reviewed schema migration introducing a provider namespace and canonical subject representation; it must not be improvised by adding duplicate fields to M0001.
 
 DEC-013 resolves CR-001's subject representation and initial mapping lifecycle. It does not close the other column-level review findings or authorize SQL generation, migration deployment, PR merge or remote DDL.
+
+
+## 13. Owner-selected PULSE pilot operating model — 2026-11-07
+
+**Decision:** The owner will operate the complete PULSE ecosystem personally in an internal pilot to identify defects before any commercial rollout. The initial pilot uses one Super Admin login. Student details are created and maintained by the operator; students do not receive logins initially. All enabled PULSE modules are used internally, including QBMS, tagging/DTE, difficulty, tests/assignments, System A tracking, reports, analytics and AI-Mentor.
+
+**Activity tracking selection:** Both modes are required:
+1. Exercise-level quick entry for assigned, attempted, correct, incorrect, skipped/unattempted counts and completion metadata.
+2. Question-level detailed evidence for individual question attempts, evaluation, verification, doubt, correction and resubmission.
+
+**Reconciliation contract:** When both levels exist, derive or reconcile exercise aggregates against question-level evidence and flag discrepancies for explicit resolution. Aggregate-only evidence remains valid but must be labelled as such; never infer individual question attempts from counts. Keep the student as academic subject and the authenticated Super Admin as the entry actor. Do not fabricate student or teacher actor identities.
+
+**Architecture qualification:** One Super Admin pilot does not remove tenant boundaries, canonical identity ownership, server-side authorization, RLS, audit provenance or append-only academic evidence. Student Auth identities are not required for student records. The pilot plan does not authorize DDL, grants, RLS changes, Data API exposure, deployment, merge or production release.
+
+**Canonical implementation plan:** [PULSE Pilot Operating Model and Implementation Plan](PULSE_PILOT_OPERATING_MODEL_AND_IMPLEMENTATION_PLAN.md).
