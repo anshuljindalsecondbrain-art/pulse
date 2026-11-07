@@ -78,7 +78,7 @@ It currently creates five tables:
 
 - public.tenants
 - public.people
-- public.tenant_people
+- public.tenant_memberships
 - public.students
 - public.academic_context_epochs
 
@@ -87,7 +87,7 @@ It does not yet provide the complete contract above:
 | Gap | Required M0001 treatment |
 |---|---|
 | No Auth UID-to-person mapping | Add a dedicated mapping entity with approved provider/subject uniqueness and lifecycle |
-|| No persisted role grant model | Keep tenant_memberships separate from tenant_role_grants; grants are deferred according to authorization decisions |
+| No persisted role grant model | Keep tenant_memberships separate from tenant_role_grants; grants are deferred according to authorization decisions |
 | No centres or batches tables | Add canonical tables or explicitly defer and remove unresolved batch references |
 | academic_context_epochs.batch_id has no FK | Add a tenant-safe FK to canonical batches |
 || No tenant-safe composite FK strategy | Enforce tenant-qualified student, enrollment and context references |
@@ -97,22 +97,17 @@ It does not yet provide the complete contract above:
 
 The existing SQL must not be copied unchanged into the canonical migration stream.
 
-## 6. Tenant-safe key strategy — mandatory decision
+## 6. Approved tenant-safe identity and enrollment model — DEC-012
 
-OPEN-016 is a hard blocker. Select one design and apply it consistently:
+The owner selected Option B: tenant memberships are independent from student identity; students are tenant-owned with an optional person link; explicit enrollments connect students to batches. This supersedes the earlier student-to-membership composite-FK proposal.
 
-**Option A — explicit tenant key on students (recommended for operational FK clarity):**
-- students carries tenant_id and tenant_person_id.
-- A unique key on tenant_people(tenant_id,id) supports a composite FK.
-- Student references tenant_people(tenant_id,id).
-- Context and System A records reference (tenant_id,student_id).
-
-**Option B — tenant derived through tenant_people:**
-- students stores only tenant_person_id.
-- All tenant-owned child references must still be enforceably tenant-safe, potentially through a revised key structure or an explicit canonical student-tenant relation.
+- `tenant_memberships` has tenant_id and person_id, with tenant-scoped uniqueness and tenant-qualified keys.
+- `students` has mandatory tenant_id and nullable person_id referencing people.id. Do not reference tenant_memberships from students.
+- `students` has a tenant-qualified unique key, such as UNIQUE(tenant_id,id), for child references.
+- `enrollments` references (tenant_id,student_id) and (tenant_id,batch_id), with effective interval and lifecycle fields.
+- `academic_context_epochs` references (tenant_id,enrollment_id); it does not independently establish a batch relationship.
 - Application joins alone are not an acceptable substitute for referential integrity.
-
-Do not implement a hybrid in which some child tables assume a direct tenant key and others infer it through joins without a documented, tested contract.
+- No constraint may assume one active enrollment until OPEN-010/D-001 is approved.
 
 ## 7. Auth identity mapping contract — OPEN-014
 
@@ -197,8 +192,8 @@ M0001 is ready for implementation only when:
 
 - [x] Canonical source branch and migration ownership approved: main is eventual canonical integration branch; current docs branch remains proposal branch (OPEN-013).
 - [x] Auth identity mapping approved: dedicated person_auth_identities, unique Supabase Auth UUID subject, canonical people.id actor, trusted audited account linking (OPEN-014).
-- [x] tenant_people association separated from effective-dated scoped tenant_role_grants (OPEN-015).
-- [x] Option A approved: explicit students.tenant_id and tenant-safe composite keys (OPEN-016).
+- [x] tenant_memberships association separated from effective-dated scoped tenant_role_grants (DEC-012).
+- [x] Tenant-owned students with mandatory tenant_id and optional person_id; no membership FK (DEC-012).
 - [x] Shared tenant-owned centres and batches approved; batch centre relationship same-tenant and optional only for tenant-wide batches (OPEN-017).
 - [ ] Concurrent active enrollment/overlap policy is approved (OPEN-010/D-001 remains blocked; do not add single-active-enrollment uniqueness assumptions).
 - [x] Subject/chapter catalogue excluded from M0001; catalogue ownership remains deferred (OPEN-011).
@@ -241,7 +236,8 @@ The six owner approvals have been recorded in the Database Decision Register. Th
 5. `public.students` — tenant-owned identity with mandatory tenant_id and nullable person_id; no membership FK.
 6. `public.centres` — tenant-owned centre identity.
 7. `public.batches` — tenant-owned batch identity with optional same-tenant centre.
-8. `public.enrollments` — tenant-safe effective-dated student-to-batch relationship.\n9. `public.academic_context_epochs` — references same-tenant enrollment.
+8. `public.enrollments` — tenant-safe effective-dated student-to-batch relationship.
+9. `public.academic_context_epochs` — references same-tenant enrollment.
 
 **Do not create in M0001:**
 
