@@ -49,7 +49,7 @@ export function createDemoRepository(
       storage.removeItem(keyFor(collection));
     },
     clear(): void {
-      for (const collection of ["students", "exercises", "marks", "doubts", "attendance"]) {
+      for (const collection of ["students", "exercises", "marks", "report-events", "verification-decisions", "doubts", "attendance"]) {
         storage.removeItem(keyFor(collection));
       }
     },
