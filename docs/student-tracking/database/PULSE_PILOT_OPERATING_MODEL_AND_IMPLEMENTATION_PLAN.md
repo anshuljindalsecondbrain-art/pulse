@@ -333,3 +333,8 @@ Deferred from the initial pilot UI, not necessarily removed from the long-term a
 8. Do not duplicate canonical question or taxonomy ownership in System A.
 9. Preserve tenant-safe keys, history, audit and authorization.
 10. No migration, production DDL, grant, RLS policy or Data API exposure is authorized solely by this pilot plan.
+
+
+## 14. P0/P1 detailed specification
+
+The first implementation slice is governed by [Pilot P0 Student Master and P1 Academic Catalogue Specification](PILOT_P0_P1_STUDENT_MASTER_AND_ACADEMIC_CATALOGUE_SPEC.md). It defines Student Master screens/fields and validation, academic catalogue hierarchy, inventory-first and itemised question modes, question type and marks contracts, audit provenance, acceptance criteria and implementation gates. Catalogue ownership OPEN-011 remains unresolved; pilot-scoped setup must not be treated as permanent global/tenant ownership approval.
