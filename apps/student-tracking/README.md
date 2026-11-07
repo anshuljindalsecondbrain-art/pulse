@@ -13,6 +13,7 @@ npm run dev
 ## Demo modules
 
 - Dashboard: institute-level metrics, quick navigation and recent assignments.
+- Student portal preview: switch roles from the top bar or sidebar; preview one fictional learner at a time with My Learning, Assignments, My Reports and Ask Doubt journeys. Student assignment visibility is limited to published assignments for that learner's batch. Student question updates append report events and remain separate from teacher verification.
 - Students: search and batch-filter the roster; add fictional learner records.
 - Batches: inspect cohort sizes and batch summaries.
 - Assignments: create a draft from the offline module catalogue, select question references, choose a target batch and due date, then publish the draft.
