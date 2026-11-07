@@ -113,3 +113,28 @@ The uploaded System A source specifies that teachers select already-existing, ta
 QBMS question identity/version and DTE classification mappings are optional, version-aware integration references. System A must remain operational when they are absent. The physical column-level proposal is in [PHYSICAL_DATABASE_BLUEPRINT.md](PHYSICAL_DATABASE_BLUEPRINT.md).
 
 Exercise/worksheet grouping may remain as a UI or assignment packaging abstraction if the existing app requires it, but it must not force System A to own question content or create a second question bank.
+
+
+---
+
+## 7. DEC-012 canonical identity and enrollment semantics (2026-11-07)
+
+This section supersedes earlier logical naming or cardinality statements that conflict with DEC-012.
+
+| Entity | Canonical meaning | Required relationship |
+|---|---|---|
+| tenant_memberships | Person's association with a tenant | Independent of student identity and separate from tenant_role_grants |
+| tenant_role_grants | Authorization capability grant | Separate effective-dated scoped grants; membership alone grants no role |
+| students | Tenant-owned student identity | Mandatory tenant_id; optional person_id; no tenant-membership prerequisite |
+| enrollments | Student-to-batch academic placement | Explicit effective-dated relationship; tenant-safe student and batch references |
+| academic_context_epochs | Context history for a placement | References enrollment; no direct independent batch relationship |
+
+Terminology normalization:
+- Use `enrollments` as the canonical physical table name in M0001 planning. Earlier logical label `student_enrolments` is superseded.
+- Use `tenant_memberships`; `tenant_people` is legacy source terminology only.
+- Use `person_id` as the optional student/person association. Do not use `tenant_person_id`.
+- Student academic context is obtained through enrollment. Do not model student-to-batch as a direct context-epoch FK.
+
+Unresolved policy boundary:
+- Whether a student may have multiple concurrent active enrollments remains OPEN-010 / RECON-004 and requires Academic Owner approval.
+- Do not encode a one-active-enrollment rule in the data dictionary or migration tests before that approval.
