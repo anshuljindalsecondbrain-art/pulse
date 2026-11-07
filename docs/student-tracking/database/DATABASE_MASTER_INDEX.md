@@ -13,6 +13,7 @@
 | [Architecture Decision Register](DATABASE_DECISION_REGISTER.md) | Decisions, options, owners and closure evidence | DEC-012 approved; RECON-001–003 closed; RECON-004 blocked |
 | [Schema and Migration Register](SCHEMA_MIGRATION_REGISTER.md) | All schemas and migration execution records | Initial register |
 | [Physical ERD Reconciliation](PHYSICAL_ERD_RECONCILIATION.md) | Shared PULSE identity + System A physical ownership and relationship map | Reconciled to DEC-012; DDL pending |
+| [M0001 Column-Level Schema Review](M0001_COLUMN_LEVEL_SCHEMA_REVIEW.md) | Column-level gaps, key/FK baseline and pre-SQL closure criteria | Review completed; blockers recorded |
 | [Physical Database Blueprint](PHYSICAL_DATABASE_BLUEPRINT.md) | Column-level types, nullability, constraints, indexes and ownership | DEC-012 amendment recorded; detailed DDL review pending |
 | [Physical Constraints and Index Catalogue](PHYSICAL_CONSTRAINTS_AND_INDEX_CATALOG.md) | Composite FKs, checks, uniqueness, deletion rules and dependency order | DEC-012 constraints recorded; technical review pending |
 | [Authorization and Permission Catalogue](AUTHORIZATION_PERMISSION_CATALOG.md) | Action permissions, role bundles, scopes and separation of duties | Proposal; owner approval pending |
@@ -103,3 +104,10 @@ The following physical design artifacts now carry the owner-approved Option B mo
 - [M0001 Local Build and Verification Plan](M0001_LOCAL_BUILD_AND_TEST_PLAN.md) — DEC-012-specific schema assertions and two-tenant fixtures.
 
 RECON-001/002/003 are closed by DEC-012. RECON-004 remains blocked pending Academic Owner approval. No executable migration or remote DDL is authorized by these documentation updates.
+
+
+## 11. M0001 column-level review — 2026-11-07
+
+[M0001 Column-Level Schema Review](M0001_COLUMN_LEVEL_SCHEMA_REVIEW.md) records ten review findings across Auth subject representation, membership lifecycle, student-person semantics, enrollment/context boundaries, code normalization, timestamp maintenance, academic vocabularies, canonical migration-base verification and internal-only security assertions.
+
+The review is not a new owner approval. Its recommendations remain proposals. SQL authoring is held until the required decisions are closed or explicitly deferred with a safe contract.
