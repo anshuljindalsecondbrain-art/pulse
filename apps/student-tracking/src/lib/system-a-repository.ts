@@ -120,6 +120,7 @@ export async function listMyObligations(instituteId: string): Promise<StudentObl
   const student = await getMyStudentIdentity(instituteId);
   if (!student) return [];
 
+  const client = requireClient();
   const { data, error } = await client
     .from("sa_student_obligations")
     .select("id,institute_id,assignment_version_id,assignment_item_id,exercise_slot_id,student_id,source_batch_id,eligibility_status,created_at")
@@ -156,7 +157,7 @@ export async function appendMyStudentReport(input: StudentReportInput): Promise<
     throw new SystemARepositoryError("The obligation is unavailable or not eligible for reporting.");
   }
 
-  const { data, error } = await supabase
+  const { data, error } = await client
     .from("sa_evidence_events")
     .insert({
       institute_id: input.instituteId,
