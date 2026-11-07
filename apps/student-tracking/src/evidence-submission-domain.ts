@@ -90,12 +90,66 @@ export function prepareStudentEvidenceSubmission(input: {
     return Object.freeze({ outcome: "IDEMPOTENT_REPLAY", evidence: priorByKey[0] });
   }
 
-  if (input.existingEvidence.some((item) => item.id === input.newEvidenceId)) {
+  const existingById = new Map<string, SystemAWorkEvidence>();
+  for (const event of input.existingEvidence) {
+    if (existingById.has(event.id)) throw new Error(`Existing evidence contains duplicate event ID: ${event.id}`);
+    existingById.set(event.id, event);
+  }
+  if (existingById.has(input.newEvidenceId)) {
     throw new Error("newEvidenceId must be unique.");
   }
 
+  const cycleEvidence = input.existingEvidence.filter((item) =>
+    item.instituteId === submission.instituteId &&
+    item.studentId === submission.studentId &&
+    item.obligationId === submission.obligationId &&
+    item.exerciseSlotId === submission.exerciseSlotId &&
+    item.source === "STUDENT_SELF_REPORT" &&
+    item.attemptCycleId === submission.attemptCycleId,
+  );
+  const cycleById = new Map<string, SystemAWorkEvidence>();
+  for (const event of cycleEvidence) {
+    if (cycleById.has(event.id)) throw new Error("Evidence lineage contains duplicate event IDs.");
+    cycleById.set(event.id, event);
+  }
+
+  const childByParent = new Map<string, string>();
+  for (const event of cycleEvidence) {
+    if (!event.supersedesEventId) continue;
+    const parent = cycleById.get(event.supersedesEventId);
+    if (!parent) throw new Error("Evidence lineage contains a missing or cross-cycle supersession parent.");
+    if (childByParent.has(parent.id)) throw new Error("Evidence lineage is branched; more than one event supersedes the same parent.");
+    childByParent.set(parent.id, event.id);
+  }
+
+  // Every cycle must be one linear chain. Detect cycles and disconnected roots
+  // before allowing another event to extend the chain.
+  const roots = cycleEvidence.filter((event) => !event.supersedesEventId);
+  if (cycleEvidence.length > 0 && roots.length !== 1) {
+    throw new Error("Evidence lineage must contain exactly one root for an attempt cycle.");
+  }
+  const visited = new Set<string>();
+  let cursor = roots[0];
+  let currentHead = cursor;
+  while (cursor && !visited.has(cursor.id)) {
+    visited.add(cursor.id);
+    currentHead = cursor;
+    const childId = childByParent.get(cursor.id);
+    cursor = childId ? cycleById.get(childId) : undefined;
+  }
+  if (visited.size !== cycleEvidence.length) {
+    throw new Error("Evidence lineage contains a cycle or disconnected event.");
+  }
   if (submission.supersedesEventId) {
-    const superseded = input.existingEvidence.find((item) => item.id === submission.supersedesEventId);
+    if (!currentHead || currentHead.id !== submission.supersedesEventId) {
+      throw new Error("A resubmission must supersede the current evidence lineage head, not a stale ancestor.");
+    }
+  } else if (cycleEvidence.length > 0) {
+    throw new Error("A new report in an existing attempt cycle must explicitly supersede its current evidence lineage head.");
+  }
+
+  if (submission.supersedesEventId) {
+    const superseded = existingById.get(submission.supersedesEventId);
     if (!superseded ||
         superseded.instituteId !== submission.instituteId ||
         superseded.studentId !== submission.studentId ||
