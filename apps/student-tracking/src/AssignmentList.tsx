@@ -4,6 +4,7 @@ import type { DashboardAssignment, AssignmentConfigurationValue } from "./WorkAs
 import "./assignment-list.css";
 import { CreateAssignment } from "./CreateAssignment";
 import { PublicationScheduling } from "./PublicationScheduling";
+import { AssignmentVersionHistory } from "./AssignmentVersionHistory";
 
 type Props = {
   assignments: DashboardAssignment[];
@@ -33,7 +34,9 @@ export function AssignmentList({ assignments, onBack, onOpen, onCreate }: Props)
   const [notice, setNotice] = useState("");
   const [creating, setCreating] = useState(false);
   const [publishing, setPublishing] = useState(false);
+  const [viewingVersionHistory, setViewingVersionHistory] = useState(false);
   if (publishing) return <PublicationScheduling assignments={assignments} onBack={() => setPublishing(false)} />;
+  if (viewingVersionHistory) return <AssignmentVersionHistory assignments={assignments} onBack={() => setViewingVersionHistory(false)} />;
   if (creating) return <CreateAssignment onCancel={() => setCreating(false)} onSaveDraft={(draft) => { onCreate(draft); setCreating(false); setNotice("Draft saved in local preview. No student obligations were created."); }} />;
 
   const subjects = Array.from(new Set(assignments.map(x => x.subject))).sort();
@@ -70,7 +73,7 @@ export function AssignmentList({ assignments, onBack, onOpen, onCreate }: Props)
       <div className="al-breadcrumb">SYSTEM A <i>/</i> ASSIGNMENT MANAGEMENT <i>/</i> ASSIGNMENT LIST</div>
       <section className="al-heading">
         <div><div className="al-eyebrow">ACADEMIC OPERATIONS</div><h1>Assignment List</h1><p>Search, compare and manage assignments without opening each record.</p></div>
-        <div className="al-heading-actions"><button className="al-secondary" onClick={() => setPublishing(true)}>Publication & scheduling</button><button className="al-primary" onClick={() => setCreating(true)}>＋ Create assignment</button></div>
+        <div className="al-heading-actions"><button className="al-secondary" onClick={() => setViewingVersionHistory(true)}>Version history</button><button className="al-secondary" onClick={() => setPublishing(true)}>Publication & scheduling</button><button className="al-primary" onClick={() => setCreating(true)}>＋ Create assignment</button></div>
       </section>
       <div className="al-scope">◈ <b>Demo Learning Institute</b><span>All demo batches</span><span>Academic year 2026–27</span></div>
       <nav className="al-tabs" aria-label="Assignment views">
@@ -93,7 +96,7 @@ export function AssignmentList({ assignments, onBack, onOpen, onCreate }: Props)
             <td><span className="al-version">Unversioned</span></td><td><span className={`al-status ${item.workflow === "Legacy record" ? "legacy" : item.workflow.toLowerCase()}`}>{item.workflow}</span></td>
             <td>—</td><td>{item.due || "—"}</td><td>—</td>
             <td className="al-menu-cell"><button aria-label={`Actions for ${item.name}`} className="al-menu" onClick={() => setMenuFor(menuFor === item.id ? null : item.id)}><MoreHorizontal size={17}/></button>
-              {menuFor === item.id && <div className="al-popmenu"><button onClick={() => onOpen(item.id)}>Open detail</button><button onClick={() => unavailable("Duplicate as draft")}>Duplicate as draft</button><button disabled>Edit draft</button><button disabled>Submit for review</button><button disabled>Version history</button><button disabled>Archive / cancel</button><small>Actions depend on persisted workflow state and permissions.</small></div>}
+              {menuFor === item.id && <div className="al-popmenu"><button onClick={() => onOpen(item.id)}>Open detail</button><button onClick={() => unavailable("Duplicate as draft")}>Duplicate as draft</button><button disabled>Edit draft</button><button disabled>Submit for review</button><button onClick={() => { setMenuFor(null); setViewingVersionHistory(true); }}>Version history</button><button disabled>Archive / cancel</button><small>Actions depend on persisted workflow state and permissions.</small></div>}
             </td>
           </tr>)}
           {!rows.length && <tr><td colSpan={11} className="al-empty"><SlidersHorizontal size={20}/><b>No assignments found</b><span>Try changing the search or filters.</span><button onClick={clearFilters}>Clear all filters</button></td></tr>}
