@@ -2,7 +2,7 @@
 
 **Document ID:** PULSE-DB-M0001-TEST-001  
 **Version:** 1.0.0  
-**Status:** Ready for CLI-backed implementation; not executed  
+**Status:** Revised for DEC-012 Option B; ready for CLI-backed implementation; not executed  
 **Date:** 2026-11-07  
 **Parent:** MIGRATION_0001_SHARED_IDENTITY_IMPLEMENTATION_SPEC.md
 
@@ -12,7 +12,7 @@ Define the exact local-only workflow for producing, reviewing and testing the fi
 
 ## 2. Preconditions
 
-- Owner approvals OPEN-013, OPEN-014, OPEN-015, OPEN-016, OPEN-017 and OPEN-029 are recorded.
+- Owner approvals OPEN-013, OPEN-014, OPEN-015, OPEN-016, OPEN-017 and OPEN-029 are recorded; DEC-012 approves Option B physical identity/enrollment model.
 - The canonical migration integration base is `main`; this work branch remains a proposal branch.
 - The shared-core source migration is historical input only and must not be copied unchanged.
 - The intended migration directory and all existing migration files must be inspected on the canonical integration branch before file generation.
@@ -49,18 +49,18 @@ The migration must establish the approved M0001 object boundary:
 - batches
 - academic_context_epochs
 
-The migration must not create tenant_role_grants, teaching_assignments, parent relationships, curriculum catalogues, System A workflow tables, QBMS content or DTE taxonomy.
+The migration must not create tenant_role_grants, teaching_assignments, parent relationships, curriculum catalogues, System A workflow tables, QBMS content or DTE taxonomy. Students must not reference tenant_memberships; academic_context_epochs must reference enrollments, not batches directly.
 
 ## 5. Required pgTAP test cases
 
 | Test ID | Assertion | Expected result |
 |---|---|---|
-| M1-001 | All eight approved tables exist in the intended schema | Pass |
+| M1-001 | All nine approved tables exist in the intended schema | Pass |
 | M1-002 | PKs and UUID defaults match the reviewed contract | Pass |
-| M1-003 | Tenant/person association unique on (tenant_id, person_id) | Duplicate rejected |
-| M1-004 | tenant_people composite key supports student association FK | Pass |
-| M1-005 | Student tenant_id and tenant_person_id must identify the same tenant association | Cross-tenant association rejected |
-| M1-006 | One student row per tenant association | Duplicate rejected |
+| M1-003 | tenant_memberships unique on (tenant_id, person_id) | Duplicate rejected |
+| M1-004 | tenant_memberships composite key supports tenant-qualified membership references; students do not reference it | Pass |
+| M1-005 | Student has mandatory tenant_id and optional person_id; student creation does not require membership | Pass; cross-tenant person link rules enforced only if explicitly tenant-qualified by approved schema |
+| M1-006 | No student-to-membership uniqueness/FK is present | Schema inspection passes |
 | M1-007 | Student tenant-qualified key (tenant_id, id) exists | Pass |
 | M1-008 | One Auth subject maps to at most one person | Duplicate Auth subject rejected |
 | M1-009 | Auth mapping person FK prevents orphan identity | Orphan rejected |
@@ -68,11 +68,11 @@ The migration must not create tenant_role_grants, teaching_assignments, parent r
 | M1-011 | Centre code uniqueness is tenant-scoped and normalized | Same tenant duplicate rejected; cross-tenant duplicate allowed |
 | M1-012 | Batch code uniqueness is tenant/year-scoped and normalized | Same tenant/year duplicate rejected |
 | M1-013 | Batch centre reference cannot cross tenants | Cross-tenant centre rejected |
-| M1-014 | Academic context student reference is tenant-safe | Cross-tenant student rejected |
-| M1-015 | Non-null academic context batch reference is tenant-safe | Cross-tenant batch rejected |
-| M1-016 | Null batch remains permitted for context rows where product allows it | Pass |
+| M1-014 | Enrollment student reference is tenant-safe | Cross-tenant student rejected |
+| M1-015 | Enrollment batch reference is tenant-safe | Cross-tenant batch rejected |
+| M1-016 | Academic context epoch references enrollment and has no direct batch_id relationship | Schema inspection passes |
 | M1-017 | valid_to must be later than valid_from | Invalid interval rejected |
-| M1-018 | No unique constraint assumes a single active context/batch per student | Schema inspection passes |
+| M1-018 | No unique/exclusion constraint assumes a single active enrollment per student | Schema inspection passes; concurrency remains unresolved |
 | M1-019 | No tenant_role_grants, teaching_assignments or catalogue tables are created | Schema inspection passes |
 | M1-020 | anon and authenticated have no table privileges on M0001 objects | Privilege assertion passes |
 | M1-021 | RLS is enabled on each exposed-schema M0001 table; no permissive policy exists | Catalog assertion passes |
@@ -82,7 +82,7 @@ The migration must not create tenant_role_grants, teaching_assignments, parent r
 
 ## 6. Two-tenant fixture
 
-Use synthetic tenant A and tenant B, two people, two memberships, two students, one centre and one batch per tenant, and at least one context epoch per student.
+Use synthetic tenant A and tenant B, two people, one membership per tenant, at least two tenant-owned students per tenant (including one with person_id NULL and one with person_id set but no membership requirement), one centre and one batch per tenant, enrollments and at least one context epoch per enrollment.
 
 Positive assertions:
 - Same-tenant student association succeeds.
@@ -138,3 +138,28 @@ Remote application requires a separate explicit approval, environment designatio
 - pgTAP tests: specified, not created or run.
 - Local replay/lint/advisors: not run.
 - Remote Supabase DDL: not authorized; no changes made.
+
+
+---
+
+## 11. DEC-012-specific test assertions — superseding legacy membership tests
+
+The M1-001–M1-024 suite above is interpreted using the DEC-012 object model. Where a legacy assertion's wording conflicts with this section, this section controls.
+
+| Test ID | DEC-012 assertion | Expected result |
+|---|---|---|
+| M1-025 | `tenant_memberships` exists; `tenant_people` is not created as a parallel canonical table | Pass |
+| M1-026 | `students.tenant_id` is NOT NULL and `students.person_id` is nullable | Catalog assertion passes |
+| M1-027 | Student composite key `(tenant_id,id)` exists | Pass |
+| M1-028 | No FK exists from students to tenant_memberships | Schema inspection passes |
+| M1-029 | Student with NULL person_id can be inserted | Pass |
+| M1-030 | Student with person_id but no tenant_memberships row can be inserted | Pass |
+| M1-031 | `enrollments` exists with tenant-qualified FKs to students and batches | Pass |
+| M1-032 | Enrollment valid interval rejects `valid_to <= valid_from` | Rejected |
+| M1-033 | `academic_context_epochs` references enrollment by tenant-qualified FK | Pass |
+| M1-034 | No independent `academic_context_epochs.batch_id` FK remains | Schema inspection passes |
+| M1-035 | Multiple historical enrollments per student are retained | Pass |
+| M1-036 | No one-active-enrollment unique index or overlap exclusion constraint exists before OPEN-010 closure | Schema inspection passes |
+| M1-037 | Existing internal-only grants/RLS boundary remains unchanged | Privilege/catalog assertions pass |
+
+The test suite must not assert whether concurrent active enrollments are permitted or rejected. That is RECON-004 / OPEN-010 and remains blocked pending Academic Owner approval.
