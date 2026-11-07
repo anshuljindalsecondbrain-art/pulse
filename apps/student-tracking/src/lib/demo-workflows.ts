@@ -119,7 +119,7 @@ export function appendAttendance(
   records: readonly DemoAttendance[],
   record: DemoAttendance,
 ): DemoAttendance[] {
-  if (!record.id.trim() || !record.studentId.trim() || !/^\\d{4}-\\d{2}-\\d{2}$/.test(record.date)) {
+  if (!record.id.trim() || !record.studentId.trim() || !/^\d{4}-\d{2}-\d{2}$/.test(record.date)) {
     throw new Error("Attendance requires an ID, student and ISO date.");
   }
   if (records.some((item) => item.studentId === record.studentId && item.date === record.date)) {
