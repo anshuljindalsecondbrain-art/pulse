@@ -138,3 +138,15 @@ Terminology normalization:
 Unresolved policy boundary:
 - Whether a student may have multiple concurrent active enrollments remains OPEN-010 / RECON-004 and requires Academic Owner approval.
 - Do not encode a one-active-enrollment rule in the data dictionary or migration tests before that approval.
+
+
+## 8. DEC-013 Auth identity dictionary amendment
+
+`person_auth_identities` initial-release columns:
+- `id uuid`: mapping row primary key.
+- `person_id uuid NOT NULL`: canonical `people.id` reference; RESTRICT/NO ACTION.
+- `auth_user_id uuid NOT NULL UNIQUE`: sole Supabase Auth subject key; unique across retained and revoked mappings.
+- `created_at timestamptz NOT NULL DEFAULT now()`: mapping creation time.
+- `revoked_at timestamptz NULL`: revocation time; NULL indicates the mapping has not been revoked.
+
+No provider/provider_subject, email or user metadata identity fields are included. Revoked rows remain retained and their Auth UUID is never reassigned. Multiple Auth identities per person require a trusted, audited server-side operation, deferred to the later security workflow.
