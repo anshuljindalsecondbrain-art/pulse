@@ -6,6 +6,7 @@ import { OFFLINE_MODULES } from "./offline-catalog";
 import { evaluateAcademicEligibility } from "./academic-eligibility-domain";
 import { ExerciseBuilder } from "./ExerciseBuilder";
 import type { ExerciseDraft } from "./exercise-builder-domain";
+import { WorkAssignmentDashboard } from "./WorkAssignmentDashboard";
 import { Activity, ArrowRight, Bell, BookOpen, CalendarDays, Check, CheckCheck, ChevronDown, CircleHelp, ClipboardList, Command, Download, GraduationCap, LayoutDashboard, Plus, Search, Settings2, ShieldCheck, Sparkles, Users, X } from "lucide-react";
 
 type Student = { id: string; name: string; roll: string; batch: string };
@@ -44,6 +45,7 @@ function App() {
   const [toast, setToast] = useState("");
   const [filter, setFilter] = useState("All students");
   const [experiment, setExperiment] = useState<"A" | "B">("B");
+  const [showAssignmentDashboard, setShowAssignmentDashboard] = useState(false);
 
   useEffect(() => { localStorage.setItem("pulse.demo.v2.students", JSON.stringify(students)); }, [students]);
   useEffect(() => { localStorage.setItem("pulse.demo.v2.exercises", JSON.stringify(exercises)); }, [exercises]);
@@ -154,13 +156,15 @@ function App() {
     }
   }
 
+  if (showAssignmentDashboard) return <WorkAssignmentDashboard assignments={exercises} onBackToMatrix={() => setShowAssignmentDashboard(false)} onCreateAssignment={() => { setShowAssignmentDashboard(false); setSelectedModuleId(OFFLINE_MODULES[0].id); setSelectedQuestionIds(OFFLINE_MODULES[0].questions.slice(0, 12).map(q => q.id)); setShowCreator(true); }} onOpenAssignment={(id) => { setActiveExercise(id); const selected = exercises.find(item => item.id === id); if (selected) setSelectedBatch(selected.batch); setShowAssignmentDashboard(false); setTab("matrix"); }} />;
+
   return <div className="app-shell">
     <aside className="sidebar">
       <div className="brand"><div className="brand-mark"><Activity size={19}/></div><div><b>PULSE</b><span>ACADEMIC OS</span></div></div>
       <div className="workspace"><div className="workspace-avatar">V</div><div><b>Demo Learning Institute</b><span>Sample Campus · India</span></div><ChevronDown size={14}/></div>
       <div className="nav-label">WORKSPACE</div>
       <nav>
-        <button className="nav-item"><LayoutDashboard size={17}/> Overview</button>
+        <button className="nav-item" onClick={() => setShowAssignmentDashboard(true)}><LayoutDashboard size={17}/> Work assignments</button>
         <button className="nav-item active"><ClipboardList size={17}/> Abhyas Matrix <span className="nav-count">A</span></button>
         <button className="nav-item" onClick={()=>setShowStudents(true)}><Users size={17}/> Students</button>
         <button className="nav-item"><BookOpen size={17}/> Exercises & DPPs</button>
