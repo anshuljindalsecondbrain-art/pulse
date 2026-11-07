@@ -96,6 +96,16 @@ describe("student evidence submission command contract", () => {
   });
 
 
+
+  it("rejects duplicate event identities in the supplied evidence history", () => {
+    const first = existing({ id: "ev-duplicate", idempotencyKey: "key-a" });
+    const second = existing({ id: "ev-duplicate", idempotencyKey: "key-b" });
+    expect(() => prepare(
+      submission({ idempotencyKey: "key-next", supersedesEventId: "ev-duplicate" }),
+      [first, second],
+    )).toThrow(/duplicate event ID/i);
+  });
+
   it("rejects a resubmission that targets a stale ancestor instead of the current head", () => {
     const root = existing({ id: "ev-root", idempotencyKey: "key-root" });
     const head = existing({
