@@ -137,3 +137,30 @@ describe("System A canonical evidence contract", () => {
     expect(metrics.attemptedObligations).toBe(0);
   });
 });
+
+describe("System A metrics input integrity", () => {
+  it("rejects duplicate obligation IDs instead of inflating assigned counts", () => {
+    expect(() => deriveSystemAMetrics({
+      obligations: [obligation, { ...obligation }],
+      evidence: [], decisions: [],
+    })).toThrow(/duplicate.*obligation/i);
+  });
+
+  it("rejects duplicate evidence IDs instead of silently overwriting the lookup entry", () => {
+    const first = report({ id: "duplicate-evidence", workProgress: "ATTEMPTED" });
+    const second = report({ id: "duplicate-evidence", workProgress: "SUBMITTED" });
+    expect(() => deriveSystemAMetrics({
+      obligations: [obligation], evidence: [first, second], decisions: [],
+    })).toThrow(/duplicate.*evidence/i);
+  });
+
+  it("rejects duplicate decision IDs even when their purposes differ", () => {
+    const completion = decision({ id: "duplicate-decision" });
+    const evaluation = decision({
+      id: "duplicate-decision", purpose: "ANSWER_EVALUATION", outcome: "CORRECT",
+    });
+    expect(() => deriveSystemAMetrics({
+      obligations: [obligation], evidence: [report()], decisions: [completion, evaluation],
+    })).toThrow(/duplicate.*decision/i);
+  });
+});
