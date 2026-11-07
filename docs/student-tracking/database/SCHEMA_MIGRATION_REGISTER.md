@@ -32,7 +32,7 @@ Do not edit or delete this historical proposal silently. Supersede it through a 
 
 ## 3. Shared identity baseline under review
 
-The V10 `feat/pulse-domain-core` branch includes `supabase/migrations/0001_identity_and_academic_context.sql` with preliminary entities:
+The historical `feat/pulse-domain-core` branch includes `supabase/migrations/0001_identity_and_academic_context.sql` with preliminary entities (legacy source only; not the approved target):
 - `tenants`
 - `people`
 - `tenant_people`
@@ -47,7 +47,7 @@ Names below are logical purposes. Executable timestamped filenames must be creat
 
 | Sequence | Logical migration purpose | Dependencies | State |
 |---|---|---|---|
-| M00 | Reconciled shared identity/core foundation | OPEN-001, OPEN-010, OPEN-011 | Blocked |
+| M00 / M0001 | Reconciled shared identity/core foundation: tenant_memberships, tenant-owned students, centres/batches, enrollments and context epochs | DEC-012; OPEN-010 concurrency policy remains blocked but does not block structural modeling | Design reconciled; executable SQL pending |
 | M01 | System A exercise, versions and slots | M00; data ownership approval | Pending design |
 | M02 | Assignment, version, items and target snapshots | M01; OPEN-003, OPEN-004 | Pending design |
 | M03 | Student obligations and publication transaction | M02; eligibility policy OPEN-008 | Pending design |
@@ -114,3 +114,21 @@ Current disposition:
 - pgTAP test files: specified, not created or run.
 - Local migration replay and lint: not run.
 - Remote Supabase DDL: not authorized and not applied.
+
+
+## 9. DEC-012 physical model update — 2026-11-07
+
+M0001 target object inventory is now:
+- tenants
+- people
+- person_auth_identities
+- tenant_memberships (replaces legacy tenant_people)
+- students (tenant_id mandatory; person_id optional; no membership FK)
+- centres
+- batches
+- enrollments (explicit tenant-safe student-to-batch relationship)
+- academic_context_epochs (references enrollment; no direct batch FK)
+
+RECON-001/002/003 are closed by DEC-012. RECON-004 / OPEN-010 remains blocked pending Academic Owner approval; no active-enrollment uniqueness or overlap exclusion is to be added before closure.
+
+The updated physical ERD, blueprint, constraints/index catalogue, data dictionary and M0001 test plan are linked from DATABASE_MASTER_INDEX.md. M0001 SQL remains uncreated; local CLI replay remains unrun; remote DDL remains unauthorized and unapplied.
