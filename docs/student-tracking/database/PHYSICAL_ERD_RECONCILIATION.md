@@ -193,9 +193,9 @@ Additional checks/constraints must prove that the obligation slot belongs to the
 
 Shared identity direction is frozen, but these physical details remain open and must not be guessed:
 
-1. Does `tenant_people` remain the canonical membership table, with a new `tenant_role_grants`, or is it renamed to `tenant_memberships`? Recommendation: retain `tenant_people` to avoid parallel membership tables; add role grants separately.
-2. Is a person allowed to have multiple student records/programmes within one tenant? Recommendation: one canonical student identity per tenant-person, with multiple effective-dated enrolments/context epochs.
-3. Can a student have concurrent active batches/programmes? Must be explicit in enrolment constraints.
+1. Membership table and student relationship are closed by DEC-012: use `tenant_memberships`; students are tenant-owned with optional `person_id` and no membership FK.
+2. Student-record multiplicity per person is not derived from membership cardinality; any uniqueness rule requires a separate product decision.
+3. Can a student have concurrent active enrollments? OPEN-010/RECON-004 remains blocked pending Academic Owner approval.
 4. Are subjects/chapters shared platform catalogue records, tenant-owned copies or tenant overlays?
 5. Does teacher scope live in role grants, teaching assignments or both? Recommendation: role grant establishes capability; teaching assignment establishes resource scope; require both.
 6. What are the canonical parent/guardian relationship verification and consent fields?
