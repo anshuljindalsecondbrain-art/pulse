@@ -1,4 +1,5 @@
 import { ArrowRight, CalendarClock, CheckCircle2, CircleAlert, ClipboardList, Clock3, FilePlus2, Filter, Search, ShieldCheck, Users } from "lucide-react";
+import "./assignment-dashboard.css";
 import { useMemo, useState } from "react";
 
 export type DashboardAssignment = {
@@ -20,13 +21,14 @@ type Props = {
   onOpenAssignment: (id: string) => void;
 };
 
-const sampleWorkflow = ["Draft", "Awaiting review", "Approved", "Scheduled", "Published", "Overdue"] as const;
+const sampleWorkflow = ["Draft", "Awaiting review", "Approved", "Scheduled", "Published", "Overdue", "Legacy record"] as const;
 type Workflow = typeof sampleWorkflow[number];
 
 function workflowFor(item: DashboardAssignment, index: number): Workflow {
   if (item.lifecycleStatus === "DRAFT") return "Draft";
-  // Existing prototype records predate the approval workflow. Keep them explicitly in a legacy bucket.
-  return index % 4 === 0 ? "Published" : "Awaiting review";
+  if (item.lifecycleStatus === "PUBLISHED") return "Published";
+  // Existing prototype records predate the approval workflow; do not infer approval or publication.
+  return "Legacy record";
 }
 
 const statusClass: Record<Workflow, string> = {
@@ -100,11 +102,11 @@ export function WorkAssignmentDashboard({ assignments, onBackToMatrix, onCreateA
             {rows.map(item=><tr key={item.id} onClick={()=>onOpenAssignment(item.id)}><td><b>{item.name}</b><small>{item.count} question slots · {item.created || "Demo record"}</small></td><td>{item.subject}<small>{item.chapter}</small></td><td>{item.batch}</td><td><span className="assignment-version">Local</span></td><td><span className={`assignment-status ${statusClass[item.workflow]}`}>{item.workflow}</span></td><td>{item.due || "—"}</td><td><ArrowRight size={15}/></td></tr>)}
             {!rows.length && <tr><td colSpan={7} className="assignment-empty">No assignments match these filters.</td></tr>}
           </tbody></table></div>
-          <div className="assignment-panel-foot">Showing {rows.length} of {assignments.length} demo assignments. Workflow labels are illustrative until approval and publication services are connected.</div>
+          <div className="assignment-panel-foot">Showing {rows.length} of {assignments.length} demo assignments. Legacy records are not assigned inferred approval states. Workflow services are not connected.</div>
         </div>
         <aside className="assignment-attention">
           <div className="assignment-panel-head"><div><h2>Attention required</h2><p>Items that may need staff action</p></div><span className="assignment-alert-icon"><CircleAlert size={16}/></span></div>
-          <div className="assignment-attention-item"><span className="assignment-attention-symbol review"><Clock3 size={15}/></span><div><b>Review queue</b><small>{counts.review} legacy demo records are not yet connected to an approval decision.</small></div></div>
+          <div className="assignment-attention-item"><span className="assignment-attention-symbol review"><Clock3 size={15}/></span><div><b>Approval queue</b><small>Approval queue data is not connected. Legacy records are not treated as awaiting review.</small></div></div>
           <div className="assignment-attention-item"><span className="assignment-attention-symbol overdue"><Users size={15}/></span><div><b>Allocation exceptions</b><small>Live allocation exception data is not connected in this prototype.</small></div></div>
           <div className="assignment-attention-note"><ShieldCheck size={15}/><span>Only server-authorised assignments and counts should appear here in production.</span></div>
         </aside>
