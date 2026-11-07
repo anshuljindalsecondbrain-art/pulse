@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
-import type { FormEvent } from "react";
+import { useEffect, useState } from "react";
+import type { FormEvent, ReactNode } from "react";
 import { Activity, ArrowRight, Bell, BookOpen, CalendarDays, Check, CheckCheck, CircleHelp, ClipboardCheck, ClipboardList, Download, GraduationCap, LayoutDashboard, Menu, Plus, Search, Settings2, ShieldCheck, Sparkles, Users, X } from "lucide-react";
-import { DEMO_BATCHES, DEMO_EXERCISES, DEMO_MARKS, DEMO_STUDENTS } from "./demo-data";
+import { DEMO_EXERCISES, DEMO_MARKS, DEMO_STUDENTS } from "./demo-data";
 import { OFFLINE_MODULES } from "./offline-catalog";
 import { isAttemptedStatus, toSafeCsvCell, type Status } from "./domain";
 type Student={id:string;name:string;roll:string;batch:string;email:string;active:boolean};
@@ -55,6 +55,6 @@ function App(){
  </div>
 }
 function iconFor(t:Tab){const props={size:16};switch(t){case"Dashboard":return <LayoutDashboard {...props}/>;case"Students":return <Users {...props}/>;case"Batches":return <GraduationCap {...props}/>;case"Assignments":return <BookOpen {...props}/>;case"Abhyas Matrix":return <ClipboardList {...props}/>;case"Doubt Radar":return <CircleHelp {...props}/>;case"Academic Review":return <ClipboardCheck {...props}/>;case"Attendance":return <CalendarDays {...props}/>;case"Reports":return <Activity {...props}/>;default:return <Settings2 {...props}/>}}
-function Metric({label,value,detail,icon}:{label:string;value:string;detail:string;icon:React.ReactNode}){return <div className="metric"><span>{icon}</span><small>{label}</small><b>{value}</b><em>{detail}</em></div>}
-function Panel({title,sub,children}:{title:string;sub:string;children:React.ReactNode}){return <section className="demo-panel"><div className="panel-head"><div><h2>{title}</h2><small>{sub}</small></div></div><div className="panel-body">{children}</div></section>}
+function Metric({label,value,detail,icon}:{label:string;value:string;detail:string;icon:ReactNode}){return <div className="metric"><span>{icon}</span><small>{label}</small><b>{value}</b><em>{detail}</em></div>}
+function Panel({title,sub,children}:{title:string;sub:string;children:ReactNode}){return <section className="demo-panel"><div className="panel-head"><div><h2>{title}</h2><small>{sub}</small></div></div><div className="panel-body">{children}</div></section>}
 export default App;
