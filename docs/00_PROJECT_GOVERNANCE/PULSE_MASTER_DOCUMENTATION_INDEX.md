@@ -194,5 +194,4 @@ Lifecycle statuses should be used consistently: Proposed, Draft, In Review, Appr
 | Version | Date | Status | Change |
 |---|---|---|---|
 | 0.1.0 | 2026-11-06 | Draft | Initial project-wide index based on the inspected main-branch inventory; proposed authority assignments remain pending review |
-
 | 0.1.1 | 2026-11-07 | Draft | Added PEIGS as a cross-domain engineering/assurance proposal and clarified that planned project-wide registers should be reconciled against PEIGS before separate duplication |
