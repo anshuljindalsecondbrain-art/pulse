@@ -11,7 +11,7 @@ export type SelectedContentSlot = {
   unitLabel: string;
   slotLabel: string;
   slotOrder: number;
-  sourceKind: "EXERCISE" | "DPP";
+  sourceKind: "EXERCISE" | "DPP" | "MANUAL";
 };
 
 type Unit = {
@@ -48,6 +48,8 @@ export function ContentSelector({ subject, classLevel, stream, initialSelection 
   const [search, setSearch] = useState("");
   const [range, setRange] = useState("");
   const [rangeError, setRangeError] = useState("");
+  const [manualSource, setManualSource] = useState("");
+  const [manualCount, setManualCount] = useState("10");
   const [selected, setSelected] = useState<SelectedContentSlot[]>(initialSelection);
   const [expanded, setExpanded] = useState<string[]>(eligibleModules[0] ? [eligibleModules[0].id] : []);
   const activeModule = eligibleModules.find(module => module.id === activeModuleId);
@@ -111,6 +113,27 @@ export function ContentSelector({ subject, classLevel, stream, initialSelection 
     if (activeModule && activeUnit) addSlots(activeModule, activeUnit, activeUnit.questions);
   }
 
+  function addManualSlots() {
+    const label = manualSource.trim();
+    const count = Number(manualCount);
+    if (!label || !Number.isInteger(count) || count < 1 || count > 200) {
+      setRangeError("Enter a source label and a slot count from 1 to 200.");
+      return;
+    }
+    const slug = label.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    const sourceId = "manual:" + slug;
+    const additions: SelectedContentSlot[] = Array.from({ length: count }, (_, index) => {
+      const order = index + 1;
+      return { sourceId, sourceRef: sourceId + ":slot-" + String(order).padStart(3, "0"), sourceLabel: label, unitId: sourceId, unitLabel: "Physical reference", slotLabel: "Slot " + order, slotOrder: order, sourceKind: "MANUAL" };
+    });
+    setSelected(current => {
+      const existing = new Set(current.map(slot => slot.sourceRef));
+      return [...current, ...additions.filter(slot => !existing.has(slot.sourceRef))];
+    });
+    setRangeError("");
+    setManualSource("");
+  }
+
   return <div className="cs-page">
     <header className="cs-header">
       <div><div className="cs-eyebrow">M08-04 · ASSIGNMENT CONTENT SELECTOR</div><h1>Select exact work</h1><p>Choose existing physical-source slots. No QBMS records or questions are created here.</p></div>
@@ -136,6 +159,14 @@ export function ContentSelector({ subject, classLevel, stream, initialSelection 
 
       <section className="cs-pane cs-preview">
         <div className="cs-pane-head"><div><small>CONTENT PREVIEW</small><b>{activeModule?.title ?? "No source selected"}</b></div><span className="cs-slot-count">{activeUnit?.questions.length ?? 0} slots</span></div>
+        {!activeUnit && <div className="cs-manual-source">
+          <h3>Unmapped physical source</h3>
+          <p>This academic scope has no matching catalogue item. Create stable physical slot references without QBMS taxonomy.</p>
+          <label>Book / module / exercise / DPP label<input value={manualSource} onChange={event => setManualSource(event.target.value)} placeholder="e.g. Physics Module 04 · Exercise 2"/></label>
+          <label>Number of slots<input type="number" min="1" max="200" value={manualCount} onChange={event => setManualCount(event.target.value)}/></label>
+          <button onClick={addManualSlots}><Plus size={14}/> Add physical slots</button>
+          {rangeError && <span role="alert">{rangeError}</span>}
+        </div>}
         {activeUnit && <>
           <div className="cs-unit-heading"><div><b>{activeUnit.label}</b><span>{activeUnit.kind === "DPP" ? "Daily practice paper" : "Exercise"} · Stable physical slot references</span></div><button onClick={selectAll}><Check size={14}/> Select all</button></div>
           <div className="cs-range">
