@@ -166,7 +166,7 @@ export function ContentSelector({ subject, classLevel, stream, initialSelection 
           <label>Number of slots<input type="number" min="1" max="200" value={manualCount} onChange={event => setManualCount(event.target.value)}/></label>
           <button onClick={addManualSlots}><Plus size={14}/> Add physical slots</button>
           {rangeError && <span role="alert">{rangeError}</span>}
-        </div></details>}
+        </div></details>
         {activeUnit && <>
           <div className="cs-unit-heading"><div><b>{activeUnit.label}</b><span>{activeUnit.kind === "DPP" ? "Daily practice paper" : "Exercise"} · Stable physical slot references</span></div><button onClick={selectAll}><Check size={14}/> Select all</button></div>
           <div className="cs-range">
