@@ -42,11 +42,12 @@ The migration must establish the approved M0001 object boundary:
 
 - tenants
 - people
-- tenant_people
+- tenant_memberships
 - person_auth_identities
 - students
 - centres
 - batches
+- enrollments
 - academic_context_epochs
 
 The migration must not create tenant_role_grants, teaching_assignments, parent relationships, curriculum catalogues, System A workflow tables, QBMS content or DTE taxonomy. Students must not reference tenant_memberships; academic_context_epochs must reference enrollments, not batches directly.
