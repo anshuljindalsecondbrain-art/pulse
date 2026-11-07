@@ -1,3 +1,5 @@
+> **Governance notice (2026-11-07):** This is a historical broad System A specification. For current approved scope, pilot roles, exclusions and operating rules, follow [Student Tracking Current Product Baseline](STUDENT_TRACKING_CURRENT_BASELINE.md). The current pilot is Super Admin-only and limited to 11 approved modules. Student/parent/teacher/reviewer/mentor portals, QBMS, System B/DTE, DRE, AI-Mentor and AI interventions are not authorized by this historical specification. Treat this document's broader scope as future design material unless the current baseline explicitly adopts it.
+
 # System A — Master Completion Specification
 **Product:** PULSE Student Work Tracking / Abhyas Matrix  
 **System boundary:** System A operates independently of QBMS and the Deep Tagging Engine (DTE).  
