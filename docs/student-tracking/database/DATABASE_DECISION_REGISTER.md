@@ -82,3 +82,8 @@ A recommended default is not a confirmed decision. Never record a recommendation
 | OPEN-029 | First migration application-security boundary | (A) Internal-only foundation with no application grants until a later reviewed security migration; (B) M0001 includes a complete minimum RLS/grant/actor-resolution contract. Select one, including whether any table is exposed through the Data API. | Blocks a safe first remote migration and application connectivity |
 
 OPEN-013 remains open: the canonical source branch and migration ownership must be explicitly confirmed before migration files are integrated. The new migration architecture documents are proposals and do not themselves close any owner decision.
+
+
+## 7. M0001 owner decision package — 2026-11-07
+
+A recommendation package is available at [M0001 Owner Decision Package](M0001_OWNER_DECISION_PACKAGE.md). It proposes defaults for OPEN-013, OPEN-014, OPEN-015, OPEN-016, OPEN-017 and OPEN-029, and provides discussion recommendations for OPEN-010 and OPEN-011. **None of these recommendations is recorded as approved.** The package creates no SQL and authorizes no remote DDL.
