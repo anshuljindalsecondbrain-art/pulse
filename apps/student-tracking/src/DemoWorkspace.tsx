@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
-import { Activity, ArrowRight, Bell, BookOpen, CalendarDays, Check, CheckCheck, CircleHelp, ClipboardCheck, ClipboardList, Download, GraduationCap, LayoutDashboard, Menu, Plus, Search, Settings2, ShieldCheck, Sparkles, Users, X } from "lucide-react";
-import { DEMO_EXERCISES, DEMO_MARKS, DEMO_STUDENTS } from "./demo-data";
+import { Activity, ArrowRight, Bell, BookOpen, CalendarDays, Check, CheckCheck, CircleHelp, ClipboardCheck, ClipboardList, Download, GraduationCap, LayoutDashboard, Plus, Search, Settings2, ShieldCheck, Sparkles, Users, X } from "lucide-react";
+import { DEMO_BATCHES, DEMO_EXERCISES, DEMO_MARKS, DEMO_STUDENTS } from "./demo-data";
 import { OFFLINE_MODULES } from "./offline-catalog";
 import { isAttemptedStatus, toSafeCsvCell, type Status } from "./domain";
 type Student={id:string;name:string;roll:string;batch:string;email:string;active:boolean};
