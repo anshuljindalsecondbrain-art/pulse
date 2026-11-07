@@ -565,3 +565,44 @@ The shared identity ownership decision is closed. The following are not silently
 - Production readiness: not achieved.
 
 **Acceptance:** This blueprint becomes executable only after the open decisions are closed, shared-core maintainers approve their extensions, the final ERD/data dictionary are reviewed, and the migration/RLS/test plan is approved.
+
+
+---
+
+## 14. DEC-012 physical identity and enrollment model — authoritative amendment (2026-11-07)
+
+This section supersedes conflicting identity/enrollment definitions in Sections 2–3, 3.5, 9 and 10. DEC-012 changes only the physical student/membership/enrollment relationship.
+
+### 14.1 Canonical shared entities
+
+| Entity | Physical contract | Ownership / relationship |
+|---|---|---|
+| `tenant_memberships` | `id uuid PK`, `tenant_id uuid NOT NULL`, `person_id uuid NOT NULL`, lifecycle/effective timestamps; unique `(tenant_id,person_id)`; unique `(tenant_id,id)` | PULSE association only; no role implication |
+| `tenant_role_grants` | Separate effective-dated, scoped grant model | PULSE authorization; never inferred from membership |
+| `students` | `id uuid PK`, `tenant_id uuid NOT NULL`, `person_id uuid NULL`, `created_at`; unique `(tenant_id,id)`; nullable person FK to `people(id)` | PULSE tenant-owned academic identity; no membership FK |
+| `enrollments` | `id uuid PK`, `tenant_id uuid NOT NULL`, `student_id uuid NOT NULL`, `batch_id uuid NOT NULL`, effective interval, status/lifecycle and provenance | PULSE student-to-batch relationship; composite FKs to same-tenant student and batch |
+| `academic_context_epochs` | `id`, `tenant_id`, `enrollment_id`, context attributes, `valid_from`, nullable `valid_to`, reason/provenance | PULSE historical context; composite FK to same-tenant enrollment, no direct batch FK |
+
+The above is a logical physical contract; exact columns for enrollment status, transfer reason, source and audit provenance require final column-level review. Do not invent additional academic policy fields.
+
+### 14.2 Tenant-safe constraint contract
+
+- `tenant_memberships`: UNIQUE `(tenant_id,person_id)` and UNIQUE `(tenant_id,id)`.
+- `students`: mandatory tenant_id; nullable person_id FK to people; UNIQUE `(tenant_id,id)`. Do not add UNIQUE `(tenant_id,person_id)` unless an explicit policy is approved; a person may have multiple student records only if product policy later allows it.
+- `enrollments`: UNIQUE `(tenant_id,id)`; FK `(tenant_id,student_id)` → `students(tenant_id,id)`; FK `(tenant_id,batch_id)` → `batches(tenant_id,id)`; valid interval check.
+- `academic_context_epochs`: FK `(tenant_id,enrollment_id)` → `enrollments(tenant_id,id)`; valid interval check.
+- No direct `academic_context_epochs.batch_id` FK or independent batch pointer.
+- No single-active-enrollment unique index or overlap exclusion constraint while OPEN-010/RECON-004 remains blocked.
+- The System A student-obligation, target snapshot and other tenant-owned child tables continue to reference `students(tenant_id,id)`; no System A table should join through tenant_memberships to establish student tenancy.
+
+### 14.3 Source migration disposition
+
+The inspected historical shared-core migration's `tenant_people`, `students.tenant_person_id` and direct `academic_context_epochs.batch_id` are legacy source structures. Reconcile them into the DEC-012 target; do not replay them unchanged and do not preserve them as parallel canonical tables.
+
+### 14.4 Security and sequencing remain unchanged
+
+- `person_auth_identities` remains approved.
+- `centres` and `batches` remain canonical PULSE tables.
+- `tenant_role_grants` remains separate and sequenced according to the approved authorization decisions.
+- M0001 remains internal-only: no `anon` or `authenticated` grants, no Data API exposure, and no application-facing policies until the later reviewed security migration.
+- Concurrent active enrollment semantics remain blocked pending Academic Owner approval.
