@@ -90,7 +90,12 @@ export function prepareStudentEvidenceSubmission(input: {
     return Object.freeze({ outcome: "IDEMPOTENT_REPLAY", evidence: priorByKey[0] });
   }
 
-  if (input.existingEvidence.some((item) => item.id === input.newEvidenceId)) {
+  const existingById = new Map<string, SystemAWorkEvidence>();
+  for (const event of input.existingEvidence) {
+    if (existingById.has(event.id)) throw new Error(`Existing evidence contains duplicate event ID: ${event.id}`);
+    existingById.set(event.id, event);
+  }
+  if (existingById.has(input.newEvidenceId)) {
     throw new Error("newEvidenceId must be unique.");
   }
 
@@ -144,7 +149,7 @@ export function prepareStudentEvidenceSubmission(input: {
   }
 
   if (submission.supersedesEventId) {
-    const superseded = input.existingEvidence.find((item) => item.id === submission.supersedesEventId);
+    const superseded = existingById.get(submission.supersedesEventId);
     if (!superseded ||
         superseded.instituteId !== submission.instituteId ||
         superseded.studentId !== submission.studentId ||
