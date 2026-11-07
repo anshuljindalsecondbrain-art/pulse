@@ -20,7 +20,7 @@ export type DashboardAssignment = {
   batch: string;
   due: string;
   created?: string;
-  lifecycleStatus?: "DRAFT" | "PUBLISHED";
+  lifecycleStatus?: "DRAFT" | "APPROVED" | "SCHEDULED" | "PUBLISHED";
   questionRefs?: string[];
   sourceGroups?: string[];
   configuration?: AssignmentConfigurationValue;
@@ -38,6 +38,8 @@ type Workflow = typeof sampleWorkflow[number];
 
 function workflowFor(item: DashboardAssignment): Workflow {
   if (item.lifecycleStatus === "DRAFT") return "Draft";
+  if (item.lifecycleStatus === "APPROVED") return "Approved";
+  if (item.lifecycleStatus === "SCHEDULED") return "Scheduled";
   if (item.lifecycleStatus === "PUBLISHED") return "Published";
   // Existing prototype records predate the approval workflow; do not infer approval or publication.
   return "Legacy record";

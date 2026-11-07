@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowUpDown, MoreHorizontal, Search, SlidersHorizontal, X } 
 import type { DashboardAssignment, AssignmentConfigurationValue } from "./WorkAssignmentDashboard";
 import "./assignment-list.css";
 import { CreateAssignment } from "./CreateAssignment";
+import { PublicationScheduling } from "./PublicationScheduling";
 
 type Props = {
   assignments: DashboardAssignment[];
@@ -12,10 +13,12 @@ type Props = {
 };
 
 type Tab = "All assignments" | "My assignments" | "Approval queue" | "Scheduled" | "Published" | "Archived";
-type Status = "Draft" | "Published" | "Legacy record";
+type Status = "Draft" | "Approved" | "Scheduled" | "Published" | "Legacy record";
 
 function statusFor(item: DashboardAssignment): Status {
   if (item.lifecycleStatus === "DRAFT") return "Draft";
+  if (item.lifecycleStatus === "APPROVED") return "Approved";
+  if (item.lifecycleStatus === "SCHEDULED") return "Scheduled";
   if (item.lifecycleStatus === "PUBLISHED") return "Published";
   return "Legacy record";
 }
@@ -29,6 +32,8 @@ export function AssignmentList({ assignments, onBack, onOpen, onCreate }: Props)
   const [menuFor, setMenuFor] = useState<string | null>(null);
   const [notice, setNotice] = useState("");
   const [creating, setCreating] = useState(false);
+  const [publishing, setPublishing] = useState(false);
+  if (publishing) return <PublicationScheduling assignments={assignments} onBack={() => setPublishing(false)} />;
   if (creating) return <CreateAssignment onCancel={() => setCreating(false)} onSaveDraft={(draft) => { onCreate(draft); setCreating(false); setNotice("Draft saved in local preview. No student obligations were created."); }} />;
 
   const subjects = Array.from(new Set(assignments.map(x => x.subject))).sort();
@@ -39,6 +44,7 @@ export function AssignmentList({ assignments, onBack, onOpen, onCreate }: Props)
         tab === "All assignments" ||
         (tab === "My assignments" && item.workflow !== "Published") ||
         (tab === "Published" && item.workflow === "Published") ||
+        (tab === "Scheduled" && item.workflow === "Scheduled") ||
         (tab === "Approval queue" && false) ||
         (tab === "Scheduled" && false) ||
         (tab === "Archived" && false);
@@ -64,7 +70,7 @@ export function AssignmentList({ assignments, onBack, onOpen, onCreate }: Props)
       <div className="al-breadcrumb">SYSTEM A <i>/</i> ASSIGNMENT MANAGEMENT <i>/</i> ASSIGNMENT LIST</div>
       <section className="al-heading">
         <div><div className="al-eyebrow">ACADEMIC OPERATIONS</div><h1>Assignment List</h1><p>Search, compare and manage assignments without opening each record.</p></div>
-        <button className="al-primary" onClick={() => setCreating(true)}>＋ Create assignment</button>
+        <div className="al-heading-actions"><button className="al-secondary" onClick={() => setPublishing(true)}>Publication & scheduling</button><button className="al-primary" onClick={() => setCreating(true)}>＋ Create assignment</button></div>
       </section>
       <div className="al-scope">◈ <b>Demo Learning Institute</b><span>All demo batches</span><span>Academic year 2026–27</span></div>
       <nav className="al-tabs" aria-label="Assignment views">
@@ -77,7 +83,7 @@ export function AssignmentList({ assignments, onBack, onOpen, onCreate }: Props)
           <label className="al-search"><Search size={16}/><input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search title, source, chapter or batch"/></label>
           <label><span>Subject</span><select value={subject} onChange={e => setSubject(e.target.value)}><option>All subjects</option>{subjects.map(s => <option key={s}>{s}</option>)}</select></label>
           <label><span>Batch</span><select value={batch} onChange={e => setBatch(e.target.value)}><option>All batches</option>{batches.map(s => <option key={s}>{s}</option>)}</select></label>
-          <label><span>Status</span><select value={status} onChange={e => setStatus(e.target.value)}><option>All statuses</option><option>Draft</option><option>Published</option><option>Legacy record</option></select></label>
+          <label><span>Status</span><select value={status} onChange={e => setStatus(e.target.value)}><option>All statuses</option><option>Draft</option><option>Approved</option><option>Scheduled</option><option>Published</option><option>Legacy record</option></select></label>
           <button className="al-clear" onClick={clearFilters}><X size={14}/> Clear</button>
         </div>
         <div className="al-tablewrap"><table className="al-table"><thead><tr><th>ASSIGNMENT <ArrowUpDown size={12}/></th><th>SOURCE / MATERIAL</th><th>SUBJECT</th><th>CLASS / BATCH</th><th>OWNER</th><th>VERSION</th><th>WORKFLOW STATUS</th><th>PUBLISH TIME</th><th>DUE DATE</th><th>STUDENTS</th><th/></tr></thead>
