@@ -32,8 +32,9 @@ export function createDemoRepository(
 
   return {
     read<T>(collection: string, fallback: T): T {
+      const key = keyFor(collection);
       try {
-        const raw = storage.getItem(keyFor(collection));
+        const raw = storage.getItem(key);
         if (raw === null) return fallback;
         return JSON.parse(raw) as T;
       } catch {
