@@ -1,12 +1,12 @@
 # PULSE — Master Documentation Index
 
 - Document ID: PULSE-GOV-REPO-003
-- Version: 0.1.0
+- Version: 0.1.2
 - Status: Draft — navigation baseline; pending owner review
 - Repository: `anshuljindalsecondbrain-art/pulse`
 - Branch baseline: `main`
 - Created: 2026-11-06
-- Related governance: [Repository Architecture and Documentation Governance Blueprint](PULSE_REPOSITORY_ARCHITECTURE_AND_DOCUMENTATION_GOVERNANCE_BLUEPRINT.md)
+- Related governance: [Repository Architecture and Documentation Governance Blueprint](PULSE_REPOSITORY_ARCHITECTURE_AND_DOCUMENTATION_GOVERNANCE_BLUEPRINT.md); [PEIGS Architecture Specification](PULSE_ENGINEERING_INTELLIGENCE_REGISTRY_ARCHITECTURE_SPECIFICATION.md); [PEIGS Data Architecture and Registry Schema](PULSE_PEIGS_DATA_ARCHITECTURE_AND_REGISTRY_SCHEMA.md)
 - Related inventory: [Repository File Inventory and Disposition Matrix](PULSE_REPOSITORY_FILE_INVENTORY_AND_DISPOSITION_MATRIX.md)
 - Implementation authorization: Not granted
 
@@ -33,6 +33,8 @@ This index is a navigation and governance aid. It does not approve requirements,
 | PULSE-GOV-REPO-001 | [Repository Architecture and Documentation Governance Blueprint](PULSE_REPOSITORY_ARCHITECTURE_AND_DOCUMENTATION_GOVERNANCE_BLUEPRINT.md) | Repository organization, documentation lifecycle, IDs, traceability and agent workflow | Draft; project governance baseline candidate |
 | PULSE-GOV-REPO-002 | [Repository File Inventory and Disposition Matrix](PULSE_REPOSITORY_FILE_INVENTORY_AND_DISPOSITION_MATRIX.md) | Tracked-file inventory, proposed dispositions and repository gaps | Draft; inventory baseline, owner review pending |
 | PULSE-GOV-REPO-003 | [Master Documentation Index](PULSE_MASTER_DOCUMENTATION_INDEX.md) | Project-wide documentation navigation and authority map | Draft; this document |
+| PULSE-GOV-PEIGS-001 | [PULSE Engineering Intelligence & Governance System Architecture Specification](PULSE_ENGINEERING_INTELLIGENCE_REGISTRY_ARCHITECTURE_SPECIFICATION.md) | Cross-domain engineering inventory, traceability, implementation assessments, evidence, audit and dependency intelligence; does not replace domain registers | Draft; audited review draft v1.2.0; implementation and database authorization not granted |
+| PULSE-PEIGS-DATA-001 | [PEIGS Data Architecture and Registry Schema](PULSE_PEIGS_DATA_ARCHITECTURE_AND_REGISTRY_SCHEMA.md) | PEIGS-only registry data model, source references, assessments, verification, evidence, findings and private-schema security boundary; reuses shared PULSE identity and external domain registers | Draft v1.0.0; SQL and migration authorization not granted |
 
 ## 4. Project-wide product and engineering documentation
 
@@ -132,17 +134,19 @@ The dedicated DTE documentation area is `docs/dte/`. The detailed module and art
 
 ## 6. Documentation gaps — planned registers
 
-The following are not present in the inspected repository tree. They are planned governance artifacts, not existing documents.
+PEIGS v1.1.0 and PULSE-PEIGS-DATA-001 propose that several cross-domain registers below be delivered as structured PEIGS views/records rather than as separately maintained Markdown registers. This is a target proposal only; no PEIGS database or dashboard exists yet. Domain-specific detailed registers remain in their existing domain locations.
+
+The following are not present in the inspected repository tree. They are planned governance artifacts, not existing documents. Their need as standalone documents must be reassessed against PEIGS before creating them.
 
 | Proposed artifact | Intended authority | Proposed location | Status |
 |---|---|---|---|
-| Requirements Traceability Matrix | Requirement-to-workflow/module/UI/API/data/code/test/release links | `docs/00_PROJECT_GOVERNANCE/PULSE_REQUIREMENTS_TRACEABILITY_MATRIX.md` | Not created |
-| Module Dependency Map | Module ownership, dependency direction and prohibited coupling | `docs/00_PROJECT_GOVERNANCE/PULSE_MODULE_DEPENDENCY_MAP.md` | Not created |
-| UI/UX Screen Register | Screen IDs, roles, routes, states, design and dependencies | `docs/01_PRODUCT_AND_UX/PULSE_UI_UX_SCREEN_REGISTER.md` | Not created |
-| API/Event Register | API and event contract IDs, owners, payload versions and consumers | `docs/02_INTERFACE_CONTRACTS/PULSE_API_EVENT_REGISTER.md` | Not created |
-| Data Entity Register | Data entity IDs, domain owners, tenant scope and lifecycle | `docs/03_DATA_GOVERNANCE/PULSE_DATA_ENTITY_REGISTER.md` | Not created |
+| Requirements Traceability Matrix | Requirement-to-workflow/module/UI/API/data/code/test/release links | PEIGS traceability view; standalone document only if a distinct approved authority is required | Proposed PEIGS coverage; not implemented |
+| Module Dependency Map | Module ownership, dependency direction and prohibited coupling | PEIGS dependency graph plus approved architecture decisions | Proposed PEIGS coverage; not implemented |
+| UI/UX Screen Register | Screen IDs, roles, routes, states, design and dependencies | PEIGS screen/artifact records linked to Figma and domain specs | Proposed PEIGS coverage; detailed screen specifications remain in domain documents |
+| API/Event Register | API and event contract IDs, owners, payload versions and consumers | PEIGS contract/artifact records linked to canonical API specifications | Proposed PEIGS coverage; not implemented |
+| Data Entity Register | Data entity IDs, domain owners, tenant scope and lifecycle | PEIGS data-artifact records linked to canonical data specifications | Proposed PEIGS coverage; not implemented |
 | Repository Change Register | Approved moves, merges, renames and archival evidence | `docs/00_PROJECT_GOVERNANCE/PULSE_REPOSITORY_CHANGE_REGISTER.md` | Not created |
-| As-built System Audit | Verified application, deployment, database, auth, storage, integrations and CI | `docs/04_TECHNICAL_AUDITS/PULSE_AS_BUILT_SYSTEM_AUDIT.md` | Not created |
+| As-built System Audit | Verified application, deployment, database, auth, storage, integrations and CI | PEIGS as-built/assurance inventory plus dated audit snapshots | Proposed PEIGS coverage; a one-time baseline audit is still required |
 
 ## 7. Document lifecycle and ownership
 
@@ -191,3 +195,5 @@ Lifecycle statuses should be used consistently: Proposed, Draft, In Review, Appr
 | Version | Date | Status | Change |
 |---|---|---|---|
 | 0.1.0 | 2026-11-06 | Draft | Initial project-wide index based on the inspected main-branch inventory; proposed authority assignments remain pending review |
+| 0.1.1 | 2026-11-07 | Draft | Added PEIGS as a cross-domain engineering/assurance proposal and clarified that planned project-wide registers should be reconciled against PEIGS before separate duplication |
+| 0.1.2 | 2026-11-07 | Draft | Added PEIGS data architecture/schema authority and linked it from the project-wide documentation index |
