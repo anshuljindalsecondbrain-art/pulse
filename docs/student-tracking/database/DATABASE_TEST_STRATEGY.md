@@ -88,3 +88,10 @@ Use server-side pagination, appropriate composite indexes and bounded query cont
 ## 4. Release gate
 
 No System A database release is complete until all applicable migration, RLS, integrity, idempotency, immutability, domain, performance and application-contract tests pass. Test evidence must cite exact commit SHA, migration head and database environment.
+
+
+## 5. Security-specific acceptance register
+
+The expanded adversarial security suite is maintained in [AUDIT_EVENT_AND_SECURITY_TEST_REGISTER.md](AUDIT_EVENT_AND_SECURITY_TEST_REGISTER.md). It includes 44 test IDs covering identity resolution, tenant isolation, scope escalation, guardian access, self-review, direct table writes, RPC execution grants, views, Realtime, Storage, exports, secrets, revocation races and outbox delivery.
+
+No release is accepted solely because Supabase advisors report zero lints. Actual role/JWT tests, negative authorization tests, transaction concurrency tests and evidence immutability tests are mandatory.
