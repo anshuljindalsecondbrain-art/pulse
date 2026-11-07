@@ -132,3 +132,8 @@ M0001 target object inventory is now:
 RECON-001/002/003 are closed by DEC-012. RECON-004 / OPEN-010 remains blocked pending Academic Owner approval; no active-enrollment uniqueness or overlap exclusion is to be added before closure.
 
 The updated physical ERD, blueprint, constraints/index catalogue, data dictionary and M0001 test plan are linked from DATABASE_MASTER_INDEX.md. M0001 SQL remains uncreated; local CLI replay remains unrun; remote DDL remains unauthorized and unapplied.
+
+
+## 10. M0001 column-level schema review — 2026-11-07
+
+[M0001 Column-Level Schema Review](M0001_COLUMN_LEVEL_SCHEMA_REVIEW.md) has been completed as a design audit. The nine-object DEC-012 inventory remains the target, but exact column/lifecycle/security details remain open. No executable migration has been generated and no local replay or remote DDL has occurred.
