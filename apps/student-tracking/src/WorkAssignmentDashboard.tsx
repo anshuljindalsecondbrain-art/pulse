@@ -18,7 +18,7 @@ export type DashboardAssignment = {
 type Props = {
   assignments: DashboardAssignment[];
   onBackToMatrix: () => void;
-  onCreateAssignment: (draft: DashboardAssignment & { classLevel: string; stream: string; sourceType: string; instructions: string; owner: string }) => void;
+  onCreateAssignment: () => void;
   onOpenAssignment: (id: string) => void;
 };
 
@@ -68,7 +68,7 @@ export function WorkAssignmentDashboard({ assignments, onBackToMatrix, onCreateA
 
   const subjects = Array.from(new Set(assignments.map(x => x.subject))).sort();
 
-  if (showList) return <AssignmentList assignments={assignments} onBack={() => setShowList(false)} onOpen={onOpenAssignment} onCreate={onCreateAssignment} />;
+  if (showList) return <AssignmentList assignments={assignments} onBack={() => setShowList(false)} onOpen={onOpenAssignment} onCreate={(draft) => { onCreateAssignment(); }} />;
 
   return <div className="assignment-dashboard">
     <header className="assignment-topline">
@@ -79,7 +79,7 @@ export function WorkAssignmentDashboard({ assignments, onBackToMatrix, onCreateA
       <div className="assignment-breadcrumb">SYSTEM A <span>/</span> ASSIGNMENT MANAGEMENT <span>/</span> OVERVIEW</div>
       <section className="assignment-heading">
         <div><div className="assignment-eyebrow">ACADEMIC OPERATIONS</div><h1>Work Assignment Dashboard</h1><p>Monitor assignment workload, approval progress, publication and allocation exceptions.</p></div>
-        <button className="assignment-primary" onClick={onCreateAssignment}><FilePlus2 size={16}/> Create assignment</button>
+        <button className="assignment-primary" onClick={() => setShowList(true)}><FilePlus2 size={16}/> Create assignment</button>
       </section>
       <div className="assignment-scope"><ShieldCheck size={16}/><span>Demo Learning Institute</span><i/> <span>All demo batches</span><i/> <span>Academic year 2026–27</span></div>
       <section className="assignment-kpis">
