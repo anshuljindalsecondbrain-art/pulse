@@ -164,3 +164,22 @@ The M1-001–M1-024 suite above is interpreted using the DEC-012 object model. W
 | M1-037 | Existing internal-only grants/RLS boundary remains unchanged | Privilege/catalog assertions pass |
 
 The test suite must not assert whether concurrent active enrollments are permitted or rejected. That is RECON-004 / OPEN-010 and remains blocked pending Academic Owner approval.
+
+
+## 5. DEC-013 Auth mapping assertions
+
+Add the following acceptance assertions to the local pgTAP suite when it is authored:
+
+| ID | Assertion | Expected |
+|---|---|---|
+| M1-038 | person_auth_identities has auth_user_id UUID NOT NULL UNIQUE | Pass |
+| M1-039 | person_auth_identities has no provider or provider_subject columns | Schema inspection passes |
+| M1-040 | Multiple Auth UUIDs may map to one person | Pass |
+| M1-041 | One Auth UUID cannot map to two people | Unique constraint rejects |
+| M1-042 | Revoked mapping retains its unique Auth UUID | Pass |
+| M1-043 | A revoked Auth UUID cannot be reassigned to another person | Unique constraint rejects |
+| M1-044 | person_id FK uses RESTRICT/NO ACTION semantics | Schema inspection passes |
+| M1-045 | No FK to managed auth.users is created | Schema inspection passes |
+| M1-046 | No client-facing grants or write policies are introduced | Internal-only boundary passes |
+
+These are test specifications only; they have not been authored or executed.
