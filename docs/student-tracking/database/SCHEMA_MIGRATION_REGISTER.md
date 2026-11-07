@@ -91,8 +91,8 @@ No application migration has been applied during this workstream.
 ## 7. Unified migration architecture increment — 2026-11-07
 
 New governance artifacts:
-- [Unified Migration Architecture](../student-tracking/database/UNIFIED_MIGRATION_ARCHITECTURE.md) — one canonical PULSE migration stream, branch rules, logical dependency graph, environment gates, recovery policy and test contract.
-- [Migration 0001 Shared Identity Implementation Specification](../student-tracking/database/MIGRATION_0001_SHARED_IDENTITY_IMPLEMENTATION_SPEC.md) — canonical identity foundation scope, physical invariants, existing shared-core gaps and implementation acceptance checklist.
+- [Unified Migration Architecture](UNIFIED_MIGRATION_ARCHITECTURE.md) — one canonical PULSE migration stream, branch rules, logical dependency graph, environment gates, recovery policy and test contract.
+- [Migration 0001 Shared Identity Implementation Specification](MIGRATION_0001_SHARED_IDENTITY_IMPLEMENTATION_SPEC.md) — canonical identity foundation scope, physical invariants, existing shared-core gaps and implementation acceptance checklist.
 
 Current disposition:
 - Logical M0001 is specified, not implemented.
