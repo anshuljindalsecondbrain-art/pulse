@@ -24,7 +24,7 @@ type Props = {
 const sampleWorkflow = ["Draft", "Awaiting review", "Approved", "Scheduled", "Published", "Overdue", "Legacy record"] as const;
 type Workflow = typeof sampleWorkflow[number];
 
-function workflowFor(item: DashboardAssignment, index: number): Workflow {
+function workflowFor(item: DashboardAssignment): Workflow {
   if (item.lifecycleStatus === "DRAFT") return "Draft";
   if (item.lifecycleStatus === "PUBLISHED") return "Published";
   // Existing prototype records predate the approval workflow; do not infer approval or publication.
@@ -45,7 +45,7 @@ export function WorkAssignmentDashboard({ assignments, onBackToMatrix, onCreateA
   const [status, setStatus] = useState("All statuses");
   const [subject, setSubject] = useState("All subjects");
 
-  const rows = useMemo(() => assignments.map((item, index) => ({ ...item, workflow: workflowFor(item, index) }))
+  const rows = useMemo(() => assignments.map(item => ({ ...item, workflow: workflowFor(item) }))
     .filter(item => (status === "All statuses" || item.workflow === status)
       && (subject === "All subjects" || item.subject === subject)
       && (item.name + " " + item.chapter + " " + item.batch).toLowerCase().includes(search.toLowerCase()))
