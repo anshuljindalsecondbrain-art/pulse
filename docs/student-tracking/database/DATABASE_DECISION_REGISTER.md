@@ -125,7 +125,7 @@ The newer `feat/system-a-abhyas-foundation` canonical core proposal was compared
 | RECON-003 | Academic context relationship | Add explicit effective-dated `enrollments` linking tenant-owned students to batches; `academic_context_epochs` reference enrollment. | **CLOSED — approved by DEC-012** |
 | RECON-004 | Concurrent active enrollment policy | D-001 records product direction to allow concurrent enrollments but is marked BLOCKED pending Academic Owner approval. Confirm the Academic Owner approval before adding interval overlap constraints or active-context rules. | BLOCKED — Academic Owner approval pending |
 
-These questions must be resolved before M0001 executable SQL is authored. Existing approvals OPEN-013/014/015/016/017/029 remain recorded; RECON-001/002 propose material refinements and must not be treated as silently approved. OPEN-010 remains open until RECON-004 is formally closed.
+RECON-001/002/003 have been closed by owner approval DEC-012. RECON-004 and OPEN-010 remain open solely for the concurrent active-enrollment policy; M0001 must not encode a one-active-enrollment assumption.
 
 
 ## 10. Owner-approved physical identity refinement — DEC-012 — 2026-11-07
