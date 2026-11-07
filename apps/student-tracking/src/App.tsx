@@ -10,7 +10,7 @@ import { WorkAssignmentDashboard } from "./WorkAssignmentDashboard";
 import { Activity, ArrowRight, Bell, BookOpen, CalendarDays, Check, CheckCheck, ChevronDown, CircleHelp, ClipboardList, Command, Download, GraduationCap, LayoutDashboard, Plus, Search, Settings2, ShieldCheck, Sparkles, Users, X } from "lucide-react";
 
 type Student = { id: string; name: string; roll: string; batch: string };
-type Exercise = { id: string; name: string; chapter: string; subject: string; count: number; batch: string; due: string; created: string; sourceModuleId?: string; questionRefs?: string[]; scope?: string; assessmentMode?: string; lifecycleStatus?: "DRAFT" | "PUBLISHED"; markingScheme?: ExerciseDraft["markingScheme"] };
+type Exercise = { id: string; name: string; chapter: string; subject: string; count: number; batch: string; due: string; created: string; sourceModuleId?: string; questionRefs?: string[]; sourceGroups?: string[]; scope?: string; assessmentMode?: string; lifecycleStatus?: "DRAFT" | "PUBLISHED"; markingScheme?: ExerciseDraft["markingScheme"] };
 type Marks = Record<string, Status>;
 const statusMeta: Record<Status, { label: string; tone: string; next: Status }> = {
   U: { label: "Unattempted", tone: "neutral", next: "C" },
@@ -156,7 +156,7 @@ function App() {
     }
   }
 
-  if (showAssignmentDashboard) return <WorkAssignmentDashboard assignments={exercises} onBackToMatrix={() => setShowAssignmentDashboard(false)} onCreateAssignment={(draft) => { const exerciseDraft: Exercise = { id: draft.id, name: draft.name, chapter: draft.chapter, subject: draft.subject, count: draft.count, batch: draft.batch, due: draft.due, created: draft.created ?? "Just now", lifecycleStatus: "DRAFT" }; setExercises(prev => [exerciseDraft, ...prev]); setToast("Assignment draft saved locally. No student obligations were created."); }} onOpenAssignment={(id) => { setActiveExercise(id); const selected = exercises.find(item => item.id === id); if (selected) setSelectedBatch(selected.batch); setShowAssignmentDashboard(false); setTab("matrix"); }} />;
+  if (showAssignmentDashboard) return <WorkAssignmentDashboard assignments={exercises} onBackToMatrix={() => setShowAssignmentDashboard(false)} onCreateAssignment={(draft) => { const exerciseDraft: Exercise = { id: draft.id, name: draft.name, chapter: draft.chapter, subject: draft.subject, count: draft.count, batch: draft.batch, due: draft.due, created: draft.created ?? "Just now", lifecycleStatus: "DRAFT", questionRefs: draft.questionRefs, sourceGroups: draft.sourceGroups }; setExercises(prev => [exerciseDraft, ...prev]); setToast("Assignment draft saved locally. No student obligations were created."); }} onOpenAssignment={(id) => { setActiveExercise(id); const selected = exercises.find(item => item.id === id); if (selected) setSelectedBatch(selected.batch); setShowAssignmentDashboard(false); setTab("matrix"); }} />;
 
   return <div className="app-shell">
     <aside className="sidebar">
