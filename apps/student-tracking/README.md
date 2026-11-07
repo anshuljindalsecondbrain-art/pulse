@@ -29,12 +29,14 @@ npm run dev
 - Seed assignments: five fictional practice assignments.
 - Question references come from the offline catalogue and are placeholders, not QBMS question identities or question text.
 - Mutations are stored in browser localStorage under the `pulse.demo.v4.*` namespace.
+- Assignment publishing runs through a typed lifecycle service and locks a question-reference snapshot.
+- The demo workflow service includes append-only report events, separate verification decisions, guarded doubt transitions and one-attendance-record-per-student-per-day validation. These domain services are unit tested; only assignment publishing is currently wired into the screen.
 - Use Reset demo data to restore the seed records.
 - Do not enter real student personal data into this preview.
 
 ## Backend boundary
 
-The current demo repository is implemented in the browser using localStorage. It simulates create, read and update workflows for product demonstrations. It is not a real API, server, Supabase database, or security boundary. The next backend increment should move these same domain contracts behind a replaceable repository/API adapter while keeping demo fixtures available for repeatable testing.
+The current demo repository is implemented in the browser using localStorage. It simulates create, read and update workflows for product demonstrations. The workflow service is pure TypeScript and can later be called by a server API. It is not a real API, server, Supabase database, or security boundary. The next backend increment should persist the same domain events through a replaceable API adapter while keeping demo fixtures available for repeatable testing.
 
 ## Validation
 
