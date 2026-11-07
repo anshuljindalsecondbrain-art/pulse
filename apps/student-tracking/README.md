@@ -13,6 +13,7 @@ npm run dev
 ## Demo modules
 
 - Dashboard: institute-level metrics, quick navigation and recent assignments.
+- Parent portal preview: switch to a fictional guardian view for a selected learner, with child overview, published assignments, attendance history, academic report/verification outcomes and doubt follow-up. The guardian view is read-only.
 - Student portal preview: switch roles from the top bar or sidebar; preview one fictional learner at a time with My Learning, Assignments, My Reports and Ask Doubt journeys. Student assignment visibility is limited to published assignments for that learner's batch. Student question updates append report events and remain separate from teacher verification.
 - Students: search and batch-filter the roster; add fictional learner records.
 - Batches: inspect cohort sizes and batch summaries.
