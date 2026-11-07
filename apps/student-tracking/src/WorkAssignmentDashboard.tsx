@@ -13,6 +13,8 @@ export type DashboardAssignment = {
   due: string;
   created?: string;
   lifecycleStatus?: "DRAFT" | "PUBLISHED";
+  questionRefs?: string[];
+  sourceGroups?: string[];
 };
 
 type Props = {
