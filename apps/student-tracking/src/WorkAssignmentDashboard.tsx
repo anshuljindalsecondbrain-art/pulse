@@ -1,5 +1,6 @@
 import { ArrowRight, CalendarClock, CheckCircle2, CircleAlert, ClipboardList, Clock3, FilePlus2, Filter, Search, ShieldCheck, Users } from "lucide-react";
 import "./assignment-dashboard.css";
+import { AssignmentList } from "./AssignmentList";
 import { useMemo, useState } from "react";
 
 export type DashboardAssignment = {
@@ -45,6 +46,7 @@ export function WorkAssignmentDashboard({ assignments, onBackToMatrix, onCreateA
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("All statuses");
   const [subject, setSubject] = useState("All subjects");
+  const [showList, setShowList] = useState(false);
 
   const rows = useMemo(() => assignments.map(item => ({ ...item, workflow: workflowFor(item) }))
     .filter(item => (status === "All statuses" || item.workflow === status)
@@ -66,10 +68,12 @@ export function WorkAssignmentDashboard({ assignments, onBackToMatrix, onCreateA
 
   const subjects = Array.from(new Set(assignments.map(x => x.subject))).sort();
 
+  if (showList) return <AssignmentList assignments={assignments} onBack={() => setShowList(false)} onOpen={onOpenAssignment} onCreate={onCreateAssignment} />;
+
   return <div className="assignment-dashboard">
     <header className="assignment-topline">
       <div className="assignment-brand"><span className="assignment-brand-mark">P</span><div><b>PULSE</b><small>STUDENT WORK TRACKING</small></div></div>
-      <div className="assignment-top-actions"><span className="assignment-demo-tag">LOCAL PREVIEW · DEMO DATA</span><button className="assignment-back" onClick={onBackToMatrix}>← Abhyas Matrix</button></div>
+      <div className="assignment-top-actions"><span className="assignment-demo-tag">LOCAL PREVIEW · DEMO DATA</span><button className="assignment-back" onClick={() => setShowList(true)}>Assignment list</button><button className="assignment-back" onClick={onBackToMatrix}>← Abhyas Matrix</button></div>
     </header>
     <main className="assignment-main">
       <div className="assignment-breadcrumb">SYSTEM A <span>/</span> ASSIGNMENT MANAGEMENT <span>/</span> OVERVIEW</div>
