@@ -12,7 +12,7 @@
 | [Database Management Master Plan](DATABASE_MANAGEMENT_MASTER_PLAN.md) | Governance, scope, architecture and lifecycle | Working baseline |
 | [Architecture Decision Register](DATABASE_DECISION_REGISTER.md) | Decisions, options, owners and closure evidence | Initial register |
 | [Schema and Migration Register](SCHEMA_MIGRATION_REGISTER.md) | All schemas and migration execution records | Initial register |
-| [Data Dictionary](DATA_DICTIONARY.md) | Column-level definitions and constraints | Logical draft |
+| [Physical ERD Reconciliation](PHYSICAL_ERD_RECONCILIATION.md) | Shared PULSE identity + System A physical ownership and relationship map | Reconciled target proposal |\n| [Data Dictionary](DATA_DICTIONARY.md) | Column-level definitions and constraints | Logical draft |
 | [RLS and Security Matrix](RLS_SECURITY_MATRIX.md) | Actor access and tenant authorization | Design baseline |
 | [Database Test Strategy](DATABASE_TEST_STRATEGY.md) | Migration, RLS, integrity and performance tests | Test plan |
 | [Change Control Protocol](DATABASE_CHANGE_CONTROL.md) | Request-to-release governance | Active protocol |
