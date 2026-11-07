@@ -18,7 +18,7 @@ export type DashboardAssignment = {
 type Props = {
   assignments: DashboardAssignment[];
   onBackToMatrix: () => void;
-  onCreateAssignment: () => void;
+  onCreateAssignment: (draft: DashboardAssignment & { classLevel: string; stream: string; sourceType: string; instructions: string; owner: string }) => void;
   onOpenAssignment: (id: string) => void;
 };
 
