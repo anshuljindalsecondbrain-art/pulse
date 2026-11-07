@@ -83,7 +83,7 @@ export function AssignmentList({ assignments, onBack, onOpen, onCreate }: Props)
         <div className="al-tablewrap"><table className="al-table"><thead><tr><th>ASSIGNMENT <ArrowUpDown size={12}/></th><th>SOURCE / MATERIAL</th><th>SUBJECT</th><th>CLASS / BATCH</th><th>OWNER</th><th>VERSION</th><th>WORKFLOW STATUS</th><th>PUBLISH TIME</th><th>DUE DATE</th><th>STUDENTS</th><th/></tr></thead>
           <tbody>{rows.map(item => <tr key={item.id}>
             <td><button className="al-title" onClick={() => onOpen(item.id)}>{item.name}</button><small>{item.id}</small></td>
-            <td>{item.chapter}<small>Exercise / question range not linked</small></td><td>{item.subject}</td><td>{item.batch}</td><td>—<small>Owner not recorded</small></td>
+            <td>{item.sourceGroups?.length ? item.sourceGroups.join(" · ") : item.chapter}<small>{item.questionRefs?.length ? `${item.questionRefs.length} stable source slots selected` : "No content slots linked"}</small></td><td>{item.subject}</td><td>{item.batch}</td><td>—<small>Owner not recorded</small></td>
             <td><span className="al-version">Unversioned</span></td><td><span className={`al-status ${item.workflow === "Legacy record" ? "legacy" : item.workflow.toLowerCase()}`}>{item.workflow}</span></td>
             <td>—</td><td>{item.due || "—"}</td><td>—</td>
             <td className="al-menu-cell"><button aria-label={`Actions for ${item.name}`} className="al-menu" onClick={() => setMenuFor(menuFor === item.id ? null : item.id)}><MoreHorizontal size={17}/></button>
