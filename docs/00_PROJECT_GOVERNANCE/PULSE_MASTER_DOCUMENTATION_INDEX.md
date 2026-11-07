@@ -191,3 +191,21 @@ Lifecycle statuses should be used consistently: Proposed, Draft, In Review, Appr
 | Version | Date | Status | Change |
 |---|---|---|---|
 | 0.1.0 | 2026-11-06 | Draft | Initial project-wide index based on the inspected main-branch inventory; proposed authority assignments remain pending review |
+
+
+## Central Management Control Plane (2026-11-07)
+
+The following documents are the project-wide management entry point. They are draft governance records and do not supersede owner decisions.
+
+- [Central Management Hub](PULSE_CENTRAL_MANAGEMENT_HUB.md) — project/system ownership, authority hierarchy, audit baseline and operating workflow.
+- [Source Authority Register](PULSE_SOURCE_AUTHORITY_REGISTER.md) — canonical source by concern and known conflicts.
+- [Branch Reconciliation Register](PULSE_BRANCH_RECONCILIATION_REGISTER.md) — branch/PR inventory and safe integration sequence.
+- [Documentation Structure and Naming Standard](PULSE_DOCUMENTATION_STRUCTURE_AND_NAMING_STANDARD.md) — target folder taxonomy and safe file-move protocol.
+- [Control Plane README](README.md) — navigation entry.
+
+**Current integration warning:** main remains the intended integration baseline. Open PRs and divergent branches are proposals until reviewed and merged. Do not apply SQL from any feature branch. Current live Supabase application schema and migration history are empty; see the hub for audit scope and limits.
+
+
+## System A and shared database consolidation (2026-11-07)
+
+- [System A and Shared Database Source Consolidation Register](PULSE_SYSTEM_A_AND_SHARED_DATABASE_SOURCE_CONSOLIDATION_REGISTER.md) — proposed canonical document map, branch divergence evidence, M0001 decision preservation, 25-table migration audit and integration gates.
