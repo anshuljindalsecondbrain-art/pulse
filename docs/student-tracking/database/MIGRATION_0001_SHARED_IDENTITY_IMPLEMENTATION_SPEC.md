@@ -310,3 +310,17 @@ These are implementation verification gates, not permission to broaden M0001 sco
 - Executable SQL: not yet created.
 - Local PostgreSQL replay/tests: not yet run.
 - Remote Supabase DDL: not authorized and not applied.
+
+
+## 15. Reconciliation hold — 2026-11-07
+
+A later audit of `feat/system-a-abhyas-foundation` identified unresolved physical-contract differences. The current M0001 object contract is therefore a controlled proposal, not yet the final SQL-authoring baseline.
+
+Do not generate executable SQL until the owner/academic gates RECON-001 through RECON-004 in [Branch and Shared-Core Schema Reconciliation](BRANCH_AND_SCHEMA_RECONCILIATION_2026-11-07.md) are resolved. In particular:
+
+- the approved `tenant_people` name differs from the newer proposed `tenant_memberships` target;
+- the approved student-to-membership composite FK differs from the newer tenant-owned student profile with optional `person_id`;
+- the current direct student/batch academic context differs from the newer explicit `enrollments` relationship;
+- D-001 concurrent-enrollment product direction remains blocked pending Academic Owner approval.
+
+This hold does not reverse the six owner decisions. It prevents the migration author from silently choosing between conflicting physical models. No SQL or remote DDL was created/applied as part of this reconciliation.
