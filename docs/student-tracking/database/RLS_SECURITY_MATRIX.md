@@ -84,6 +84,6 @@ For every exposed table:
 
 Client code may use the project URL and a publishable key. Service-role/secret credentials remain exclusively in trusted server environments and must not be committed or included in browser build variables.
 
-## 7. Deployment status
+## 7. Detailed policy specification\n\nSee [RLS_POLICY_SPECIFICATION.md](RLS_POLICY_SPECIFICATION.md) for the table-family policy matrix, helper-function contract, command-only write boundary, view security requirements and release tests. See [AUTHORIZATION_PERMISSION_CATALOG.md](AUTHORIZATION_PERMISSION_CATALOG.md) for action-based permissions and role bundles. The two documents are proposals; neither is executable policy SQL.\n\n## 8. Deployment status
 
 No policy implementation or authorization grant has been applied to the live PULSE project during this documentation increment.
