@@ -91,7 +91,7 @@ Existing `supabase/migrations/20261106000100_system_a_initial_schema.sql` is pro
 
 The V10 shared-core branch contains a preliminary identity migration with `tenants`, `people`, `tenant_people`, `students` and `academic_context_epochs`. That branch's own migration comments say production RLS and application-specific constraints remain pending. Its exact canonical status and integration must be reviewed before use.
 
-## 5. Target database domain map
+## 5. Primary operational workflow\n\nThe source specification clarifies that teachers primarily select already-existing questions from offline academic modules; they do not normally author questions or create new question content in System A. The initial data path is therefore:\n\n\`Offline module/source edition → source question reference → assignment version/item → publication target snapshot → student-question obligation → student report → teacher observation/verification → correction/doubt → analytics\`.\n\nAn exercise or worksheet grouping may be represented as a presentation/packaging abstraction if required by the existing UI, but it must not become a duplicate question bank or a mandatory content-authoring workflow. QBMS question identity/version and DTE enrichment remain optional future integrations.\n\n## 6. Target database domain map
 
 | Domain | Logical entity families | Main dependency |
 |---|---|---|
