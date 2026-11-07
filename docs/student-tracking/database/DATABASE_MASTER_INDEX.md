@@ -116,3 +116,8 @@ The review is not a new owner approval. Its recommendations remain proposals. SQ
 ## 12. DEC-013 — Auth identity mapping decision
 
 DEC-013 selects a single unique `auth_user_id` UUID for the initial Supabase Auth release. The Auth identity contract is documented in the Decision Register, M0001 specification, physical blueprint, constraints catalogue, data dictionary, column-level review and local test plan. CR-001 is closed; other column-level gates remain open.
+
+
+## 13. PULSE internal pilot operating model — 2026-11-07
+
+[PULSE Pilot Operating Model and Implementation Plan](PULSE_PILOT_OPERATING_MODEL_AND_IMPLEMENTATION_PLAN.md) records the owner-selected operating mode: one Super Admin login, manually managed student records, no student login in the initial pilot, full internal use of PULSE modules, and both exercise-level and question-level activity tracking. It defines the student/content workflows, actor provenance, reconciliation rules, pilot phases and acceptance scenarios. This is a product operating plan; it does not authorize DDL, grants, RLS changes, Data API exposure or deployment.
