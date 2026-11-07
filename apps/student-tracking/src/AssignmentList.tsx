@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { ArrowLeft, ArrowUpDown, MoreHorizontal, Search, SlidersHorizontal, X } from "lucide-react";
-import type { DashboardAssignment } from "./WorkAssignmentDashboard";
+import type { DashboardAssignment, AssignmentConfigurationValue } from "./WorkAssignmentDashboard";
 import "./assignment-list.css";
 import { CreateAssignment } from "./CreateAssignment";
 
@@ -8,7 +8,7 @@ type Props = {
   assignments: DashboardAssignment[];
   onBack: () => void;
   onOpen: (id: string) => void;
-  onCreate: (draft: DashboardAssignment & { classLevel: string; stream: string; sourceType: string; instructions: string; owner: string }) => void;
+  onCreate: (draft: DashboardAssignment & { classLevel: string; stream: string; sourceType: string; instructions: string; owner: string; configuration: AssignmentConfigurationValue }) => void;
 };
 
 type Tab = "All assignments" | "My assignments" | "Approval queue" | "Scheduled" | "Published" | "Archived";
