@@ -4,3 +4,5 @@
 
 .demo-role-switch{background:#252d43!important;border:1px solid #59647e!important;color:#e5eaff!important;border-radius:7px;padding:7px 10px;font-size:10px}.student-quick{grid-template-columns:repeat(4,minmax(0,1fr));margin:14px 0 18px}.student-quick button{border:1px solid #303b53;background:#151e30;color:#d8e2f2;text-align:left;padding:13px;border-radius:9px}.student-quick button.active{border-color:#8c82ff;background:#242545}.student-quick small{display:block;color:#8293ad;margin-top:6px}.student-assignment{border:1px solid #2b3850;border-radius:9px;padding:12px;margin:12px 0}.student-question-list{margin:10px 0}.student-question-list .demo-row{padding:7px 4px;border-top:1px solid #283349}.student-question-list select{min-width:145px}.demo-sidebar-bottom button{display:block;margin-top:9px;background:#252d43;border:1px solid #59647e;color:#dce5f4;border-radius:6px;padding:6px 9px;font-size:9px}
 @media(max-width:700px){.student-quick{grid-template-columns:1fr 1fr}.demo-role-switch{font-size:8px;padding:5px 7px}}
+
+.student-quick{grid-template-columns:repeat(auto-fit,minmax(125px,1fr))}
