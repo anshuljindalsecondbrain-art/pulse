@@ -101,7 +101,7 @@ ERD note: the diagram is a logical relationship map, not executable DDL. Every S
 | Tenant role grant | Not present | PULSE | Add `tenant_role_grants`; separate role/action/resource scope from tenant-person membership |
 | Student | `public.students` | PULSE academic core | Tenant-owned; mandatory `tenant_id`, optional `person_id`; no membership FK |
 | Centre | Not present | PULSE academic core | Add canonical `centres` with tenant-scoped code and status |
-| Batch | Referenced by nullable `academic_context_epochs.batch_id`, but no table/FK exists | PULSE academic core | Add canonical `batches`; add FK and tenant-qualified relationship |
+| Batch | Historical epoch had unconstrained batch_id; target uses enrollment | PULSE academic core | Add canonical `batches`; enrollment references batch; context epoch references enrollment |
 | Enrollment/context | `public.enrollments`, `public.academic_context_epochs` | PULSE academic core | Add explicit student-to-batch enrollment; context epochs reference enrollment; concurrency policy remains OPEN-010 |
 | Teaching assignment | Not present | PULSE authorization/academic core | Add explicit person-to-centre/batch/subject responsibility with validity and grantor |
 | Parent/guardian link | Not present in inspected core | PULSE identity/relationship service | Add verified, temporal person-to-student relationship; do not create System A-local guardian identity |
