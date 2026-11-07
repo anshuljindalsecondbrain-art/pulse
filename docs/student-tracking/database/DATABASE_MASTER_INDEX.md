@@ -62,3 +62,6 @@ Do not describe a proposal as deployed or a CI workflow as passing without check
 ## 5. Update rules
 
 Every database event updates the relevant register and change history. The index must link to current canonical documents, and replaced documents must remain discoverable as superseded records.
+
+| [Unified Migration Architecture](UNIFIED_MIGRATION_ARCHITECTURE.md) | Canonical migration ownership, branch policy, dependency graph, environment rollout and recovery | Proposed; implementation approval pending |
+| [Migration 0001 Shared Identity Specification](MIGRATION_0001_SHARED_IDENTITY_IMPLEMENTATION_SPEC.md) | Scope, invariants, object inventory and acceptance gates for shared identity foundation | Design specification; SQL blocked |
