@@ -1,21 +1,23 @@
 # PULSE Engineering Intelligence & Governance System (PEIGS)
-## Architecture Specification v1.0 — Review Draft
+## Architecture Specification v1.1 — Audited Review Draft
 
 - **Document ID:** PULSE-GOV-PEIGS-001
-- **Version:** 1.0.0
-- **Status:** Draft — owner review and approval required
+- **Version:** 1.1.0
+- **Status:** Draft — audited and revised; owner review and approval required
 - **Repository baseline:** `main`
 - **Working branch:** `docs/peigs-architecture-v1`
 - **Scope:** Project-wide engineering registry and development-control methodology
 - **Implementation authorization:** Not granted
 - **Database authorization:** Not granted
-- **Supersedes:** None
+- **Supersedes:** v1.0.0 on this branch only; v1.0.0 remains in Git history
 
 ## 1. Executive decision
 
-PULSE should establish one evidence-driven Engineering Intelligence & Governance System (PEIGS). It is the authoritative operational registry for engineering inventory, traceability, status assessments, evidence, findings, decisions, dependencies and release verification.
+PULSE should establish one evidence-driven Engineering Intelligence & Governance System (PEIGS). PEIGS is the cross-domain operational index for engineering inventory, traceability, implementation assessments, evidence, findings, dependencies and release verification.
 
-PEIGS is not another product requirements document, a flat spreadsheet, or a replacement for GitHub. It is a cross-cutting governance capability that connects approved intent to actual implementation and independently verified operation.
+**PEIGS does not replace the PULSE Master Documentation Index, any domain-specific register, a product specification, GitHub, Figma or CI.** Existing domain registers remain detailed authorities for their domain's scope, terminology, requirements and module-level documentation lifecycle. PEIGS stores stable references to those authorities and adds cross-domain traceability and evidence-backed engineering assessments. It must not create a second manually maintained copy of domain requirements or module definitions.
+
+The PULSE Master Documentation Index remains the project-wide navigation and document-authority map. PEIGS becomes the cross-domain implementation/assurance index only after governance approval. Document lifecycle status (Draft/Approved/Superseded) and implementation status (Designed/Implemented/Verified) are separate dimensions.
 
 The architecture is hybrid:
 - **GitHub** remains authoritative for source code, version-controlled specifications, architecture decisions, migrations, tests and engineering change history.
@@ -56,6 +58,10 @@ A future user or coding agent must be able to identify what is required, what ex
 10. Automation may discover and verify technical facts, but must not self-approve subjective or high-impact outcomes.
 11. No duplicate institute, person, student, tenant or membership identity model is to be introduced for the registry.
 12. Build a modular capability; do not introduce microservices solely to represent registry domains.
+13. Do not migrate domain registers wholesale into PEIGS. Link to canonical domain authorities and only normalize cross-domain fields required for traceability and portfolio reporting.
+14. Never treat an imported conversation export, generated document, Figma screenshot or branch file as approved product scope without an explicit authority and approval check.
+15. Inventory all relevant branches and environments; a main-branch-only scan is not an as-built audit.
+16. Preserve source provenance and distinguish directly observed facts from imported claims, inferred relationships and unresolved conflicts.
 
 ## 4. Registry scope and tracking granularity
 
@@ -84,10 +90,12 @@ Do not create a registry record for every decorative icon, CSS declaration or tr
 Approved requirements, specifications, architecture, workflows, designs, contracts and planned deliverables. Proposed and draft material must remain visibly unapproved.
 
 ### 5.2 As-built inventory — what actually exists
-Discovered source files, routes, components, APIs, database objects, migrations, policies, tests, design assets and deployments. Each discovered item records source, branch/ref, path or external identifier, and observation time.
+Discovered source files, routes, components, APIs, database objects, migrations, policies, tests, design assets and deployments. Each discovered item records source, repository, branch/ref, commit SHA or external version, environment, path/external identifier, observation time and discovery method. Scan all relevant branches, tags, connected services and deployment environments; explicitly record scan coverage and exclusions.
+
+A source item may be present in a branch without being merged, deployed or operational. Record those states independently.
 
 ### 5.3 Assurance inventory — what has been verified
-Evidence-backed build, test, design, security, migration, workflow, accessibility, performance and release assessments. Verification applies to a specific artifact version and relevant dependency versions.
+Evidence-backed build, test, design, security, migration, workflow, accessibility, performance and release assessments. Verification applies to a specific artifact version and relevant dependency versions. A successful build does not prove feature acceptance; a passing unit test does not prove tenant isolation; a deployment does not prove production readiness.
 
 These inventories are linked but must never be collapsed into one status field.
 
@@ -137,19 +145,25 @@ A relevant change marks affected evidence as **stale / reverification required**
 
 ## 8. Logical registry data model
 
-The following are proposed logical entities, not existing database tables:
+The following are proposed logical entities, not existing database tables. This is a conceptual model, not yet an implementation-ready schema. A separate data specification must define columns, primary/foreign keys, uniqueness, check constraints, indexes, RLS, retention and migration sequencing.
+
+### 8.1 Required logical entities
 
 | Entity | Responsibility |
 |---|---|
 | `systems` | System and domain catalogue |
 | `modules` | Module identity, ownership and boundaries |
-| `work_items` | Requirements, features, tasks, defects and improvements |
-| `artifacts` | Screens, workflows, components, APIs, data objects, files, tests and assets |
+| `requirements` | Stable requirement identity, source authority, owner, scope, phase and lifecycle |
+| `acceptance_criteria` | Atomic, testable criteria linked to one or more requirements |
+| `work_items` | Delivery tasks, defects, remediation and improvements; must not be the only storage for normative requirements |
+| `artifacts` | Typed identity for modules, screens, workflows, components, APIs, data objects, files, tests and assets |
 | `artifact_relationships` | Typed many-to-many traceability links |
 | `dependencies` | Directional technical and operational dependencies |
 | `specifications` | Requirement and design document metadata |
-| `artifact_versions` | Version and revision identity |
-| `status_assessments` | Dimension-specific status and confidence |
+| `artifact_versions` | Immutable source/version identity, including commit, design version, schema version or release |
+| `status_assessments` | Dimension-specific status, confidence, assessor, rationale, effective time and supersession |
+| `source_observations` | Raw discovery/synchronization facts with connector, source ID, observed time and payload hash |
+| `sync_runs` | Connector execution, cursor, result counts, errors and last-successful sync |
 | `evidence_records` | Evidence metadata and immutable references |
 | `verification_runs` | Test, build, audit and release verification executions |
 | `audit_findings` | Findings, severity, scope and closure criteria |
@@ -159,7 +173,21 @@ The following are proposed logical entities, not existing database tables:
 | `source_references` | GitHub, Figma, Supabase, CI and deployment locators |
 | `change_events` | Append-only history of registry changes |
 | `releases` | Release identity, environment, commit and deployment |
-| `owners` / role grants | References to the approved shared identity and authorization model |
+| `role_grants` | References to the approved shared identity and authorization model; no new user/person/institute tables |
+| `conflicts` | Competing claims, sources, scope, resolution owner and final decision |
+
+### 8.2 Identity and integrity rules
+
+- Every registry entity has an immutable stable ID independent of its name or path.
+- Every artifact has a controlled `artifact_type`; do not use unvalidated polymorphic IDs without integrity enforcement.
+- Requirements and acceptance criteria are first-class records, not free-text fields embedded only in work items.
+- Every relationship has a type, source/target IDs, provenance, validity period and optional confidence; enforce allowed source/target types.
+- Every assessment is append-only or supersedes a prior assessment. Do not overwrite historical state.
+- Every approval binds to the exact artifact/requirement version and scope approved. A later version does not inherit approval automatically.
+- Every evidence record points to an immutable external reference or content hash, with access controls and retention metadata.
+- Tenant scope is explicit. Shared/global artifacts and institute-owned extensions must be distinguishable. Cross-tenant integrity must be enforced, not inferred from UI context.
+- Use controlled vocabularies per status dimension and validate allowed transitions. Do not let arbitrary strings become workflow states.
+- Deactivation/retirement is preferred to hard deletion for referenced records. Corrections are new events or versions.
 
 Use typed relationship kinds, for example: `satisfies`, `implements`, `appears_on`, `uses_component`, `calls_api`, `reads_entity`, `writes_entity`, `tested_by`, `verified_by`, `depends_on`, `supersedes`, `derived_from` and `documents`.
 
@@ -214,9 +242,25 @@ A person may hold multiple roles, but approval records must state the authority 
 
 The registry stores stable external identifiers and links. It should not duplicate full source files or make a second copy the authoritative version.
 
+### 11.1 Authority and conflict precedence
+
+| Information type | Primary authority | PEIGS treatment |
+|---|---|---|
+| Product/domain requirements | Approved domain specification or approved decision | Link and trace; do not rewrite |
+| Cross-project document navigation and authority map | PULSE Master Documentation Index | Link to and reconcile with this index |
+| Domain module/scope register | Existing domain register (for example, DTE registers) | Preserve as detailed authority; index its IDs and references |
+| Source code as-built state | Exact GitHub commit and branch | Discover and assess; never infer from documentation |
+| Database as-built state | Live Supabase catalog plus applied migration history | Compare with migration files; record drift |
+| Design as-built state | Exact Figma file/page/node/version | Link and verify; screenshots are not canonical design sources |
+| Test result | Exact CI/test run | Store immutable run reference and result |
+| Deployment state | Exact deployment/environment record | Store release evidence |
+| Approval | Authorized human approval event | Never infer from commit, document presence or status text |
+
+When two authoritative sources disagree, create a conflict record. Do not silently select the newest file or the most recently edited conversation. Resolve through the named domain/product authority and record the decision.
+
 ## 12. Automation policy
 
-Automation is introduced only after the initial inventory and data model are validated.
+Automation is introduced only after the initial inventory and data model are validated. Start with read-only discovery and reporting; write-back synchronization is a later controlled increment.
 
 **Automatically discovered:** commits, files, routes where reliably extractable, migration files, database catalog objects, CI runs and deployments.
 
@@ -259,8 +303,9 @@ The interface must support filters, saved views, server-side pagination and boun
 Before starting any task, a developer or coding agent must:
 1. Search the registry for the requirement and related artifacts.
 2. Read the authoritative approved specification and relevant decisions.
-3. Inspect current source and exact branch/commit.
-4. Compare target, as-built and assurance inventories.
+3. Inspect current source across relevant branches and exact commit SHAs; inspect live connected systems where required.
+4. Confirm the applicable product phase and domain authority before treating a planned screen/module as current scope.
+5. Compare target, as-built and assurance inventories.
 5. Identify existing implementation and reusable components.
 6. Inspect dependencies and change impact.
 7. Record gaps, assumptions and conflicts.
@@ -268,7 +313,7 @@ Before starting any task, a developer or coding agent must:
 9. Obtain required approvals.
 10. Implement the smallest reviewable change.
 11. Run relevant tests and capture exact evidence.
-12. Update registry records, source references, findings and next actions.
+13. Update registry records, source references, findings and next actions.
 
 If a critical fact is unknown, record it as unknown and investigate. Do not silently infer completion or invent source links.
 
@@ -276,15 +321,20 @@ If a critical fact is unknown, record it as unknown and investigate. Do not sile
 
 | Phase | Deliverable | Exit condition |
 |---|---|---|
-| 0 | Governance and source reconciliation | Canonical authorities, conflicts and scope are recorded |
-| 1 | Registry data architecture | Logical model, IDs, relationships, roles and evidence rules approved |
-| 2 | Initial System A and System B inventories | Target/as-built/assurance distinctions populated with provenance |
-| 3 | Registry MVP | Search, module explorer, status dimensions, evidence and findings work |
-| 4 | Engineering intelligence | Dependency graph, impact analysis and stale-evidence detection work |
-| 5 | Integrations | GitHub, CI, Supabase catalog, Vercel and Figma references synchronized |
-| 6 | Operational governance | Recurring audits, work queues and release gates adopted |
+| 0 | Governance and source reconciliation | Canonical authorities, branch coverage, scope/phase conflicts and domain-register boundaries are recorded |
+| 1 | Data architecture and threat model | Detailed schema, identity/RLS model, retention and sync design approved |
+| 2 | Inventory pilot | One representative System A workflow and one in-scope DTE framework workflow traced end-to-end; existing System A and DTE inventories remain separate |
+| 3 | Registry MVP | Search, source links, traceability, status dimensions, evidence and findings work on the pilot |
+| 4 | Controlled expansion | Complete remaining System A and DTE scope inventories; add other PULSE domains only after owner validation |
+| 5 | Read-only integrations | GitHub branches, Supabase catalog, CI, Vercel and Figma discovery synchronized with provenance |
+| 6 | Verified automation | Dependency impact, stale-evidence and orphan detection tested against known changes |
+| 7 | Operational governance | Recurring audits, work queues, access reviews and release gates adopted |
 
 System A and System B must first be inventoried independently, then reconciled against shared platform ownership. Do not merge their domain responsibilities into a single module model.
+
+**Phase control:** the GitHub DTE governance baseline currently describes an offline framework/operating-process phase and explicitly defers digital question inventory, upload and digital question-to-tag mapping. The uploaded System B Part 2 export also reports a 49-screen functional/interaction specification and a Figma design file with design foundations and only an initial subset of screens designed. These are different dimensions and potentially different scope generations. PEIGS must record the 49-screen set as documented future/target scope unless the product owner explicitly approves it for the current phase; it must not automatically classify all 49 screens as current implementation commitments. The reported Figma state must be re-verified against the live Figma file before an as-built design status is asserted.
+
+**System A control:** the uploaded System A specification requires source-independent daily tracking and explicitly says it must not depend on QBMS or DTE. The initial pilot should therefore validate the assignment → student-question obligation → evidence/attempt lifecycle without requiring question taxonomy completion.
 
 ## 16. Explicit non-goals
 
@@ -314,8 +364,12 @@ PEIGS is not:
 ## 18. Acceptance criteria for this specification
 
 This architecture draft is ready for owner review when reviewers can confirm:
-- The hybrid source-of-truth boundaries are clear.
+- The hybrid source-of-truth boundaries are clear and consistent with the Master Documentation Index and domain registers.
+- Domain registers remain detailed authorities; PEIGS does not duplicate them.
 - Target, as-built and assurance inventories are separate.
+- Branch, commit, environment and external design-version coverage is explicit.
+- The current DTE phase boundary and System A independence invariant are preserved.
+- The data model has first-class requirements, acceptance criteria, artifact versions, source observations, sync runs and conflicts.
 - Tracking granularity avoids both under-tracking and element-level bureaucracy.
 - Status dimensions and evidence confidence are distinct.
 - IDs, relationships, dependencies and version history are defined.
@@ -328,8 +382,8 @@ This architecture draft is ready for owner review when reviewers can confirm:
 ## 19. Decisions intentionally deferred
 
 The following must be resolved during detailed design, not guessed in this draft:
-- Exact mapping to the existing shared PULSE identity and role tables.
-- Whether registry access is platform-admin-only initially or supports institute-level views.
+- Exact mapping to the existing shared PULSE identity and role tables, after live schema and policy audit.
+- Whether registry access is platform-admin-only initially or supports institute-level views, subject to threat modelling.
 - Evidence file storage and retention policy.
 - Exact SQL column types, indexes, partitioning and RLS policies.
 - GitHub webhook versus scheduled synchronization details.
@@ -347,3 +401,28 @@ The following must be resolved during detailed design, not guessed in this draft
 | QA/operations reviewer | Pending | — | — | |
 
 **Current disposition:** Review draft only. No Supabase migration, application implementation, repository reorganization, production deployment or release is authorized.
+
+
+## 21. Audit corrections introduced in v1.1.0
+
+The v1.0.0 draft was reviewed against the existing PULSE Master Documentation Index, repository governance blueprint, DTE module register and phase disposition, root agent instructions, architecture/database governance documents, and the uploaded System A/System B exports.
+
+Corrections:
+1. Clarified that PEIGS is a cross-domain engineering/assurance index, not a replacement for domain registers or the Master Documentation Index.
+2. Added an authority-precedence matrix and explicit conflict records.
+3. Required all relevant branches, commits and environments to be inventoried; main-only inspection is insufficient.
+4. Expanded the conceptual data model with first-class requirements, acceptance criteria, source observations, sync runs and conflict records.
+5. Added integrity, version-bound approval, controlled status vocabulary and tenant-boundary rules.
+6. Added explicit DTE phase controls: the current GitHub DTE baseline defers digital question upload/inventory/tagging; the uploaded 49-screen System B export is not automatically current-phase scope.
+7. Added a System A pilot invariant: daily tracking must function independently of QBMS/DTE.
+8. Changed delivery sequencing to a representative pilot before broad inventory and integrations.
+9. Required read-only discovery before controlled write-back synchronization.
+
+This audit is a design/document review, not a live Figma verification, complete all-branch code audit, database security certification or product-owner approval.
+
+## 22. Change history
+
+| Version | Status | Change |
+|---|---|---|
+| 1.0.0 | Superseded draft | Initial PEIGS architecture proposal |
+| 1.1.0 | Audited review draft | Authority hierarchy, source precedence, branch coverage, data-model integrity, phase boundaries and pilot sequence corrections |
